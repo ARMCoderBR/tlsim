@@ -11,25 +11,33 @@
 #include "output.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_connect(output *o, char *name, int *getvalue){
+output *output_create(char *name){
 
+    output *o = malloc(sizeof(output));
     if (name){
-        o->name = malloc(strlen(name)+1);
-        strcpy(o->name,name);
+
+        o->name = malloc(1+strlen(name));
+        strcpy(o->name, name);
     }
     else
         o->name = NULL;
 
-    o->getval = getvalue;
+    return o;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void output_update(output *o, int val, int timestamp){
+
+    o->value = val;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void output_print(output *o){
 
     if (o->name)
-        printf("%s:%d ",o->name,*o->getval);
+        printf("%s:%d ",o->name,o->value);
     else
-        printf("%d ",*o->getval);
+        printf("%d ",o->value);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

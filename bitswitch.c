@@ -5,15 +5,24 @@
  *      Author: milton
  */
 
+#include <malloc.h>
 
 #include "bitswitch.h"
 #include "update.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-void bitswitch_init(bitswitch *s, int val){
+bitswitch *bitswitch_create(){
 
-    s->value = val;
-    s->oldvalue =  1 - val;
+    bitswitch *b = malloc(sizeof(bitswitch));
+    b->oldvalue = 2;
+    b->out_event_handler_root = NULL;
+    return b;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void bitswitch_connect_out(bitswitch *s, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
+
+    new_ehandler(s->out_event_handler_root, obj, event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,12 +33,10 @@ void bitswitch_setval(bitswitch *s, int val){
     if (s->oldvalue != s->value){
 
         s->oldvalue = s->value;
-        update_run();
+        event e;
+        e.event_handler_root = s->out_event_handler_root;
+        e.value = s->value;
+        e.timestamp = 0;
+        event_insert(&e);
     }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-int bitswitch_getval(bitswitch *s){
-
-    return s->value;
 }

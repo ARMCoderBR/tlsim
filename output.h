@@ -12,10 +12,12 @@
 typedef struct  {
 
     char *name;
-    int *getval;
+    int value;
 } output;
 
-void output_connect(output *o, char *name, int *getval);
+output *output_create(char *name);
+
+void output_update(output *o, int val, int timestamp);
 
 void output_print(output *o);
 void output_println(output *o);

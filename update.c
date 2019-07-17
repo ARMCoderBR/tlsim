@@ -5,9 +5,10 @@
  *      Author: milton
  */
 
+#include <malloc.h>
 
 #include "update.h"
-#include "and.h"
+#include "bitand.h"
 
 #define MAXPARTS 200
 
@@ -44,4 +45,30 @@ void update_run(){
             }
         }
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void event_insert(event *e){
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void new_ehandler(ehandler *ehptr, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
+
+    if (ehptr == NULL){
+
+        ehptr = malloc(sizeof(ehandler));
+        ehptr->event_handler = event_handler;
+        ehptr->obj = obj;
+        ehptr->next = NULL;
+        return;
+    }
+
+    while (ehptr->next != NULL)
+        ehptr = ehptr->next;
+
+    ehptr->next = malloc(sizeof(ehandler));
+    ehptr = ehptr->next;
+    ehptr->event_handler = event_handler;
+    ehptr->next = NULL;
 }
