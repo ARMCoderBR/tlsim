@@ -39,6 +39,6 @@ void update_register (void *o, int type);
 
 void update_run();
 
-void new_ehandler(ehandler *ehptr, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void new_ehandler(ehandler **ehptr, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
 
 #endif /* UPDATE_H_ */

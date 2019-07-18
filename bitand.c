@@ -20,7 +20,8 @@ bitand *bitand_create(){
 ////////////////////////////////////////////////////////////////////////////////
 void bitand_connect_out(bitand *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
 
-    new_ehandler(a->out_event_handler_root, obj, event_handler);
+    new_ehandler(&a->out_event_handler_root, obj, event_handler);
+    event_handler(obj,a->value,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
