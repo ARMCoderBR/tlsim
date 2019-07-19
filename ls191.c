@@ -67,10 +67,49 @@ void ls191_connect_ripclk(ls191 *a, void *obj, void (*event_handler)(void *obj, 
 ////////////////////////////////////////////////////////////////////////////////
 int ls191_update(ls191 *a){
 
+    if (!a->load){
 
+        a->qa = a->da;
+        a->qb = a->db;
+        a->qc = a->dc;
+        a->qd = a->dd;
+    }
+    else{
 
+        if (!a->enable)
+        if ((!a->clk_o) && (a->clk)){
 
+            a->qa++;
+            if (a->qa == 2) {
+                a->qa = 0;
+                a->qb++;
+                if (a->qb == 2){
+                    a->qb = 0;
+                    a->qc++;
+                    if (a->qc == 2){
+                        a->qc = 0;
+                        a->qd++;
+                        if (a->qd == 2)
+                            a->qd = 0;
+                    }
+                }
+            }
+        }
+    }
 
+    a->clk_o = a->clk;
+
+    if (a->downup){ //0=UP  1=DOWN
+
+        a->maxmin = (a->qa & a->qb & a->qc & a->qd);
+    }else{
+
+        a->maxmin = 1 ^ (a->qa | a->qb | a->qc | a->qd);
+    }
+
+    a->ripclk = 1;
+    if ((a->maxmin) && (!a->clk))
+        a->ripclk = 0;
 
     int mask = 0;
     if (a->qa_o != a->qa){

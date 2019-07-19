@@ -14,7 +14,7 @@ typedef struct {
 
     //Entradas
     int da, db, dc, dd, load, enable, downup, clk;
-    int clk_old;
+    int clk_o;
     //Saídas
     int qa,qb,qc,qd,maxmin,ripclk;
     int qa_o,qb_o,qc_o,qd_o,maxmin_o,ripclk_o;
