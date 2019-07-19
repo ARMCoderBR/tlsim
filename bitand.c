@@ -39,7 +39,7 @@ int bitand_update(bitand *a){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void bitand_up(bitand *a, int val, int timestamp){
+void bitand_up(bitand *a, int timestamp){
 
     if (bitand_update(a)){
 
@@ -57,7 +57,7 @@ void bitand_update_ina(bitand *a, int val, int timestamp){
     if (val == a->ina) return;
 
     a->ina = val;
-    bitand_up(a, val, timestamp);
+    bitand_up(a, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,5 +66,5 @@ void bitand_update_inb(bitand *a, int val, int timestamp){
     if (val == a->inb) return;
 
     a->inb = val;
-    bitand_up(a, val, timestamp);
+    bitand_up(a, timestamp);
 }
