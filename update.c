@@ -22,7 +22,9 @@ void event_insert(event *e);
 ////////////////////////////////////////////////////////////////////////////////
 void event_process(){
 
+#ifdef DEBUG
     printf("event_process BEGIN evins:%d evget:%d\n",evins,evget);
+#endif
 
     ehandler * ehandlerptr;
     while (evins != evget){
@@ -42,20 +44,27 @@ void event_process(){
         evget++;
         evget %= EVQUEUELEN;
     }
+#ifdef DEBUG
     printf("event_process END\n");
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void event_insert(event *e){
 
+#ifdef DEBUG
     printf("event_insert BEGIN\n");
+#endif
 
     memcpy(&evqueue[evins],e,sizeof(event));
     evins++;
     evins %= EVQUEUELEN;
 
     event_process();
+
+#ifdef DEBUG
     printf("event_insert END evins:%d evget:%d\n",evins,evget);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +78,9 @@ void new_ehandler(ehandler **ehptr, void *obj, void (*event_handler)(void *obj, 
     if (*ehptr == NULL){
 
         *ehptr = ept;
+#ifdef DEBUG
         printf("new_ehandler(1)\n");
+#endif
         return;
     }
 
@@ -78,7 +89,9 @@ void new_ehandler(ehandler **ehptr, void *obj, void (*event_handler)(void *obj, 
     while (eptscan->next != NULL)
         eptscan = eptscan->next;
 
+#ifdef DEBUG
     printf("new_ehandler(2)\n");
+#endif
 
     eptscan->next = ept;
 }

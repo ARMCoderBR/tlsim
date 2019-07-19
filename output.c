@@ -28,7 +28,9 @@ output *output_create(char *name){
 ////////////////////////////////////////////////////////////////////////////////
 void output_update(output *o, int val, int timestamp){
 
+#ifdef DEBUG
     printf("output_update val:%d\n",val);
+#endif
     o->value = val;
 }
 

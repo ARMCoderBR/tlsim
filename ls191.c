@@ -80,17 +80,40 @@ int ls191_update(ls191 *a){
         if ((!a->clk_o) && (a->clk)){
 
             a->qa++;
-            if (a->qa == 2) {
-                a->qa = 0;
-                a->qb++;
-                if (a->qb == 2){
-                    a->qb = 0;
-                    a->qc++;
-                    if (a->qc == 2){
-                        a->qc = 0;
-                        a->qd++;
-                        if (a->qd == 2)
-                            a->qd = 0;
+
+            if (!a->downup){
+                //UP
+                if (a->qa == 2) {
+                    a->qa = 0;
+                    a->qb++;
+                    if (a->qb == 2){
+                        a->qb = 0;
+                        a->qc++;
+                        if (a->qc == 2){
+                            a->qc = 0;
+                            a->qd++;
+                            if (a->qd == 2)
+                                a->qd = 0;
+                        }
+                    }
+                }
+            }else{
+                //DOWN
+                if (a->qa == 2)
+                    a->qa = 0;
+                else{
+                    a->qb++;
+                    if (a->qb == 2)
+                        a->qb = 0;
+                    else{
+                        a->qc++;
+                        if (a->qc == 2)
+                            a->qc = 0;
+                        else{
+                            a->qd++;
+                            if (a->qd == 2)
+                                a->qd = 0;
+                        }
                     }
                 }
             }
@@ -99,7 +122,7 @@ int ls191_update(ls191 *a){
 
     a->clk_o = a->clk;
 
-    if (a->downup){ //0=UP  1=DOWN
+    if (!a->downup){ //0=UP  1=DOWN
 
         a->maxmin = (a->qa & a->qb & a->qc & a->qd);
     }else{
