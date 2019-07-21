@@ -8,11 +8,6 @@
 #ifndef UPDATE_H_
 #define UPDATE_H_
 
-typedef enum {
-
-    BITAND,
-} objtype;
-
 typedef struct {
 
     int type;

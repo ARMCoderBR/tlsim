@@ -10,8 +10,6 @@
 
 #include "update.h"
 
-#include "ls08.h"
-
 #define EVQUEUELEN 200
 
 event evqueue[EVQUEUELEN];
