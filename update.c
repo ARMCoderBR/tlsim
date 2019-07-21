@@ -9,7 +9,8 @@
 #include <string.h>
 
 #include "update.h"
-#include "bitand.h"
+
+#include "ls08.h"
 
 #define EVQUEUELEN 200
 
