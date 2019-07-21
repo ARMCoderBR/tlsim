@@ -12,13 +12,12 @@
 
 typedef struct {
 
-    int in1d,in2d,in3d,in4d,in5d,in6d,in7d,in8d;
+    int in1d[8];
     int in_ocon;
     int clk,clk_o;
-    int out1q_o,out2q_o,out3q_o,out4q_o,out5q_o,out6q_o,out7q_o,out8q_o;
-    int out1q,out2q,out3q,out4q,out5q,out6q,out7q,out8q;
-    ehandler *out1q_event_handler_root,*out2q_event_handler_root,*out3q_event_handler_root,*out4q_event_handler_root,
-             *out5q_event_handler_root,*out6q_event_handler_root,*out7q_event_handler_root,*out8q_event_handler_root;
+    int outq_o[8];
+    int outq[8];
+    ehandler *outq_event_handler_root[8];
 } ls374;
 
 ls374 *ls374_create();

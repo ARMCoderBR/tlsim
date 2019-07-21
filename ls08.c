@@ -1,5 +1,5 @@
 /*
- * and.c
+ * ls08.c
  *
  *  Created on: 16 de jul de 2019
  *      Author: milton
@@ -20,28 +20,28 @@ ls08 *ls08_create(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls08_connect_out1(ls08 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
+void ls08_connect_y1(ls08 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
 
     new_ehandler(&a->out_event_handler_root[0], obj, event_handler);
     event_handler(obj,a->value[0],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls08_connect_out2(ls08 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
+void ls08_connect_y2(ls08 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
 
     new_ehandler(&a->out_event_handler_root[1], obj, event_handler);
     event_handler(obj,a->value[1],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls08_connect_out3(ls08 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
+void ls08_connect_y3(ls08 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
 
     new_ehandler(&a->out_event_handler_root[2], obj, event_handler);
     event_handler(obj,a->value[2],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls08_connect_out4(ls08 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
+void ls08_connect_y4(ls08 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
 
     new_ehandler(&a->out_event_handler_root[3], obj, event_handler);
     event_handler(obj,a->value[3],0);

@@ -35,13 +35,13 @@ int main (int argc, char *argv[]){
     bitswitch_connect_out(s2, ands, (void*)&ls08_update_b1);
     bitswitch_connect_out(s3, ands, (void*)&ls08_update_a2);
 
-    ls08_connect_out1(ands, ands, (void*)&ls08_update_b2);
-    ls08_connect_out1(ands, oand1, (void*)&output_update_d0);
+    ls08_connect_y1(ands, ands, (void*)&ls08_update_b2);
+    ls08_connect_y1(ands, oand1, (void*)&output_update_d0);
 
     bitswitch_connect_out(s1, os1, (void*)&output_update_d0);
     bitswitch_connect_out(s2, os2, (void*)&output_update_d0);
     bitswitch_connect_out(s3, os3, (void*)&output_update_d0);
-    ls08_connect_out2(ands, oand2, (void*)&output_update_d0);
+    ls08_connect_y2(ands, oand2, (void*)&output_update_d0);
 
     printf("===================== 0 ==== 0\n");
 
