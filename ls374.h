@@ -22,24 +22,24 @@ typedef struct {
 
 ls374 *ls374_create();
 
-void ls191_connect_1d(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_2d(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_3d(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_4d(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_5d(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_6d(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_7d(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_8d(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_clk(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_ocon(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void ls374_connect_1q(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void ls374_connect_2q(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void ls374_connect_3q(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void ls374_connect_4q(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void ls374_connect_5q(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void ls374_connect_6q(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void ls374_connect_7q(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void ls374_connect_8q(ls374 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
 
-void ls191_update_1q(ls374 *a, int val, int timestamp);
-void ls191_update_2q(ls374 *a, int val, int timestamp);
-void ls191_update_3q(ls374 *a, int val, int timestamp);
-void ls191_update_4q(ls374 *a, int val, int timestamp);
-void ls191_update_5q(ls374 *a, int val, int timestamp);
-void ls191_update_6q(ls374 *a, int val, int timestamp);
-void ls191_update_7q(ls374 *a, int val, int timestamp);
-void ls191_update_8q(ls374 *a, int val, int timestamp);
+void ls374_update_1q(ls374 *a, int val, int timestamp);
+void ls374_update_2q(ls374 *a, int val, int timestamp);
+void ls374_update_3q(ls374 *a, int val, int timestamp);
+void ls374_update_4q(ls374 *a, int val, int timestamp);
+void ls374_update_5q(ls374 *a, int val, int timestamp);
+void ls374_update_6q(ls374 *a, int val, int timestamp);
+void ls374_update_7q(ls374 *a, int val, int timestamp);
+void ls374_update_8q(ls374 *a, int val, int timestamp);
+void ls374_update_clk(ls374 *a, int val, int timestamp);
+void ls374_update_ocon(ls374 *a, int val, int timestamp);
 
 #endif /* LS374_H_ */
