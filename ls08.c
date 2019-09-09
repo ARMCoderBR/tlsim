@@ -61,9 +61,14 @@ static void ls08_update_pin_inb(ls08 *a, int val, int timestamp, int index){
 ls08 *ls08_create(){
 
     ls08 *b = malloc(sizeof(ls08));
+
+    if (b == NULL)
+        return NULL;
+
     b->oldvalue[0] = b->oldvalue[1] = b->oldvalue[2] = b->oldvalue[3] = 2;
     b->out_event_handler_root[0] = b->out_event_handler_root[1] =
             b->out_event_handler_root[2] = b->out_event_handler_root[3] = NULL;
+
     return b;
 }
 

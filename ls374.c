@@ -64,6 +64,9 @@ ls374 *ls374_create(){
 
     ls374 *b = malloc(sizeof(ls374));
 
+    if (b == NULL)
+        return NULL;
+
     int i;
 
     for (i = 0; i < 8; i++){

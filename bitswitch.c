@@ -14,8 +14,13 @@
 bitswitch *bitswitch_create(){
 
     bitswitch *b = malloc(sizeof(bitswitch));
+
+    if (b == NULL)
+        return NULL;
+
     b->oldvalue = 2;
     b->out_event_handler_root = NULL;
+
     return b;
 }
 

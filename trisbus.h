@@ -24,6 +24,7 @@ typedef struct {
 typedef struct {
 
     trisnode_s *trisnode;
+    int nlines;
 } trisbus;
 
 trisbus *trisbus_create(int nlines);

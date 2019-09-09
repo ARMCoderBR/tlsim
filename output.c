@@ -14,6 +14,10 @@
 output *output_create(char *name){
 
     output *o = malloc(sizeof(output));
+
+    if (o == NULL)
+        return NULL;
+
     if (name){
 
         o->name = malloc(1+strlen(name));
@@ -23,6 +27,7 @@ output *output_create(char *name){
         o->name = NULL;
 
     o->value = 0;
+
     return o;
 }
 

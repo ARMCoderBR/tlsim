@@ -159,6 +159,10 @@ static void ls191_up(ls191 *a, int timestamp){
 ls191 *ls191_create(){
 
     ls191 *b = malloc(sizeof(ls191));
+
+    if (b == NULL)
+        return NULL;
+
     b->qa_o = b->qb_o = b->qc_o = b->qd_o = b->maxmin_o = b->ripclk_o = 2;
     b->qa_event_handler_root =
     b->qb_event_handler_root =
@@ -166,6 +170,7 @@ ls191 *ls191_create(){
     b->qd_event_handler_root =
     b->maxmin_event_handler_root =
     b->ripclk_event_handler_root = NULL;
+
     return b;
 }
 

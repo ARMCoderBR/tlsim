@@ -12,15 +12,28 @@
 ////////////////////////////////////////////////////////////////////////////////
 trisbus *trisbus_create(int nlines){
 
+    if (!nlines) return NULL;
+
     trisbus *b = malloc(sizeof(trisbus));
+
+    if (b == NULL)
+        return NULL;
+
     b->trisnode = malloc(nlines * sizeof(trisnode_s));
 
+    if (b->trisnode == NULL){
+
+        free(b);
+        return NULL;
+    }
+
+    b->nlines = nlines;
     return b;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void trisbus_connect_out(trisbus *a, int index, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
+void trisbus_connect_out(trisbus *source, int index, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    new_ehandler(&a->trisnode[index].out_event_handler_root, obj, event_handler);
-    event_handler(obj,a->trisnode[index].value,0);
+    new_ehandler(&source->trisnode[index].out_event_handler_root, dest, dest_event_handler);
+    dest_event_handler(dest,source->trisnode[index].value,0);
 }
