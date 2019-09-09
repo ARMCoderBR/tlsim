@@ -16,8 +16,8 @@ typedef struct {
 
 typedef struct {
 
-    void (*event_handler)(void *obj, int val, int timestamp);
-    void *obj;
+    void (*objdest_event_handler)(void *objdest, int val, int timestamp);
+    void *objdest;
     void *next;
 } ehandler;
 
@@ -34,6 +34,6 @@ void update_register (void *o, int type);
 
 void update_run();
 
-void new_ehandler(ehandler **ehptr, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)(void *objdest, int val, int timestamp));
 
 #endif /* UPDATE_H_ */

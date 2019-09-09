@@ -34,7 +34,7 @@ void event_process(){
 
         while (ehandlerptr != NULL){
 
-            ehandlerptr->event_handler(ehandlerptr->obj,value,timestamp);
+            ehandlerptr->objdest_event_handler(ehandlerptr->objdest,value,timestamp);
             ehandlerptr = ehandlerptr->next;
         }
 
@@ -67,11 +67,11 @@ void event_insert(event *e){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void new_ehandler(ehandler **ehptr, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
+void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)(void *objdest, int val, int timestamp)){
 
     ehandler *ept = malloc(sizeof(ehandler));
-    ept->event_handler = event_handler;
-    ept->obj = obj;
+    ept->objdest_event_handler = objdest_event_handler;
+    ept->objdest = objdest;
     ept->next = NULL;
 
     if (*ehptr == NULL){

@@ -28,20 +28,20 @@ typedef struct {
 
 ls191 *ls191_create();
 
-void ls191_connect_qa(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_qb(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_qc(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_qd(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_maxmin(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
-void ls191_connect_ripclk(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void ls191_connect_qa(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
+void ls191_connect_qb(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
+void ls191_connect_qc(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
+void ls191_connect_qd(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
+void ls191_connect_maxmin(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
+void ls191_connect_ripclk(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
 
-void ls191_update_da(ls191 *a, int val, int timestamp);
-void ls191_update_db(ls191 *a, int val, int timestamp);
-void ls191_update_dc(ls191 *a, int val, int timestamp);
-void ls191_update_dd(ls191 *a, int val, int timestamp);
-void ls191_update_load(ls191 *a, int val, int timestamp);
-void ls191_update_enable(ls191 *a, int val, int timestamp);
-void ls191_update_downup(ls191 *a, int val, int timestamp);
-void ls191_update_clk(ls191 *a, int val, int timestamp);
+void ls191_update_da(ls191 *dest, int val, int timestamp);
+void ls191_update_db(ls191 *dest, int val, int timestamp);
+void ls191_update_dc(ls191 *dest, int val, int timestamp);
+void ls191_update_dd(ls191 *dest, int val, int timestamp);
+void ls191_update_load(ls191 *dest, int val, int timestamp);
+void ls191_update_enable(ls191 *dest, int val, int timestamp);
+void ls191_update_downup(ls191 *dest, int val, int timestamp);
+void ls191_update_clk(ls191 *dest, int val, int timestamp);
 
 #endif /* LS191_H_ */

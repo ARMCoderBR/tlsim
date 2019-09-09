@@ -20,10 +20,10 @@ bitswitch *bitswitch_create(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void bitswitch_connect_out(bitswitch *s, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
+void bitswitch_connect_out(bitswitch *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    new_ehandler(&s->out_event_handler_root, obj, event_handler);
-    event_handler(obj,s->value,0);
+    new_ehandler(&source->out_event_handler_root, dest, dest_event_handler);
+    dest_event_handler(dest,source->value,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

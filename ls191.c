@@ -9,63 +9,7 @@
 #include "ls191.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-ls191 *ls191_create(){
-
-    ls191 *b = malloc(sizeof(ls191));
-    b->qa_o = b->qb_o = b->qc_o = b->qd_o = b->maxmin_o = b->ripclk_o = 2;
-    b->qa_event_handler_root =
-    b->qb_event_handler_root =
-    b->qc_event_handler_root =
-    b->qd_event_handler_root =
-    b->maxmin_event_handler_root =
-    b->ripclk_event_handler_root = NULL;
-    return b;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_qa(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
-
-    new_ehandler(&a->qa_event_handler_root, obj, event_handler);
-    event_handler(obj,a->qa,0);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_qb(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
-
-    new_ehandler(&a->qb_event_handler_root, obj, event_handler);
-    event_handler(obj,a->qb,0);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_qc(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
-
-    new_ehandler(&a->qc_event_handler_root, obj, event_handler);
-    event_handler(obj,a->qc,0);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_qd(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
-
-    new_ehandler(&a->qd_event_handler_root, obj, event_handler);
-    event_handler(obj,a->qd,0);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_maxmin(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
-
-    new_ehandler(&a->maxmin_event_handler_root, obj, event_handler);
-    event_handler(obj,a->maxmin,0);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_ripclk(ls191 *a, void *obj, void (*event_handler)(void *obj, int val, int timestamp)){
-
-    new_ehandler(&a->ripclk_event_handler_root, obj, event_handler);
-    event_handler(obj,a->ripclk,0);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-int ls191_update(ls191 *a){
+static int ls191_update(ls191 *a){
 
     if (!a->load){
 
@@ -158,7 +102,7 @@ int ls191_update(ls191 *a){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_up(ls191 *a, int timestamp){
+static void ls191_up(ls191 *a, int timestamp){
 
     event e;
     e.timestamp = timestamp+1;
@@ -208,65 +152,125 @@ void ls191_up(ls191 *a, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_update_da(ls191 *a, int val, int timestamp){
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-    if (val == a->da) return;
-    a->da = val;
-    ls191_up(a,timestamp);
+////////////////////////////////////////////////////////////////////////////////
+ls191 *ls191_create(){
+
+    ls191 *b = malloc(sizeof(ls191));
+    b->qa_o = b->qb_o = b->qc_o = b->qd_o = b->maxmin_o = b->ripclk_o = 2;
+    b->qa_event_handler_root =
+    b->qb_event_handler_root =
+    b->qc_event_handler_root =
+    b->qd_event_handler_root =
+    b->maxmin_event_handler_root =
+    b->ripclk_event_handler_root = NULL;
+    return b;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_update_db(ls191 *a, int val, int timestamp){
+void ls191_connect_qa(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    if (val == a->db) return;
-    a->db = val;
-    ls191_up(a,timestamp);
+    new_ehandler(&source->qa_event_handler_root, dest, dest_event_handler);
+    dest_event_handler(dest,source->qa,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_update_dc(ls191 *a, int val, int timestamp){
+void ls191_connect_qb(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    if (val == a->dc) return;
-    a->dc = val;
-    ls191_up(a,timestamp);
+    new_ehandler(&source->qb_event_handler_root, dest, dest_event_handler);
+    dest_event_handler(dest,source->qb,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_update_dd(ls191 *a, int val, int timestamp){
+void ls191_connect_qc(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    if (val == a->dd) return;
-    a->dd = val;
-    ls191_up(a,timestamp);
+    new_ehandler(&source->qc_event_handler_root, dest, dest_event_handler);
+    dest_event_handler(dest,source->qc,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_update_load(ls191 *a, int val, int timestamp){
+void ls191_connect_qd(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    if (val == a->load) return;
-    a->load = val;
-    ls191_up(a,timestamp);
+    new_ehandler(&source->qd_event_handler_root, dest, dest_event_handler);
+    dest_event_handler(dest,source->qd,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_update_enable(ls191 *a, int val, int timestamp){
+void ls191_connect_maxmin(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    if (val == a->enable) return;
-    a->enable = val;
-    ls191_up(a,timestamp);
+    new_ehandler(&source->maxmin_event_handler_root, dest, dest_event_handler);
+    dest_event_handler(dest,source->maxmin,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_update_downup(ls191 *a, int val, int timestamp){
+void ls191_connect_ripclk(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    if (val == a->downup) return;
-    a->downup = val;
-    ls191_up(a,timestamp);
+    new_ehandler(&source->ripclk_event_handler_root, dest, dest_event_handler);
+    dest_event_handler(dest,source->ripclk,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_update_clk(ls191 *a, int val, int timestamp){
+void ls191_update_da(ls191 *dest, int val, int timestamp){
 
-    if (val == a->clk) return;
-    a->clk = val;
-    ls191_up(a,timestamp);
+    if (val == dest->da) return;
+    dest->da = val;
+    ls191_up(dest,timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls191_update_db(ls191 *dest, int val, int timestamp){
+
+    if (val == dest->db) return;
+    dest->db = val;
+    ls191_up(dest,timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls191_update_dc(ls191 *dest, int val, int timestamp){
+
+    if (val == dest->dc) return;
+    dest->dc = val;
+    ls191_up(dest,timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls191_update_dd(ls191 *dest, int val, int timestamp){
+
+    if (val == dest->dd) return;
+    dest->dd = val;
+    ls191_up(dest,timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls191_update_load(ls191 *dest, int val, int timestamp){
+
+    if (val == dest->load) return;
+    dest->load = val;
+    ls191_up(dest,timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls191_update_enable(ls191 *dest, int val, int timestamp){
+
+    if (val == dest->enable) return;
+    dest->enable = val;
+    ls191_up(dest,timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls191_update_downup(ls191 *dest, int val, int timestamp){
+
+    if (val == dest->downup) return;
+    dest->downup = val;
+    ls191_up(dest,timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls191_update_clk(ls191 *dest, int val, int timestamp){
+
+    if (val == dest->clk) return;
+    dest->clk = val;
+    ls191_up(dest,timestamp);
 }

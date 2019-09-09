@@ -19,7 +19,7 @@ typedef struct{
 
 bitswitch *bitswitch_create();
 
-void bitswitch_connect_out(bitswitch *s, void *obj, void (*event_handler)(void *obj, int val, int timestamp));
+void bitswitch_connect_out(bitswitch *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
 
 void bitswitch_setval(bitswitch *s, int val);
 

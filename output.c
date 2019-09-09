@@ -27,51 +27,51 @@ output *output_create(char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_update_d0(output *o, int val, int timestamp){
+void output_update_d0(output *dest, int val, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d0 val:%d\n",val);
 #endif
     if (val)
-        o->value |= 1;
+        dest->value |= 1;
     else
-        o->value &= ~1;
+        dest->value &= ~1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_update_d1(output *o, int val, int timestamp){
+void output_update_d1(output *dest, int val, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d1 val:%d\n",val);
 #endif
     if (val)
-        o->value |= 2;
+        dest->value |= 2;
     else
-        o->value &= ~2;
+        dest->value &= ~2;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_update_d2(output *o, int val, int timestamp){
+void output_update_d2(output *dest, int val, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d2 val:%d\n",val);
 #endif
     if (val)
-        o->value |= 4;
+        dest->value |= 4;
     else
-        o->value &= ~4;
+        dest->value &= ~4;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_update_d3(output *o, int val, int timestamp){
+void output_update_d3(output *dest, int val, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d2 val:%d\n",val);
 #endif
     if (val)
-        o->value |= 8;
+        dest->value |= 8;
     else
-        o->value &= ~8;
+        dest->value &= ~8;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
