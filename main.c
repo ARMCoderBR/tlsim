@@ -10,7 +10,6 @@
 #include <ncurses.h>
 
 #include "board.h"
-
 #include "bitswitch.h"
 #include "ls08.h"
 #include "output.h"
@@ -18,7 +17,7 @@
 #include "ls191.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-int main (int argc, char *argv[]){
+void gatetest(){
 
     bitswitch *s1,*s2,*s3;
     ls08 *ands;
@@ -99,8 +98,10 @@ int main (int argc, char *argv[]){
     output_prints(os3);
     output_prints(oand1);
     output_println(oand2);
+}
 
-    ////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+int main (int argc, char *argv[]){
 
     ls191 *ctr1 = ls191_create();
     output *oqa1 = output_create(NULL);
@@ -146,10 +147,11 @@ int main (int argc, char *argv[]){
     ls191_connect_maxmin(ctr1, omaxmin1, (void*)&output_update_d0);
     ls191_connect_ripclk(ctr1, oripclk1, (void*)&output_update_d0);
 
-    int i;
-
     printf("### UP\n");
     bitswitch_setval(updownsel,0);  //UP
+
+#if 0
+    int i;
 
     for (i = 0; i < 16; i++){
         bitswitch_setval(clk,0);
@@ -168,6 +170,7 @@ int main (int argc, char *argv[]){
         bitswitch_setval(clk,1);
         output_prints(oclk); output_prints(oupdown); output_prints(oripclk1); output_print(oqd1); output_print(oqc1); output_print(oqb1); output_prints(oqa1); output_prints(ohex1); output_println(omaxmin1);
     }
+#endif
 
     board_init(0,0);
 
