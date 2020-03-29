@@ -8,6 +8,8 @@
 #include <malloc.h>
 #include "ls32.h"
 
+// QUAD OR GATE
+
 ////////////////////////////////////////////////////////////////////////////////
 static int ls32_update(ls32 *a, int index){
 

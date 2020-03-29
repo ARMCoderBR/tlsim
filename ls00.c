@@ -8,6 +8,8 @@
 #include <malloc.h>
 #include "ls00.h"
 
+// QUAD NAND GATE
+
 ////////////////////////////////////////////////////////////////////////////////
 static int ls00_update(ls00 *a, int index){
 

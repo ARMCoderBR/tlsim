@@ -8,6 +8,8 @@
 #include <malloc.h>
 #include "ls04.h"
 
+// HEX INVERTER
+
 ////////////////////////////////////////////////////////////////////////////////
 static int ls04_update(ls04 *a, int index){
 
