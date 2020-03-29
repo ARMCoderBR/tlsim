@@ -10,10 +10,12 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <string.h>
 
 #include "board.h"
 #include "bitswitch.h"
 
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,6 +74,14 @@ int read_key(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void sigterm_handler(int sig){
+
+    endwin();
+    exit(0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -102,8 +112,22 @@ bitswitch *switch_to_clock = NULL;
 
 board_object obja[NOBJ];
 
+pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
+
+pthread_t refthread;
+int refresh_run = 0;
+int must_refresh = 0;
+
+////////////////////////////////////////////////////////////////////////////////
+void board_set_refresh(){
+
+    must_refresh = 1;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void board_refresh(){
+
+    pthread_mutex_lock(&ncursesmutex);
 
     int i;
 
@@ -163,24 +187,9 @@ void board_refresh(){
 
     wrefresh(janela1);
     wrefresh(janela0);
+
+    pthread_mutex_unlock(&ncursesmutex);
 }
-
-////////////////////////////////////////////////////////////////////////////////
-void sigterm_handler(int sig){
-
-    endwin();
-    exit(0);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-pthread_t refthread;
-int refresh_run = 0;
-int must_refresh = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 void *refresh_thread(void *args){
@@ -193,16 +202,10 @@ void *refresh_thread(void *args){
             board_refresh();
 
         must_refresh = 0;
-        usleep(50000);      //50 ms
+        usleep(42000);      //42 ms
     }
 
     return NULL;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void board_set_refresh(){
-
-    must_refresh = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -212,7 +215,6 @@ void refresh_thread_stop(){
     pthread_join(refthread,NULL);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -221,16 +223,63 @@ void refresh_thread_stop(){
 
 pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
 
-
 pthread_t clkthread;
+
 int clock_run = 0;
 int clock_paused = 0;
-int clock_per_us = 500000;
+int clock_period_us = 500000;
+int iclk = 1;
+
+#define NCLKS 9
+
+int CLKS_PERIOD_US[NCLKS] = {1000000,    //1s
+                             500000,     //500ms
+                             250000,     //250ms
+                             100000,     //100ms
+                             50000,      //50ms
+                             10000,      //10ms
+                             1000,       //1ms
+                             100,        //100us
+                             10,         //10us
+};
+
+////////////////////////////////////////////////////////////////////////////////
+void clock_redraw(){
+
+    pthread_mutex_lock(&ncursesmutex);
+
+    int i;
+
+    char s[50] = "Clk:[";
+
+    for (i = 0; i < NCLKS; i++)
+        if (i != iclk)
+            strcat(s,"-");
+        else
+            strcat(s,"|");
+    strcat(s,"]");
+
+    wmove(janela3,1,1);
+    waddstr(janela3,s);
+
+    wmove(janela3,2,1);
+    if (!clock_paused)
+        waddstr(janela3,"RUNNING");
+    else
+        waddstr(janela3,"PAUSED");
+
+    wrefresh(janela3);
+
+    pthread_mutex_unlock(&ncursesmutex);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void *clock_thread(void *args){
 
+    clock_period_us = CLKS_PERIOD_US[iclk];
     clock_run = 1;
+
+    clock_redraw();
 
     while (clock_run){
 
@@ -241,14 +290,14 @@ void *clock_thread(void *args){
             pthread_mutex_unlock(&transitionmutex);
 
             board_set_refresh();
-            usleep(clock_per_us/2);
+            usleep(clock_period_us/2);
 
             pthread_mutex_lock(&transitionmutex);
             bitswitch_setval(switch_to_clock, 0);
             pthread_mutex_unlock(&transitionmutex);
 
             board_set_refresh();
-            usleep(clock_per_us/2);
+            usleep(clock_period_us/2);
         }
         else
             usleep(100000);
@@ -258,12 +307,38 @@ void *clock_thread(void *args){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void clock_faster(){
+
+    if (iclk < (NCLKS-1)){
+
+        iclk++;
+        clock_period_us = CLKS_PERIOD_US[iclk];
+        clock_redraw();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void clock_slower(){
+
+    if (iclk > 0){
+
+        iclk--;
+        clock_period_us = CLKS_PERIOD_US[iclk];
+        clock_redraw();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void clock_thread_stop(){
 
     clock_run = 0;
     pthread_join(clkthread,NULL);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 int board_init(int width, int height){
@@ -412,6 +487,13 @@ void board_run(){
 
             case 27:
                 stoprun = 1;
+                break;
+            case '+':
+            case '=':
+                clock_faster();
+                break;
+            case '-':
+                clock_slower();
                 break;
             }
 
