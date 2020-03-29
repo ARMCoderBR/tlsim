@@ -7,6 +7,9 @@
 
 
 #include <stdio.h>
+#include <ncurses.h>
+
+#include "board.h"
 
 #include "bitswitch.h"
 #include "ls08.h"
@@ -165,6 +168,22 @@ int main (int argc, char *argv[]){
         bitswitch_setval(clk,1);
         output_prints(oclk); output_prints(oupdown); output_prints(oripclk1); output_print(oqd1); output_print(oqc1); output_print(oqb1); output_prints(oqa1); output_prints(ohex1); output_println(omaxmin1);
     }
+
+    board_init(0,0);
+
+    board_assign_clock_to_switch(clk);
+
+    board_add_led(oclk,1,1,"CLK");
+
+    board_add_xdigit(ohex1,10,1,"COUNT");
+
+    board_add_led(omaxmin1,20,1,"MAXMIN");
+
+    board_add_led(oripclk1,30,1,"RIPPLE");
+
+    board_add_manual_switch(updownsel, 1, 4, KEY_F(1), "UP/DN");
+
+    board_run();
 
     return 0;
 }
