@@ -9,6 +9,7 @@
 #include <signal.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 #include "board.h"
 #include "bitswitch.h"
@@ -174,6 +175,41 @@ void sigterm_handler(int sig){
 #define LINHAS_JANELA2 8
 #define LINHAS_JANELA2B (LINHAS_JANELA2+2)
 
+
+pthread_t refthread;
+int refresh_run = 0;
+int must_refresh = 0;
+
+////////////////////////////////////////////////////////////////////////////////
+void *board_refresh_thread(void *args){
+
+    refresh_run = 1;
+
+    while (refresh_run){
+
+        if (must_refresh)
+            board_refresh();
+
+        must_refresh = 0;
+        usleep(50000);      //50 ms
+    }
+
+    return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void board_set_refresh(){
+
+    must_refresh = 1;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void board_refresh_stop(){
+
+    refresh_run = 0;
+    pthread_join(refthread,NULL);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 void board_run(){
 
@@ -210,7 +246,9 @@ void board_run(){
     int presc = 0;
     int mainclk = 0;
 
-    board_refresh();
+    pthread_create(&refthread, NULL, board_refresh_thread, NULL);
+
+    board_set_refresh();
 
     while (!stoprun){
 
@@ -235,7 +273,7 @@ void board_run(){
 
                         bitswitch *bs = obja[i].objptr;
                         bitswitch_setval(bs, 1 ^ bs->value);
-                        board_refresh();
+                        board_set_refresh();
                     }
                 }
         }
@@ -248,12 +286,14 @@ void board_run(){
             if (switch_to_clock){
 
                 bitswitch_setval(switch_to_clock, mainclk);
-                board_refresh();
+                board_set_refresh();
                 mainclk ^= 1;
             }
         }
         /////////////////////////////
     }
+
+    board_refresh_stop();
 
     endwin();
 }
