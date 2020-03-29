@@ -226,7 +226,8 @@ pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_t clkthread;
 
 int clock_run = 0;
-int clock_paused = 0;
+int clock_pausing = 0;
+int clock_state_paused = 0;
 int clock_period_us = 500000;
 int iclk = 1;
 
@@ -263,10 +264,10 @@ void clock_redraw(){
     waddstr(janela3,s);
 
     wmove(janela3,2,1);
-    if (!clock_paused)
+    if (!clock_pausing)
         waddstr(janela3,"RUNNING");
     else
-        waddstr(janela3,"PAUSED");
+        waddstr(janela3,"PAUSED ");
 
     wrefresh(janela3);
 
@@ -284,6 +285,18 @@ void *clock_thread(void *args){
     while (clock_run){
 
         if (switch_to_clock){
+
+            if (clock_pausing){
+
+                pthread_mutex_lock(&transitionmutex);
+                bitswitch_setval(switch_to_clock, 0);
+                pthread_mutex_unlock(&transitionmutex);
+                clock_state_paused = 1;
+                usleep(100000);
+                continue;
+            }
+            else
+                clock_state_paused = 0;
 
             pthread_mutex_lock(&transitionmutex);
             bitswitch_setval(switch_to_clock, 1);
@@ -309,6 +322,13 @@ void *clock_thread(void *args){
 ////////////////////////////////////////////////////////////////////////////////
 void clock_faster(){
 
+    if (clock_pausing){
+
+        clock_pausing = 0;
+        clock_redraw();
+        return;
+    }
+
     if (iclk < (NCLKS-1)){
 
         iclk++;
@@ -320,12 +340,44 @@ void clock_faster(){
 ////////////////////////////////////////////////////////////////////////////////
 void clock_slower(){
 
+    if (clock_pausing){
+
+        clock_pausing = 0;
+        clock_redraw();
+        return;
+    }
+
     if (iclk > 0){
 
         iclk--;
         clock_period_us = CLKS_PERIOD_US[iclk];
         clock_redraw();
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void clock_pause(){
+
+    if (!clock_pausing){
+
+        clock_pausing = 1;
+
+        while (!clock_state_paused)
+            usleep(100000);
+
+        clock_redraw();
+        return;
+    }
+    else{
+
+        pthread_mutex_lock(&transitionmutex);
+        bitswitch_setval(switch_to_clock, 1);
+        bitswitch_setval(switch_to_clock, 0);
+        pthread_mutex_unlock(&transitionmutex);
+        board_set_refresh();
+    }
+
+    clock_redraw();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -494,6 +546,9 @@ void board_run(){
                 break;
             case '-':
                 clock_slower();
+                break;
+            case 'p':
+                clock_pause();
                 break;
             }
 
