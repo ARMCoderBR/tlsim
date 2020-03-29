@@ -139,9 +139,9 @@ void board_refresh(){
             {
                 output* out = obja[i].objptr;
                 if (out->value)
-                    waddstr(janela1,"[##]");
+                    waddstr(janela1,"[#]");
                 else
-                    waddstr(janela1,"[  ]");
+                    waddstr(janela1,"[.]");
             }
             break;
 
@@ -172,16 +172,18 @@ void sigterm_handler(int sig){
     exit(0);
 }
 
-#define LINHAS_JANELA2 8
-#define LINHAS_JANELA2B (LINHAS_JANELA2+2)
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 pthread_t refthread;
 int refresh_run = 0;
 int must_refresh = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
-void *board_refresh_thread(void *args){
+void *refresh_thread(void *args){
 
     refresh_run = 1;
 
@@ -204,99 +206,64 @@ void board_set_refresh(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void board_refresh_stop(){
+void refresh_thread_stop(){
 
     refresh_run = 0;
     pthread_join(refthread,NULL);
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
-void board_run(){
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
-    signal (SIGHUP,SIG_IGN);
-    signal (SIGINT,SIG_IGN);
-    signal (SIGTERM,sigterm_handler);
-    signal (SIGTSTP,SIG_IGN);
-    signal (SIGWINCH,SIG_IGN);
 
-    if (initscr() == NULL){
+pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
 
-        printf("initscr()\n");
-        exit(-1);
+
+pthread_t clkthread;
+int clock_run = 0;
+int clock_paused = 0;
+int clock_per_us = 500000;
+
+////////////////////////////////////////////////////////////////////////////////
+void *clock_thread(void *args){
+
+    clock_run = 1;
+
+    while (clock_run){
+
+        if (switch_to_clock){
+
+            pthread_mutex_lock(&transitionmutex);
+            bitswitch_setval(switch_to_clock, 1);
+            pthread_mutex_unlock(&transitionmutex);
+
+            board_set_refresh();
+            usleep(clock_per_us/2);
+
+            pthread_mutex_lock(&transitionmutex);
+            bitswitch_setval(switch_to_clock, 0);
+            pthread_mutex_unlock(&transitionmutex);
+
+            board_set_refresh();
+            usleep(clock_per_us/2);
+        }
+        else
+            usleep(100000);
     }
 
-    cbreak(); noecho();            /* Inicia o NCURSES */
-    ESCDELAY=200;
-    TERM_LINES = LINES;
-    TERM_COLS = COLS;
-
-    janela0 = newwin(TERM_LINES,TERM_COLS,0,0);
-    janela1 = newwin(TERM_LINES-1-LINHAS_JANELA2B,TERM_COLS-2,1,1);
-    janela2 = newwin(LINHAS_JANELA2B,TERM_COLS,TERM_LINES-LINHAS_JANELA2B,0);
-    janela3 = newwin(LINHAS_JANELA2,TERM_COLS-2,1+TERM_LINES-LINHAS_JANELA2B,1);
-
-    //printf("4\n");
-    desenha_janelas();
-
-    //printf("5\n");
-
-    keypad(janela1,TRUE);
-
-    int stoprun = 0;
-    int presc = 0;
-    int mainclk = 0;
-
-    pthread_create(&refthread, NULL, board_refresh_thread, NULL);
-
-    board_set_refresh();
-
-    while (!stoprun){
-
-        restart_handlers();
-
-        if (received_key()){
-
-            int key = read_key();
-
-            switch(key){
-
-            case 27:
-                stoprun = 1;
-                break;
-            }
-
-            int i;
-            for (i = 0; i < nobjs; i++)
-                if (obja[i].type == MANUAL_SWITCH){
-
-                    if (obja[i].key == key){
-
-                        bitswitch *bs = obja[i].objptr;
-                        bitswitch_setval(bs, 1 ^ bs->value);
-                        board_set_refresh();
-                    }
-                }
-        }
-
-        /////////////////////////////
-        presc++;
-        if (presc >= 5){
-
-            presc = 0;
-            if (switch_to_clock){
-
-                bitswitch_setval(switch_to_clock, mainclk);
-                board_set_refresh();
-                mainclk ^= 1;
-            }
-        }
-        /////////////////////////////
-    }
-
-    board_refresh_stop();
-
-    endwin();
+    return NULL;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void clock_thread_stop(){
+
+    clock_run = 0;
+    pthread_join(clkthread,NULL);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 int board_init(int width, int height){
@@ -337,10 +304,10 @@ int board_add_manual_switch(bitswitch *bs, int pos_w, int pos_h, int key, char *
 int board_add_led(output *out, int pos_w, int pos_h, char *name){
 
 /*
-  [  ]
+  [.]
   STATUS
 
-  [##]
+  [#]
   STATUS
 */
 
@@ -362,7 +329,7 @@ int board_add_led(output *out, int pos_w, int pos_h, char *name){
 int board_add_xdigit(output *out, int pos_w, int pos_h, char *name){
 
 /*
-  [  ]
+  A
   STATUS
 */
 
@@ -387,4 +354,88 @@ int board_assign_clock_to_switch(bitswitch *bs){
     return 0;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
+#define LINHAS_JANELA2 8
+#define LINHAS_JANELA2B (LINHAS_JANELA2+2)
+
+void board_run(){
+
+    signal (SIGHUP,SIG_IGN);
+    signal (SIGINT,SIG_IGN);
+    signal (SIGTERM,sigterm_handler);
+    signal (SIGTSTP,SIG_IGN);
+    signal (SIGWINCH,SIG_IGN);
+
+    if (initscr() == NULL){
+
+        printf("initscr()\n");
+        exit(-1);
+    }
+
+    cbreak(); noecho();            /* Inicia o NCURSES */
+    ESCDELAY=200;
+    TERM_LINES = LINES;
+    TERM_COLS = COLS;
+
+    janela0 = newwin(TERM_LINES,TERM_COLS,0,0);
+    janela1 = newwin(TERM_LINES-1-LINHAS_JANELA2B,TERM_COLS-2,1,1);
+    janela2 = newwin(LINHAS_JANELA2B,TERM_COLS,TERM_LINES-LINHAS_JANELA2B,0);
+    janela3 = newwin(LINHAS_JANELA2,TERM_COLS-2,1+TERM_LINES-LINHAS_JANELA2B,1);
+
+    //printf("4\n");
+    desenha_janelas();
+
+    //printf("5\n");
+
+    keypad(janela1,TRUE);
+
+    int stoprun = 0;
+
+    pthread_create(&refthread, NULL, refresh_thread, NULL);
+    pthread_create(&clkthread, NULL, clock_thread, NULL);
+
+    board_set_refresh();
+
+    while (!stoprun){
+
+        restart_handlers();
+
+        if (received_key()){
+
+            int key = read_key();
+
+            switch(key){
+
+            case 27:
+                stoprun = 1;
+                break;
+            }
+
+            int i;
+            for (i = 0; i < nobjs; i++)
+                if (obja[i].type == MANUAL_SWITCH){
+
+                    if (obja[i].key == key){
+
+                        pthread_mutex_lock(&transitionmutex);
+                        bitswitch *bs = obja[i].objptr;
+                        bitswitch_setval(bs, 1 ^ bs->value);
+                        pthread_mutex_unlock(&transitionmutex);
+
+                        board_set_refresh();
+                    }
+                }
+        }
+
+    }
+
+    refresh_thread_stop();
+    clock_thread_stop();
+    pthread_mutex_destroy(&transitionmutex);
+
+    endwin();
+}
