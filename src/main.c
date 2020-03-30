@@ -12,12 +12,16 @@
 #include "board.h"
 
 #include "tests.h"
-
+#include "computer.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 int main (int argc, char *argv[]){
 
     testls191();
     //gatetest();
+
+
+    //computer_sim();
+
     return 0;
 }
