@@ -1,17 +1,17 @@
 /*
- * ls374.c
+ * ls173.c
  *
- *  Created on: 21 de jul de 2019
+ *  Created on: 29 de mar de 2020
  *      Author: milton
  */
 
 #include <malloc.h>
-#include "ls374.h"
+#include "ls173.h"
 
-// 3-STATE OCTAL D-TYPE TRANSPARENT LATCHES AND EDGE-TRIGGERED FLIP-FLOPS
+// 4-BIT D-TYPE REGISTERS WITH 3-STATE OUTPUTS
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls374_update (ls374 *a, int timestamp){
+static void ls173_update (ls173 *a, int timestamp){
 
     int i;
 
@@ -28,11 +28,11 @@ static void ls374_update (ls374 *a, int timestamp){
     ////////////////////////////////
     if (a->in_ocon){
 
-        for (i = 0; i < 8; i++)
+        for (i = 0; i < 4; i++)
             a->outq[i] = 2; //HiZ
     }
     else{
-        for (i = 0; i < 8; i++)
+        for (i = 0; i < 4; i++)
             a->outq[i] = a->latd[i];
     }
 
@@ -40,7 +40,7 @@ static void ls374_update (ls374 *a, int timestamp){
     event e;
     e.timestamp = timestamp+1;
 
-    for (i = 0; i < 8; i++){
+    for (i = 0; i < 4; i++){
 
         if (a->outq_o[i] != a->outq[i]){
 
@@ -52,7 +52,7 @@ static void ls374_update (ls374 *a, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls374_update_d(ls374 *a, int val, int timestamp, int index){
+static void ls173_update_d(ls173 *a, int val, int timestamp, int index){
 
     if (val > 1) val = 1;
 
@@ -64,19 +64,19 @@ static void ls374_update_d(ls374 *a, int val, int timestamp, int index){
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls374 *ls374_create(){
+ls173 *ls173_create(){
 
-    ls374 *b = malloc(sizeof(ls374));
+    ls173 *b = malloc(sizeof(ls173));
 
     if (b == NULL)
         return NULL;
 
+    int i;
+
     b->clk = b->clk_o = 1;
     b->in_ocon = 1;
 
-    int i;
-
-    for (i = 0; i < 8; i++){
+    for (i = 0; i < 4; i++){
 
         b->outq[i] = b->outq_o[i] = 2;
         b->latd[i] = 0;
@@ -87,126 +87,126 @@ ls374 *ls374_create(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls374_connect_q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp), int index){
+static void ls173_connect_q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp), int index){
 
     new_ehandler(&source->outq_event_handler_root[index], dest, dest_event_handler);
     dest_event_handler(dest,source->outq[index],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_connect_1q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
+void ls173_connect_1q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    ls374_connect_q(source, dest, dest_event_handler, 0);
+    ls173_connect_q(source, dest, dest_event_handler, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_connect_2q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
+void ls173_connect_2q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    ls374_connect_q(source, dest, dest_event_handler, 1);
+    ls173_connect_q(source, dest, dest_event_handler, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_connect_3q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
+void ls173_connect_3q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    ls374_connect_q(source, dest, dest_event_handler, 2);
+    ls173_connect_q(source, dest, dest_event_handler, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_connect_4q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
+void ls173_connect_4q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    ls374_connect_q(source, dest, dest_event_handler, 3);
+    ls173_connect_q(source, dest, dest_event_handler, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_connect_5q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
+void ls173_connect_5q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    ls374_connect_q(source, dest, dest_event_handler, 4);
+    ls173_connect_q(source, dest, dest_event_handler, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_connect_6q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
+void ls173_connect_6q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    ls374_connect_q(source, dest, dest_event_handler, 5);
+    ls173_connect_q(source, dest, dest_event_handler, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_connect_7q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
+void ls173_connect_7q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    ls374_connect_q(source, dest, dest_event_handler, 6);
+    ls173_connect_q(source, dest, dest_event_handler, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_connect_8q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
+void ls173_connect_8q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
 
-    ls374_connect_q(source, dest, dest_event_handler, 7);
+    ls173_connect_q(source, dest, dest_event_handler, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_1d(ls374 *dest, int val, int timestamp){
+void ls173_update_1d(ls173 *dest, int val, int timestamp){
 
-    ls374_update_d(dest, val, timestamp, 0);
+    ls173_update_d(dest, val, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_2d(ls374 *dest, int val, int timestamp){
+void ls173_update_2d(ls173 *dest, int val, int timestamp){
 
-    ls374_update_d(dest, val, timestamp, 1);
+    ls173_update_d(dest, val, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_3d(ls374 *dest, int val, int timestamp){
+void ls173_update_3d(ls173 *dest, int val, int timestamp){
 
-    ls374_update_d(dest, val, timestamp, 2);
+    ls173_update_d(dest, val, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_4d(ls374 *dest, int val, int timestamp){
+void ls173_update_4d(ls173 *dest, int val, int timestamp){
 
-    ls374_update_d(dest, val, timestamp, 3);
+    ls173_update_d(dest, val, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_5d(ls374 *dest, int val, int timestamp){
+void ls173_update_5d(ls173 *dest, int val, int timestamp){
 
-    ls374_update_d(dest, val, timestamp, 4);
+    ls173_update_d(dest, val, timestamp, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_6d(ls374 *dest, int val, int timestamp){
+void ls173_update_6d(ls173 *dest, int val, int timestamp){
 
-    ls374_update_d(dest, val, timestamp, 5);
+    ls173_update_d(dest, val, timestamp, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_7d(ls374 *dest, int val, int timestamp){
+void ls173_update_7d(ls173 *dest, int val, int timestamp){
 
-    ls374_update_d(dest, val, timestamp, 6);
+    ls173_update_d(dest, val, timestamp, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_8d(ls374 *dest, int val, int timestamp){
+void ls173_update_8d(ls173 *dest, int val, int timestamp){
 
-    ls374_update_d(dest, val, timestamp, 7);
+    ls173_update_d(dest, val, timestamp, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_clk(ls374 *dest, int val, int timestamp){
+void ls173_update_clk(ls173 *dest, int val, int timestamp){
 
     if (val > 1) val = 1;
 
     if (dest->clk == val) return;
 
     dest->clk = val;
-    ls374_update(dest, timestamp);
+    ls173_update(dest, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_ocon(ls374 *dest, int val, int timestamp){
+void ls173_update_ocon(ls173 *dest, int val, int timestamp){
 
     if (val > 1) val = 1;
 
     if (dest->in_ocon == val) return;
 
     dest->in_ocon = val;
-    ls374_update(dest, timestamp);
+    ls173_update(dest, timestamp);
 }

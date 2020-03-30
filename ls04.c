@@ -40,6 +40,8 @@ static void ls04_up(ls04 *a, int timestamp, int index){
 ////////////////////////////////////////////////////////////////////////////////
 static void ls04_update_pin_in(ls04 *a, int val, int timestamp, int index){
 
+    if (val > 1) val = 1;
+
     if (val == a->in[index]) return;
 
     a->in[index] = val;

@@ -219,6 +219,8 @@ void ls191_connect_ripclk(ls191 *source, void *dest, void (*dest_event_handler)(
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_update_da(ls191 *dest, int val, int timestamp){
 
+    if (val > 1) val = 1;
+
     if (val == dest->da) return;
     dest->da = val;
     ls191_up(dest,timestamp);
@@ -226,6 +228,8 @@ void ls191_update_da(ls191 *dest, int val, int timestamp){
 
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_update_db(ls191 *dest, int val, int timestamp){
+
+    if (val > 1) val = 1;
 
     if (val == dest->db) return;
     dest->db = val;
@@ -235,6 +239,8 @@ void ls191_update_db(ls191 *dest, int val, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_update_dc(ls191 *dest, int val, int timestamp){
 
+    if (val > 1) val = 1;
+
     if (val == dest->dc) return;
     dest->dc = val;
     ls191_up(dest,timestamp);
@@ -242,6 +248,8 @@ void ls191_update_dc(ls191 *dest, int val, int timestamp){
 
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_update_dd(ls191 *dest, int val, int timestamp){
+
+    if (val > 1) val = 1;
 
     if (val == dest->dd) return;
     dest->dd = val;
@@ -251,6 +259,8 @@ void ls191_update_dd(ls191 *dest, int val, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_update_load(ls191 *dest, int val, int timestamp){
 
+    if (val > 1) val = 1;
+
     if (val == dest->load) return;
     dest->load = val;
     ls191_up(dest,timestamp);
@@ -258,6 +268,8 @@ void ls191_update_load(ls191 *dest, int val, int timestamp){
 
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_update_enable(ls191 *dest, int val, int timestamp){
+
+    if (val > 1) val = 1;
 
     if (val == dest->enable) return;
     dest->enable = val;
@@ -267,6 +279,8 @@ void ls191_update_enable(ls191 *dest, int val, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_update_downup(ls191 *dest, int val, int timestamp){
 
+    if (val > 1) val = 1;
+
     if (val == dest->downup) return;
     dest->downup = val;
     ls191_up(dest,timestamp);
@@ -274,6 +288,8 @@ void ls191_update_downup(ls191 *dest, int val, int timestamp){
 
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_update_clk(ls191 *dest, int val, int timestamp){
+
+    if (val > 1) val = 1;
 
     if (val == dest->clk) return;
     dest->clk = val;

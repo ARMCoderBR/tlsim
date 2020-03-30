@@ -40,6 +40,8 @@ static void ls32_up(ls32 *a, int timestamp, int index){
 ////////////////////////////////////////////////////////////////////////////////
 static void ls32_update_pin_ina(ls32 *a, int val, int timestamp, int index){
 
+    if (val > 1) val = 1;
+
     if (val == a->ina[index]) return;
 
     a->ina[index] = val;
@@ -48,6 +50,8 @@ static void ls32_update_pin_ina(ls32 *a, int val, int timestamp, int index){
 
 ////////////////////////////////////////////////////////////////////////////////
 static void ls32_update_pin_inb(ls32 *a, int val, int timestamp, int index){
+
+    if (val > 1) val = 1;
 
     if (val == a->inb[index]) return;
 
