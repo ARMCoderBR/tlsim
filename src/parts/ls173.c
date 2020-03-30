@@ -15,18 +15,27 @@ static void ls173_update (ls173 *a, int timestamp){
 
     int i;
 
+    if (a->in_clr){
+
+        for (i = 0; i < 4; i++)
+            a->outq[i] = a->latd[i] = 0;
+
+        goto ls173_end;
+    }
+
+
     ////////////////////////////////
     if (a->clk_o != a->clk){
 
         a->clk_o = a->clk;
 
-        if (a->clk)
-            for (i = 0; i < 8; i++)
+        if ((a->clk) && (!a->in_g1) && (!a->in_g2))
+            for (i = 0; i < 4; i++)
                 a->latd[i] = a->inpd[i];
     }
 
     ////////////////////////////////
-    if (a->in_ocon){
+    if (a->in_m | a->in_n){
 
         for (i = 0; i < 4; i++)
             a->outq[i] = 2; //HiZ
@@ -38,12 +47,15 @@ static void ls173_update (ls173 *a, int timestamp){
 
     ////////////////////////////////
     event e;
+
+ls173_end:
     e.timestamp = timestamp+1;
 
     for (i = 0; i < 4; i++){
 
         if (a->outq_o[i] != a->outq[i]){
 
+            a->outq_o[i] = a->outq[i];
             e.event_handler_root = a->outq_event_handler_root[i];
             e.value = a->outq[i];
             event_insert(&e);
@@ -74,7 +86,8 @@ ls173 *ls173_create(){
     int i;
 
     b->clk = b->clk_o = 1;
-    b->in_ocon = 1;
+    b->in_m = b->in_n = 1;
+    b->in_g1 = b->in_g2 = 1;
 
     for (i = 0; i < 4; i++){
 
@@ -154,12 +167,57 @@ void ls173_in_clk(ls173 *dest, int val, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_ocon(ls173 *dest, int val, int timestamp){
+void ls173_in_clr(ls173 *dest, int val, int timestamp){
 
     if (val > 1) val = 1;
 
-    if (dest->in_ocon == val) return;
+    if (dest->in_clr == val) return;
 
-    dest->in_ocon = val;
+    dest->in_clr = val;
     ls173_update(dest, timestamp);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void ls173_in_m(ls173 *dest, int val, int timestamp){
+
+    if (val > 1) val = 1;
+
+    if (dest->in_m == val) return;
+
+    dest->in_m = val;
+    ls173_update(dest, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls173_in_n(ls173 *dest, int val, int timestamp){
+
+    if (val > 1) val = 1;
+
+    if (dest->in_n == val) return;
+
+    dest->in_n = val;
+    ls173_update(dest, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls173_in_g1(ls173 *dest, int val, int timestamp){
+
+    if (val > 1) val = 1;
+
+    if (dest->in_g1 == val) return;
+
+    dest->in_g1 = val;
+    ls173_update(dest, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls173_in_g2(ls173 *dest, int val, int timestamp){
+
+    if (val > 1) val = 1;
+
+    if (dest->in_g2 == val) return;
+
+    dest->in_g2 = val;
+    ls173_update(dest, timestamp);
+}
+

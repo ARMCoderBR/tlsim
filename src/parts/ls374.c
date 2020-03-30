@@ -44,6 +44,7 @@ static void ls374_update (ls374 *a, int timestamp){
 
         if (a->outq_o[i] != a->outq[i]){
 
+            a->outq_o[i] = a->outq[i];
             e.event_handler_root = a->outq_event_handler_root[i];
             e.value = a->outq[i];
             event_insert(&e);

@@ -14,7 +14,11 @@ typedef struct {
 
     int inpd[4];
     int latd[4];
-    int in_ocon;
+    int in_clr;
+    int in_m;
+    int in_n;
+    int in_g1;
+    int in_g2;
     int clk,clk_o;
     int outq_o[4];
     int outq[4];
@@ -36,9 +40,9 @@ void ls173_in_4d(ls173 *dest, int val, int timestamp);
 void ls173_in_clk(ls173 *dest, int val, int timestamp);
 void ls173_update_clr(ls173 *dest, int val, int timestamp);
 
-void ls173_update_m(ls173 *dest, int val, int timestamp);
-void ls173_update_n(ls173 *dest, int val, int timestamp);
-void ls173_update_g1(ls173 *dest, int val, int timestamp);
-void ls173_update_g2(ls173 *dest, int val, int timestamp);
+void ls173_in_m(ls173 *dest, int val, int timestamp);
+void ls173_in_n(ls173 *dest, int val, int timestamp);
+void ls173_in_g1(ls173 *dest, int val, int timestamp);
+void ls173_in_g2(ls173 *dest, int val, int timestamp);
 
 #endif /* LS173_H_ */
