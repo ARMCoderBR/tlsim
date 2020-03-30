@@ -111,37 +111,37 @@ void ls04_connect_y6(ls04 *source, void *dest, void (*dest_event_handler)(void *
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls04_update_a1(ls04 *dest, int val, int timestamp){
+void ls04_in_a1(ls04 *dest, int val, int timestamp){
 
     ls04_update_pin_in(dest, val, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls04_update_a2(ls04 *dest, int val, int timestamp){
+void ls04_in_a2(ls04 *dest, int val, int timestamp){
 
     ls04_update_pin_in(dest, val, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls04_update_a3(ls04 *dest, int val, int timestamp){
+void ls04_in_a3(ls04 *dest, int val, int timestamp){
 
     ls04_update_pin_in(dest, val, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls04_update_a4(ls04 *dest, int val, int timestamp){
+void ls04_in_a4(ls04 *dest, int val, int timestamp){
 
     ls04_update_pin_in(dest, val, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls04_update_a5(ls04 *dest, int val, int timestamp){
+void ls04_in_a5(ls04 *dest, int val, int timestamp){
 
     ls04_update_pin_in(dest, val, timestamp, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls04_update_a6(ls04 *dest, int val, int timestamp){
+void ls04_in_a6(ls04 *dest, int val, int timestamp){
 
     ls04_update_pin_in(dest, val, timestamp, 5);
 }

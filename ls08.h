@@ -26,13 +26,13 @@ void ls08_connect_y2(ls08 *source, void *dest, void (*dest_event_handler)(void *
 void ls08_connect_y3(ls08 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
 void ls08_connect_y4(ls08 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
 
-void ls08_update_a1(ls08 *dest, int val, int timestamp);
-void ls08_update_b1(ls08 *dest, int val, int timestamp);
-void ls08_update_a2(ls08 *dest, int val, int timestamp);
-void ls08_update_b2(ls08 *dest, int val, int timestamp);
-void ls08_update_a3(ls08 *dest, int val, int timestamp);
-void ls08_update_b3(ls08 *dest, int val, int timestamp);
-void ls08_update_a4(ls08 *dest, int val, int timestamp);
-void ls08_update_b4(ls08 *dest, int val, int timestamp);
+void ls08_in_a1(ls08 *dest, int val, int timestamp);
+void ls08_in_b1(ls08 *dest, int val, int timestamp);
+void ls08_in_a2(ls08 *dest, int val, int timestamp);
+void ls08_in_b2(ls08 *dest, int val, int timestamp);
+void ls08_in_a3(ls08 *dest, int val, int timestamp);
+void ls08_in_b3(ls08 *dest, int val, int timestamp);
+void ls08_in_a4(ls08 *dest, int val, int timestamp);
+void ls08_in_b4(ls08 *dest, int val, int timestamp);
 
 #endif /* LS08_H_ */

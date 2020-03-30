@@ -161,7 +161,7 @@ void board_refresh(){
 
         case LED:
             {
-                output* out = obja[i].objptr;
+                indicator* out = obja[i].objptr;
                 if (out->value)
                     waddstr(janela1,"[#]");
                 else
@@ -171,7 +171,7 @@ void board_refresh(){
 
         case XDIGIT:
             {
-                output* out = obja[i].objptr;
+                indicator* out = obja[i].objptr;
                 char s[10];
                 sprintf(s,"%X",out->value & 0x0F);
                 waddstr(janela1,s);
@@ -428,7 +428,7 @@ int board_add_manual_switch(bitswitch *bs, int pos_w, int pos_h, int key, char *
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int board_add_led(output *out, int pos_w, int pos_h, char *name){
+int board_add_led(indicator *out, int pos_w, int pos_h, char *name){
 
 /*
   [.]
@@ -453,7 +453,7 @@ int board_add_led(output *out, int pos_w, int pos_h, char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int board_add_xdigit(output *out, int pos_w, int pos_h, char *name){
+int board_add_xdigit(indicator *out, int pos_w, int pos_h, char *name){
 
 /*
   A

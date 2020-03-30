@@ -118,79 +118,32 @@ void ls173_connect_4q(ls173 *source, void *dest, void (*dest_event_handler)(void
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_connect_5q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
-
-    ls173_connect_q(source, dest, dest_event_handler, 4);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls173_connect_6q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
-
-    ls173_connect_q(source, dest, dest_event_handler, 5);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls173_connect_7q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
-
-    ls173_connect_q(source, dest, dest_event_handler, 6);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls173_connect_8q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp)){
-
-    ls173_connect_q(source, dest, dest_event_handler, 7);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls173_update_1d(ls173 *dest, int val, int timestamp){
+void ls173_in_1d(ls173 *dest, int val, int timestamp){
 
     ls173_update_d(dest, val, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_update_2d(ls173 *dest, int val, int timestamp){
+void ls173_in_2d(ls173 *dest, int val, int timestamp){
 
     ls173_update_d(dest, val, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_update_3d(ls173 *dest, int val, int timestamp){
+void ls173_in_3d(ls173 *dest, int val, int timestamp){
 
     ls173_update_d(dest, val, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_update_4d(ls173 *dest, int val, int timestamp){
+void ls173_in_4d(ls173 *dest, int val, int timestamp){
 
     ls173_update_d(dest, val, timestamp, 3);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-void ls173_update_5d(ls173 *dest, int val, int timestamp){
-
-    ls173_update_d(dest, val, timestamp, 4);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_update_6d(ls173 *dest, int val, int timestamp){
-
-    ls173_update_d(dest, val, timestamp, 5);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls173_update_7d(ls173 *dest, int val, int timestamp){
-
-    ls173_update_d(dest, val, timestamp, 6);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls173_update_8d(ls173 *dest, int val, int timestamp){
-
-    ls173_update_d(dest, val, timestamp, 7);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ls173_update_clk(ls173 *dest, int val, int timestamp){
+void ls173_in_clk(ls173 *dest, int val, int timestamp){
 
     if (val > 1) val = 1;
 
@@ -201,7 +154,7 @@ void ls173_update_clk(ls173 *dest, int val, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_update_ocon(ls173 *dest, int val, int timestamp){
+void ls173_in_ocon(ls173 *dest, int val, int timestamp){
 
     if (val > 1) val = 1;
 

@@ -28,12 +28,12 @@ void ls173_connect_2q(ls173 *source, void *dest, void (*dest_event_handler)(void
 void ls173_connect_3q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
 void ls173_connect_4q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
 
-void ls173_update_1d(ls173 *dest, int val, int timestamp);
-void ls173_update_2d(ls173 *dest, int val, int timestamp);
-void ls173_update_3d(ls173 *dest, int val, int timestamp);
-void ls173_update_4d(ls173 *dest, int val, int timestamp);
+void ls173_in_1d(ls173 *dest, int val, int timestamp);
+void ls173_in_2d(ls173 *dest, int val, int timestamp);
+void ls173_in_3d(ls173 *dest, int val, int timestamp);
+void ls173_in_4d(ls173 *dest, int val, int timestamp);
 
-void ls173_update_clk(ls173 *dest, int val, int timestamp);
+void ls173_in_clk(ls173 *dest, int val, int timestamp);
 void ls173_update_clr(ls173 *dest, int val, int timestamp);
 
 void ls173_update_m(ls173 *dest, int val, int timestamp);

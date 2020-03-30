@@ -142,55 +142,55 @@ void ls374_connect_8q(ls374 *source, void *dest, void (*dest_event_handler)(void
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_1d(ls374 *dest, int val, int timestamp){
+void ls374_in_1d(ls374 *dest, int val, int timestamp){
 
     ls374_update_d(dest, val, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_2d(ls374 *dest, int val, int timestamp){
+void ls374_in_2d(ls374 *dest, int val, int timestamp){
 
     ls374_update_d(dest, val, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_3d(ls374 *dest, int val, int timestamp){
+void ls374_in_3d(ls374 *dest, int val, int timestamp){
 
     ls374_update_d(dest, val, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_4d(ls374 *dest, int val, int timestamp){
+void ls374_in_4d(ls374 *dest, int val, int timestamp){
 
     ls374_update_d(dest, val, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_5d(ls374 *dest, int val, int timestamp){
+void ls374_in_5d(ls374 *dest, int val, int timestamp){
 
     ls374_update_d(dest, val, timestamp, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_6d(ls374 *dest, int val, int timestamp){
+void ls374_in_6d(ls374 *dest, int val, int timestamp){
 
     ls374_update_d(dest, val, timestamp, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_7d(ls374 *dest, int val, int timestamp){
+void ls374_in_7d(ls374 *dest, int val, int timestamp){
 
     ls374_update_d(dest, val, timestamp, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_8d(ls374 *dest, int val, int timestamp){
+void ls374_in_8d(ls374 *dest, int val, int timestamp){
 
     ls374_update_d(dest, val, timestamp, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_clk(ls374 *dest, int val, int timestamp){
+void ls374_in_clk(ls374 *dest, int val, int timestamp){
 
     if (val > 1) val = 1;
 
@@ -201,7 +201,7 @@ void ls374_update_clk(ls374 *dest, int val, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls374_update_ocon(ls374 *dest, int val, int timestamp){
+void ls374_in_ocon(ls374 *dest, int val, int timestamp){
 
     if (val > 1) val = 1;
 

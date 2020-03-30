@@ -35,13 +35,13 @@ void ls191_connect_qd(ls191 *source, void *dest, void (*dest_event_handler)(void
 void ls191_connect_maxmin(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
 void ls191_connect_ripclk(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
 
-void ls191_update_da(ls191 *dest, int val, int timestamp);
-void ls191_update_db(ls191 *dest, int val, int timestamp);
-void ls191_update_dc(ls191 *dest, int val, int timestamp);
-void ls191_update_dd(ls191 *dest, int val, int timestamp);
-void ls191_update_load(ls191 *dest, int val, int timestamp);
-void ls191_update_enable(ls191 *dest, int val, int timestamp);
-void ls191_update_downup(ls191 *dest, int val, int timestamp);
-void ls191_update_clk(ls191 *dest, int val, int timestamp);
+void ls191_in_da(ls191 *dest, int val, int timestamp);
+void ls191_in_db(ls191 *dest, int val, int timestamp);
+void ls191_in_dc(ls191 *dest, int val, int timestamp);
+void ls191_in_dd(ls191 *dest, int val, int timestamp);
+void ls191_in_load(ls191 *dest, int val, int timestamp);
+void ls191_in_enable(ls191 *dest, int val, int timestamp);
+void ls191_in_updown(ls191 *dest, int val, int timestamp);
+void ls191_in_clk(ls191 *dest, int val, int timestamp);
 
 #endif /* LS191_H_ */

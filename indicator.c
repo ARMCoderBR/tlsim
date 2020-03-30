@@ -1,19 +1,20 @@
 /*
- * output.c
+ * indicator.c
  *
  *  Created on: 16 de jul de 2019
  *      Author: milton
  */
 
+#include "indicator.h"
+
 #include <malloc.h>
 #include <string.h>
 
-#include "output.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-output *output_create(char *name){
+indicator *indicator_create(char *name){
 
-    output *o = malloc(sizeof(output));
+    indicator *o = malloc(sizeof(indicator));
 
     if (o == NULL)
         return NULL;
@@ -32,7 +33,7 @@ output *output_create(char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_update_d0(output *dest, int val, int timestamp){
+void indicator_in_d0(indicator *dest, int val, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d0 val:%d\n",val);
@@ -44,7 +45,7 @@ void output_update_d0(output *dest, int val, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_update_d1(output *dest, int val, int timestamp){
+void indicator_in_d1(indicator *dest, int val, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d1 val:%d\n",val);
@@ -56,7 +57,7 @@ void output_update_d1(output *dest, int val, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_update_d2(output *dest, int val, int timestamp){
+void indicator_in_d2(indicator *dest, int val, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d2 val:%d\n",val);
@@ -68,7 +69,7 @@ void output_update_d2(output *dest, int val, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_update_d3(output *dest, int val, int timestamp){
+void indicator_in_d3(indicator *dest, int val, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d2 val:%d\n",val);
@@ -81,7 +82,7 @@ void output_update_d3(output *dest, int val, int timestamp){
 
 ////////////////////////////////////////////////////////////////////////////////
 const char dighex[]="0123456789ABCDEF";
-void output_print(output *o){
+void indicator_print(indicator *o){
 
     if (o->name)
         printf("%s:%c",o->name,dighex[o->value]);
@@ -90,15 +91,15 @@ void output_print(output *o){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_println(output *o){
+void indicator_println(indicator *o){
 
-    output_print(o);
+    indicator_print(o);
     printf("\r\n");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void output_prints(output *o){
+void indicator_prints(indicator *o){
 
-    output_print(o);
+    indicator_print(o);
     printf(" ");
 }
