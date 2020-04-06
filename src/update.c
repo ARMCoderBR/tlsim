@@ -7,6 +7,7 @@
 
 #include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 
 #include "update.h"
 
@@ -29,12 +30,12 @@ void event_process(){
     while (evins != evget){
 
         ehandlerptr = evqueue[evget].event_handler_root;
-        int value = evqueue[evget].value;
+        int *valueptr = evqueue[evget].valueptr;
         int timestamp = 1 + evqueue[evget].timestamp;
 
         while (ehandlerptr != NULL){
 
-            ehandlerptr->objdest_event_handler(ehandlerptr->objdest,value,timestamp);
+            ehandlerptr->objdest_event_handler(ehandlerptr->objdest,valueptr,timestamp);
             ehandlerptr = ehandlerptr->next;
         }
 
@@ -67,7 +68,7 @@ void event_insert(event *e){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)(void *objdest, int val, int timestamp)){
+void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp)){
 
     ehandler *ept = malloc(sizeof(ehandler));
     ept->objdest_event_handler = objdest_event_handler;
@@ -94,3 +95,54 @@ void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)
 
     eptscan->next = ept;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+int update_val_multi(vallist *rootptr, int *valptr){
+
+    if (!rootptr){
+
+        rootptr = malloc(sizeof(vallist));
+        if (!rootptr){
+            perror ("update_val_multi() cant malloc()\n");
+            exit(-1);
+        }
+
+        rootptr->valptr = valptr;
+        rootptr->next = NULL;
+    }
+
+    int val = 2;
+    int found = 0;
+    vallist *lastptr = NULL;
+
+    while (rootptr){
+
+        if (*rootptr->valptr < val)
+            val = *rootptr->valptr;
+
+        if (rootptr->valptr == valptr)
+            found = 1;
+
+        lastptr = rootptr;
+        rootptr = rootptr->next;
+    }
+
+    if (!found){
+
+        if (*valptr < val)
+            val = *valptr;
+
+        vallist *newptr = malloc(sizeof(vallist));
+        if (!newptr){
+            perror ("update_val_multi() cant malloc()\n");
+            exit(-1);
+        }
+
+        newptr->valptr = valptr;
+        newptr->next = NULL;
+        lastptr->next = newptr;
+    }
+
+    return val;
+}
+

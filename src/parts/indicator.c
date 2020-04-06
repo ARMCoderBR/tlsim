@@ -5,6 +5,7 @@
  *      Author: milton
  */
 
+#include "update.h"
 #include "indicator.h"
 
 #include <malloc.h>
@@ -28,16 +29,23 @@ indicator *indicator_create(char *name){
         o->name = NULL;
 
     o->value = 0;
+    o->ind0_rootptr = NULL;
+    o->ind1_rootptr = NULL;
+    o->ind2_rootptr = NULL;
+    o->ind3_rootptr = NULL;
 
     return o;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void indicator_in_d0(indicator *dest, int val, int timestamp){
+void indicator_in_d0(indicator *dest, int *valptr, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d0 val:%d\n",val);
 #endif
+
+    int val = update_val_multi(dest->ind0_rootptr, valptr);
+
     if (val)
         dest->value |= 1;
     else
@@ -45,11 +53,14 @@ void indicator_in_d0(indicator *dest, int val, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void indicator_in_d1(indicator *dest, int val, int timestamp){
+void indicator_in_d1(indicator *dest, int *valptr, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d1 val:%d\n",val);
 #endif
+
+    int val = update_val_multi(dest->ind1_rootptr, valptr);
+
     if (val)
         dest->value |= 2;
     else
@@ -57,11 +68,14 @@ void indicator_in_d1(indicator *dest, int val, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void indicator_in_d2(indicator *dest, int val, int timestamp){
+void indicator_in_d2(indicator *dest, int *valptr, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d2 val:%d\n",val);
 #endif
+
+    int val = update_val_multi(dest->ind2_rootptr, valptr);
+
     if (val)
         dest->value |= 4;
     else
@@ -69,11 +83,14 @@ void indicator_in_d2(indicator *dest, int val, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void indicator_in_d3(indicator *dest, int val, int timestamp){
+void indicator_in_d3(indicator *dest, int *valptr, int timestamp){
 
 #ifdef DEBUG
     printf("output_update_d2 val:%d\n",val);
 #endif
+
+    int val = update_val_multi(dest->ind3_rootptr, valptr);
+
     if (val)
         dest->value |= 8;
     else

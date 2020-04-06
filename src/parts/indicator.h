@@ -12,15 +12,16 @@
 typedef struct  {
 
     char *name;
+    vallist *ind0_rootptr, *ind1_rootptr, *ind2_rootptr, *ind3_rootptr;
     int value;
 } indicator;
 
 indicator *indicator_create(char *name);
 
-void indicator_in_d0(indicator *dest, int val, int timestamp);
-void indicator_in_d1(indicator *dest, int val, int timestamp);
-void indicator_in_d2(indicator *dest, int val, int timestamp);
-void indicator_in_d3(indicator *dest, int val, int timestamp);
+void indicator_in_d0(indicator *dest, int *valptr, int timestamp);
+void indicator_in_d1(indicator *dest, int *valptr, int timestamp);
+void indicator_in_d2(indicator *dest, int *valptr, int timestamp);
+void indicator_in_d3(indicator *dest, int *valptr, int timestamp);
 
 void indicator_print(indicator *o);
 void indicator_println(indicator *o);
