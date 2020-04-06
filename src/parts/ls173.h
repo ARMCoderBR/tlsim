@@ -43,7 +43,7 @@ void ls173_in_3d(ls173 *dest, int *valptr, int timestamp);
 void ls173_in_4d(ls173 *dest, int *valptr, int timestamp);
 
 void ls173_in_clk(ls173 *dest, int *valptr, int timestamp);
-void ls173_update_clr(ls173 *dest, int *valptr, int timestamp);
+void ls173_in_clr(ls173 *dest, int *valptr, int timestamp);
 
 void ls173_in_m(ls173 *dest, int *valptr, int timestamp);
 void ls173_in_n(ls173 *dest, int *valptr, int timestamp);

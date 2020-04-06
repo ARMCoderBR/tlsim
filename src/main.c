@@ -16,10 +16,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 int main (int argc, char *argv[]){
 
-    testls191();
+    //testls191();
     //gatetest();
 
-    //computer_sim();
+    computer_sim();
 
     return 0;
 }

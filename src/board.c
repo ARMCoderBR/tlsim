@@ -96,6 +96,8 @@ typedef enum {
     XDIGIT,
 } control_type;
 
+#define NAMESIZE 32
+
 typedef struct {
 
     int pos_w;
@@ -103,12 +105,12 @@ typedef struct {
     control_type type;
     void *objptr;
     int key;
-    char *name;
+    char name[NAMESIZE];
 } board_object;
 
 bitswitch *switch_to_clock = NULL;
 
-#define NOBJ 100
+#define NOBJ 1000
 
 board_object obja[NOBJ];
 
@@ -421,7 +423,7 @@ int board_add_manual_switch(bitswitch *bs, int pos_w, int pos_h, int key, char *
     obja[nobjs].type   = MANUAL_SWITCH;
     obja[nobjs].objptr = bs;
     obja[nobjs].key    = key;
-    obja[nobjs].name   = name;
+    strncpy(obja[nobjs].name, name, NAMESIZE);
     nobjs++;
 
     return 0;
@@ -446,7 +448,7 @@ int board_add_led(indicator *out, int pos_w, int pos_h, char *name){
     obja[nobjs].type   = LED;
     obja[nobjs].objptr = out;
     obja[nobjs].key    = 0;
-    obja[nobjs].name   = name;
+    strncpy(obja[nobjs].name, name, NAMESIZE);
     nobjs++;
 
     return 0;
@@ -468,7 +470,7 @@ int board_add_xdigit(indicator *out, int pos_w, int pos_h, char *name){
     obja[nobjs].type   = XDIGIT;
     obja[nobjs].objptr = out;
     obja[nobjs].key    = 0;
-    obja[nobjs].name   = name;
+    strncpy(obja[nobjs].name, name, NAMESIZE);
     nobjs++;
 
     return 0;
