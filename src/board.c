@@ -143,17 +143,6 @@ void board_refresh(){
             {
                 bitswitch* bs = obja[i].objptr;
 
-                int key = obja[i].key;
-                char s[10];
-                if ((key >= KEY_F(1)) && (key <= KEY_F(12))){
-
-                    sprintf(s,"[F%d]",1+key-KEY_F(1));
-                }
-                else
-                    sprintf(s,"[%c]",key);
-
-                waddstr(janela1,s);
-
                 if (bs->value)
                     waddstr(janela1,"[0 >1]");
                 else
@@ -185,6 +174,22 @@ void board_refresh(){
             wmove(janela1,1 + obja[i].pos_h,obja[i].pos_w);
             waddstr(janela1,obja[i].name);
         }
+
+        if (obja[i].type == MANUAL_SWITCH){
+
+            int key = obja[i].key;
+            char s[10];
+            if ((key >= KEY_F(1)) && (key <= KEY_F(12))){
+
+                sprintf(s,"[F%d]",1+key-KEY_F(1));
+            }
+            else
+                sprintf(s,"[%c]",key);
+
+            waddstr(janela1,s);
+        }
+
+
     }
 
     wrefresh(janela1);

@@ -78,8 +78,11 @@ void computer_sim(){
 
     bitswitch *sw_enable = bitswitch_create();
 
+    bitswitch *mainclk = bitswitch_create();
+    indicator *indclk = indicator_create(NULL);
+
     bitswitch_setval(sw_load,0);
-    bitswitch_setval(sw_clr,1);
+    bitswitch_setval(sw_clr,0);
 
     bitswitch_setval(sw_enable,1);
 
@@ -111,13 +114,20 @@ void computer_sim(){
     ls245_connect_b7(reg_1->ls245_1,oled[6],(void*)&indicator_in_d0);
     ls245_connect_b8(reg_1->ls245_1,oled[7],(void*)&indicator_in_d0);
 
-    bitswitch_connect_out(sw_load,reg_1->ls173_lo,(void*)&ls173_in_clk);
-    bitswitch_connect_out(sw_load,reg_1->ls173_hi,(void*)&ls173_in_clk);
+    bitswitch_connect_out(sw_load,reg_1->ls173_lo,(void*)&ls173_in_g1);
+    bitswitch_connect_out(sw_load,reg_1->ls173_lo,(void*)&ls173_in_g2);
+
+    bitswitch_connect_out(sw_load,reg_1->ls173_hi,(void*)&ls173_in_g1);
+    bitswitch_connect_out(sw_load,reg_1->ls173_hi,(void*)&ls173_in_g2);
 
     bitswitch_connect_out(sw_clr, reg_1->ls173_lo, (void*)&ls173_in_clr);
     bitswitch_connect_out(sw_clr, reg_1->ls173_hi, (void*)&ls173_in_clr);
 
     bitswitch_connect_out(sw_enable,reg_1->ls245_1,(void*)&ls245_in_oe);
+
+    bitswitch_connect_out(mainclk, reg_1->ls173_lo, (void*)&ls173_in_clk);
+    bitswitch_connect_out(mainclk, reg_1->ls173_hi, (void*)&ls173_in_clk);
+    bitswitch_connect_out(mainclk, indclk, (void*)&indicator_in_d0);
 
     board_init(0,0);
 
@@ -127,8 +137,6 @@ void computer_sim(){
     for (i = 0; i < 8; i++){
 
         j = 7-i;
-        sprintf(s,"In%d",j);
-        board_add_led(reg_1->led[i],12*i,1,s);
         sprintf(s,"SW%d",j);
         board_add_manual_switch(sw[i], 12*i, 4, '0'+j, s);
 
@@ -141,10 +149,11 @@ void computer_sim(){
 
     board_add_manual_switch(sw_load, 0, 7, 'l', "Load");
     board_add_manual_switch(sw_clr, 12, 7, 'c', "Clr");
+    board_add_led(indclk, 24, 7, "Clk");
 
     board_add_manual_switch(sw_enable, 0, 13, 'e', "Enable");
 
-//    board_assign_clock_to_switch(clk);
+    board_assign_clock_to_switch(mainclk);
 //
 //    board_add_led(oclk,1,1,"CLK");
 //
