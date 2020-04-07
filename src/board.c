@@ -20,6 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+#define LINHAS_JANELA2 8
+#define LINHAS_JANELA2B (LINHAS_JANELA2+2)
+
 int TERM_LINES = 0;
 int TERM_COLS = 0;
 fd_set readfds;
@@ -32,7 +35,7 @@ WINDOW *janela3;
 ////////////////////////////////////////////////////////////////////////////////
 void desenha_janelas(void)
 {
-    box(janela0, 0 , 0);        /* 0, 0 gives default characters
+    /*box(janela0, 0 , 0);  */      /* 0, 0 gives default characters
                                  * for the vertical and horizontal
                                  * lines            */
     wrefresh(janela0);
@@ -104,14 +107,14 @@ void board_set_refresh(){
 ////////////////////////////////////////////////////////////////////////////////
 void rectangle(int y1, int x1, int y2, int x2)
 {
-    mvhline(y1, x1, 0, x2-x1);
-    mvhline(y2, x1, 0, x2-x1);
-    mvvline(y1, x1, 0, y2-y1);
-    mvvline(y1, x2, 0, y2-y1);
-    mvaddch(y1, x1, ACS_ULCORNER);
-    mvaddch(y2, x1, ACS_LLCORNER);
-    mvaddch(y1, x2, ACS_URCORNER);
-    mvaddch(y2, x2, ACS_LRCORNER);
+    mvwhline(janela1, y1, x1, 0, x2-x1);
+    mvwhline(janela1, y2, x1, 0, x2-x1);
+    mvwvline(janela1, y1, x1, 0, y2-y1);
+    mvwvline(janela1, y1, x2, 0, y2-y1);
+    mvwaddch(janela1, y1, x1, ACS_ULCORNER);
+    mvwaddch(janela1, y2, x1, ACS_LLCORNER);
+    mvwaddch(janela1, y1, x2, ACS_URCORNER);
+    mvwaddch(janela1, y2, x2, ACS_LRCORNER);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -119,13 +122,21 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 
     if (b->type != BOARD) return;   // Erro interno - nunca deve acontecer.
 
-    rectangle(new_h+b->pos_h, new_w+b->pos_w, new_h+(b->w_height+b->pos_h)-1, new_w+(b->w_width+b->pos_w)-1);
+    rectangle(new_h, new_w, new_h+b->w_height-1, new_w+b->w_width-1);
+
+    if (b->name[0]){
+
+        wmove(janela1, new_h, 1 + new_w);
+        waddch(janela1,'[');
+        waddstr(janela1,b->name);
+        waddch(janela1,']');
+    }
 
     b = b->objptr_root;
 
     while (b){
 
-        wmove(janela1,new_h + b->pos_h,new_w + b->pos_w);
+        wmove(janela1, new_h + b->pos_h, new_w + b->pos_w);
 
         switch (b->type){
 
@@ -161,12 +172,15 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 
         case BOARD:
 
-            board_refresh_a(b->objptr_root,b->pos_h, b->pos_w);
+            board_refresh_a(b/*->objptr_root*/,b->pos_h, b->pos_w);
             break;
         }
 
-        wmove(janela1,1 + new_h + b->pos_h, new_w + b->pos_w);
-        waddstr(janela1,b->name);
+        if (b->type != BOARD){
+
+            wmove(janela1,1 + new_h + b->pos_h, new_w + b->pos_w);
+            waddstr(janela1,b->name);
+        }
 
         if (b->type == MANUAL_SWITCH){
 
@@ -426,6 +440,12 @@ board_object *board_create(int width, int height, int key, char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+board_object *mainboard_create(char *name){
+
+    return board_create(0, 0, 0, name);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 int board_add_object(board_object *b, board_object *newobject){
 
     if (!b) return -2;
@@ -543,34 +563,28 @@ int board_add_xdigit(board_object *b, indicator *out, int pos_w, int pos_h, char
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h, int key, char *name){
+int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h){
 
-/*
-  [.]
-  STATUS
-
-  [#]
-  STATUS
-*/
     if (!b) return -2;
     if (!board) return -2;
 
-    board_object *obja = malloc(sizeof(board_object));
-    if (!obja) return -1;
+//    board_object *obja = malloc(sizeof(board_object));
+//    if (!obja) return -1;
+//
+//    obja->pos_w  = pos_w;
+//    obja->pos_h  = pos_h;
+//    obja->type   = BOARD;
+//    obja->objptr = board;
+//    obja->key    = board->key;
+//    strncpy(obja->name, board->name, NAMESIZE);
+//    obja->objptr_root = NULL;
+//    obja->objptr_next = NULL;
+//
+//    return board_add_object(b, obja);
 
-    obja->pos_w  = pos_w;
-    obja->pos_h  = pos_h;
-    obja->type   = BOARD;
-    obja->objptr = board;
-    obja->key    = key;
-    if (name)
-        strncpy(obja->name, name, NAMESIZE);
-    else
-        obja->name[0] = 0;
-    obja->objptr_root = NULL;
-    obja->objptr_next = NULL;
-
-    return board_add_object(b, obja);
+    board->pos_w = pos_w;
+    board->pos_h = pos_h;
+    return board_add_object(b, board);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -585,10 +599,10 @@ int board_assign_clock_to_switch(bitswitch *bs){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#define LINHAS_JANELA2 8
-#define LINHAS_JANELA2B (LINHAS_JANELA2+2)
 
 int board_run(board_object *board){
+
+    int resize = 0;
 
     if (!board) return -2;
 
@@ -599,6 +613,7 @@ int board_run(board_object *board){
     signal (SIGINT,SIG_IGN);
     signal (SIGTERM,sigterm_handler);
     signal (SIGTSTP,SIG_IGN);
+    //signal (SIGWINCH,sigwinch_handler);
     signal (SIGWINCH,SIG_IGN);
 
     if (initscr() == NULL){
@@ -613,9 +628,17 @@ int board_run(board_object *board){
     TERM_COLS = COLS;
 
     janela0 = newwin(TERM_LINES,TERM_COLS,0,0);
-    janela1 = newwin(TERM_LINES-1-LINHAS_JANELA2B,TERM_COLS-2,1,1);
+    //janela1 = newwin(TERM_LINES-1-LINHAS_JANELA2B,TERM_COLS-2,1,1);
+    janela1 = newwin(TERM_LINES-LINHAS_JANELA2B,TERM_COLS,0,0);
     janela2 = newwin(LINHAS_JANELA2B,TERM_COLS,TERM_LINES-LINHAS_JANELA2B,0);
     janela3 = newwin(LINHAS_JANELA2,TERM_COLS-2,1+TERM_LINES-LINHAS_JANELA2B,1);
+
+
+    if (!board->w_width)
+        board->w_width = TERM_COLS;
+
+    if (!board->w_height)
+        board->w_height = TERM_LINES-LINHAS_JANELA2B;
 
     //printf("4\n");
     desenha_janelas();
@@ -633,6 +656,28 @@ int board_run(board_object *board){
 
     while (!stoprun){
 
+        if (resize){
+
+            pthread_mutex_lock(&ncursesmutex);
+
+            getmaxyx(stdscr, TERM_LINES, TERM_COLS);
+
+            wresize(janela0,TERM_LINES,TERM_COLS);
+            wresize(janela1,TERM_LINES-LINHAS_JANELA2B,TERM_COLS);
+            wresize(janela2,LINHAS_JANELA2B,TERM_COLS);
+            mvwin(janela2,TERM_LINES-LINHAS_JANELA2B,0);
+            wresize(janela3,LINHAS_JANELA2,TERM_COLS-2);
+            mvwin(janela3,1+TERM_LINES-LINHAS_JANELA2B,1);
+
+            board->w_width = TERM_COLS;
+            board->w_height = TERM_LINES-LINHAS_JANELA2B;
+            desenha_janelas();
+            resize = 0;
+
+            pthread_mutex_unlock(&ncursesmutex);
+            board_set_refresh();
+        }
+
         restart_handlers();
 
         if (received_key()){
@@ -641,6 +686,9 @@ int board_run(board_object *board){
 
             switch(key){
 
+            case KEY_RESIZE:
+                resize = 1;
+                break;
             case 27:
                 stoprun = 1;
                 break;

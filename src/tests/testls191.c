@@ -86,26 +86,26 @@ void testls191(){
     }
 #endif
 
-    board_object *mainboard = board_create(0,0,0,"LS191 TEST");
+    board_object *ls191_test1 = board_create(40,7,0,"LS191 TEST");
 
-    if (!mainboard){
+    if (!ls191_test1){
 
-        perror("mainboard create");
+        perror("ls191_test1 create");
         exit(0);
     }
 
-
     board_assign_clock_to_switch(clk);
 
-    board_add_led(mainboard, oclk,1,1,"CLK");
+    board_add_led(ls191_test1, oclk,1,1,"CLK");
+    board_add_xdigit(ls191_test1, ohex1,10,1,"COUNT");
+    board_add_led(ls191_test1, omaxmin1,20,1,"MAXMIN");
+    board_add_led(ls191_test1, oripclk1,30,1,"RIPPLE");
+    board_add_manual_switch(ls191_test1, updownsel, 1, 4, KEY_F(1), "UP/DN");
 
-    board_add_xdigit(mainboard, ohex1,10,1,"COUNT");
 
-    board_add_led(mainboard, omaxmin1,20,1,"MAXMIN");
-
-    board_add_led(mainboard, oripclk1,30,1,"RIPPLE");
-
-    board_add_manual_switch(mainboard, updownsel, 1, 4, KEY_F(1), "UP/DN");
-
+    board_object *mainboard = mainboard_create("My LS191 Test");
+    board_add_board(mainboard, ls191_test1, 8, 13);
     board_run(mainboard);
+
+    //board_run(ls191_test1);
 }
