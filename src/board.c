@@ -85,34 +85,9 @@ void sigterm_handler(int sig){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-int board_w = 0;
-int board_h = 0;
-int nobjs = 0;
-
-typedef enum {
-
-    MANUAL_SWITCH,
-    LED,
-    XDIGIT,
-} control_type;
-
-#define NAMESIZE 32
-
-typedef struct {
-
-    int pos_w;
-    int pos_h;
-    control_type type;
-    void *objptr;
-    int key;
-    char name[NAMESIZE];
-} board_object;
-
 bitswitch *switch_to_clock = NULL;
 
 #define NOBJ 1000
-
-board_object obja[NOBJ];
 
 pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -127,21 +102,36 @@ void board_set_refresh(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void board_refresh(){
+void rectangle(int y1, int x1, int y2, int x2)
+{
+    mvhline(y1, x1, 0, x2-x1);
+    mvhline(y2, x1, 0, x2-x1);
+    mvvline(y1, x1, 0, y2-y1);
+    mvvline(y1, x2, 0, y2-y1);
+    mvaddch(y1, x1, ACS_ULCORNER);
+    mvaddch(y2, x1, ACS_LLCORNER);
+    mvaddch(y1, x2, ACS_URCORNER);
+    mvaddch(y2, x2, ACS_LRCORNER);
+}
 
-    pthread_mutex_lock(&ncursesmutex);
+////////////////////////////////////////////////////////////////////////////////
+void board_refresh_a(board_object *b, int new_h, int new_w){
 
-    int i;
+    if (b->type != BOARD) return;   // Erro interno - nunca deve acontecer.
 
-    for (i = 0; i < nobjs; i++){
+    rectangle(new_h+b->pos_h, new_w+b->pos_w, new_h+(b->w_height+b->pos_h)-1, new_w+(b->w_width+b->pos_w)-1);
 
-        wmove(janela1,obja[i].pos_h,obja[i].pos_w);
+    b = b->objptr_root;
 
-        switch (obja[i].type){
+    while (b){
+
+        wmove(janela1,new_h + b->pos_h,new_w + b->pos_w);
+
+        switch (b->type){
 
         case MANUAL_SWITCH:
             {
-                bitswitch* bs = obja[i].objptr;
+                bitswitch* bs = b->objptr;
 
                 if (bs->value)
                     waddstr(janela1,"[0 >1]");
@@ -152,7 +142,7 @@ void board_refresh(){
 
         case LED:
             {
-                indicator* out = obja[i].objptr;
+                indicator* out = b->objptr;
                 if (out->value)
                     waddstr(janela1,"[#]");
                 else
@@ -162,22 +152,25 @@ void board_refresh(){
 
         case XDIGIT:
             {
-                indicator* out = obja[i].objptr;
+                indicator* out = b->objptr;
                 char s[10];
                 sprintf(s,"%X",out->value & 0x0F);
                 waddstr(janela1,s);
             }
             break;
+
+        case BOARD:
+
+            board_refresh_a(b->objptr_root,b->pos_h, b->pos_w);
+            break;
         }
 
-        if (obja[i].name){
-            wmove(janela1,1 + obja[i].pos_h,obja[i].pos_w);
-            waddstr(janela1,obja[i].name);
-        }
+        wmove(janela1,1 + new_h + b->pos_h, new_w + b->pos_w);
+        waddstr(janela1,b->name);
 
-        if (obja[i].type == MANUAL_SWITCH){
+        if (b->type == MANUAL_SWITCH){
 
-            int key = obja[i].key;
+            int key = b->key;
             char s[10];
             if ((key >= KEY_F(1)) && (key <= KEY_F(12))){
 
@@ -189,8 +182,16 @@ void board_refresh(){
             waddstr(janela1,s);
         }
 
-
+        b = b->objptr_next;
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void board_refresh(board_object *b){
+
+    pthread_mutex_lock(&ncursesmutex);
+
+    board_refresh_a(b,0,0);
 
     wrefresh(janela1);
     wrefresh(janela0);
@@ -201,12 +202,14 @@ void board_refresh(){
 ////////////////////////////////////////////////////////////////////////////////
 void *refresh_thread(void *args){
 
+    board_object * refboard = args;
+
     refresh_run = 1;
 
     while (refresh_run){
 
         if (must_refresh)
-            board_refresh();
+            board_refresh(refboard);
 
         must_refresh = 0;
         usleep(42000);      //42 ms
@@ -399,18 +402,58 @@ void clock_thread_stop(){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-int board_init(int width, int height){
+board_object *board_create(int width, int height, int key, char *name){
 
-    board_w = width;
-    board_h = height;
-    nobjs = 0;
+    board_object *b = malloc(sizeof(board_object));
+
+    if (!b) return b;
+
+    b->pos_w = b->pos_h = 0;
+    b->type = BOARD;
+    b->objptr = NULL;
+    b->key = key;
+    if (name)
+        strncpy(b->name, name, NAMESIZE);
+    else
+        b->name[0] = 0;
+    b->w_width = width;
+    b->w_height = height;
+    b->objptr_root = NULL;
+    b->objptr_next = NULL;
+    b->board_on_focus = b;  // Focada nela própria no início.
+
+    return b;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int board_add_object(board_object *b, board_object *newobject){
+
+    if (!b) return -2;
+    if (!newobject) return -2;
+
+    if (b->type != BOARD) return -10;
+
+    board_object *pb = b->objptr_root;
+
+    if (!pb)
+        b->objptr_root = newobject;
+    else
+    while(b->objptr_next)
+        b = b->objptr_next;
+
+    b->objptr_next = newobject;
+
+//    if (newobject->type == BOARD)
+//    if (b->board_on_focus == b)
+//        b->board_on_focus = newobject;
+
+    newobject->objptr_next = NULL;  // Dupla garantia.
 
     return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int board_add_manual_switch(bitswitch *bs, int pos_w, int pos_h, int key, char *name){
+int board_add_manual_switch(board_object *b, bitswitch *bs, int pos_w, int pos_h, int key, char *name){
 
 /*
   F1[0 >1]
@@ -419,23 +462,29 @@ int board_add_manual_switch(bitswitch *bs, int pos_w, int pos_h, int key, char *
   F1[0< 1]
   UP/DOWN
 */
+    if (!b) return -2;
+    if (!bs) return -2;
 
-    if (nobjs >= NOBJ)
-        return -1;
+    board_object *obja = malloc(sizeof(board_object));
+    if (!obja) return -1;
 
-    obja[nobjs].pos_w  = pos_w;
-    obja[nobjs].pos_h  = pos_h;
-    obja[nobjs].type   = MANUAL_SWITCH;
-    obja[nobjs].objptr = bs;
-    obja[nobjs].key    = key;
-    strncpy(obja[nobjs].name, name, NAMESIZE);
-    nobjs++;
+    obja->pos_w  = pos_w;
+    obja->pos_h  = pos_h;
+    obja->type   = MANUAL_SWITCH;
+    obja->objptr = bs;
+    obja->key    = key;
+    if (name)
+        strncpy(obja->name, name, NAMESIZE);
+    else
+        obja->name[0] = 0;
+    obja->objptr_root = NULL;
+    obja->objptr_next = NULL;
 
-    return 0;
+    return board_add_object(b, obja);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int board_add_led(indicator *out, int pos_w, int pos_h, char *name){
+int board_add_led(board_object *b, indicator *out, int pos_w, int pos_h, char *name){
 
 /*
   [.]
@@ -444,41 +493,84 @@ int board_add_led(indicator *out, int pos_w, int pos_h, char *name){
   [#]
   STATUS
 */
+    if (!b) return -2;
+    if (!out) return -2;
 
-    if (nobjs >= NOBJ)
-        return -1;
+    board_object *obja = malloc(sizeof(board_object));
+    if (!obja) return -1;
 
-    obja[nobjs].pos_w  = pos_w;
-    obja[nobjs].pos_h  = pos_h;
-    obja[nobjs].type   = LED;
-    obja[nobjs].objptr = out;
-    obja[nobjs].key    = 0;
-    strncpy(obja[nobjs].name, name, NAMESIZE);
-    nobjs++;
+    obja->pos_w  = pos_w;
+    obja->pos_h  = pos_h;
+    obja->type   = LED;
+    obja->objptr = out;
+    obja->key    = 0;
+    if (name)
+        strncpy(obja->name, name, NAMESIZE);
+    else
+        obja->name[0] = 0;
+    obja->objptr_root = NULL;
+    obja->objptr_next = NULL;
 
-    return 0;
+    return board_add_object(b, obja);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int board_add_xdigit(indicator *out, int pos_w, int pos_h, char *name){
+int board_add_xdigit(board_object *b, indicator *out, int pos_w, int pos_h, char *name){
 
 /*
   A
   STATUS
 */
+    if (!b) return -2;
+    if (!out) return -2;
 
-    if (nobjs >= NOBJ)
-        return -1;
+    board_object *obja = malloc(sizeof(board_object));
+    if (!obja) return -1;
 
-    obja[nobjs].pos_w  = pos_w;
-    obja[nobjs].pos_h  = pos_h;
-    obja[nobjs].type   = XDIGIT;
-    obja[nobjs].objptr = out;
-    obja[nobjs].key    = 0;
-    strncpy(obja[nobjs].name, name, NAMESIZE);
-    nobjs++;
+    obja->pos_w  = pos_w;
+    obja->pos_h  = pos_h;
+    obja->type   = XDIGIT;
+    obja->objptr = out;
+    obja->key    = 0;
+    if (name)
+        strncpy(obja->name, name, NAMESIZE);
+    else
+        obja->name[0] = 0;
+    obja->objptr_root = NULL;
+    obja->objptr_next = NULL;
 
-    return 0;
+    return board_add_object(b, obja);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h, int key, char *name){
+
+/*
+  [.]
+  STATUS
+
+  [#]
+  STATUS
+*/
+    if (!b) return -2;
+    if (!board) return -2;
+
+    board_object *obja = malloc(sizeof(board_object));
+    if (!obja) return -1;
+
+    obja->pos_w  = pos_w;
+    obja->pos_h  = pos_h;
+    obja->type   = BOARD;
+    obja->objptr = board;
+    obja->key    = key;
+    if (name)
+        strncpy(obja->name, name, NAMESIZE);
+    else
+        obja->name[0] = 0;
+    obja->objptr_root = NULL;
+    obja->objptr_next = NULL;
+
+    return board_add_object(b, obja);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -496,7 +588,12 @@ int board_assign_clock_to_switch(bitswitch *bs){
 #define LINHAS_JANELA2 8
 #define LINHAS_JANELA2B (LINHAS_JANELA2+2)
 
-void board_run(){
+int board_run(board_object *board){
+
+    if (!board) return -2;
+
+    if (board->type != BOARD)
+        return -10;
 
     signal (SIGHUP,SIG_IGN);
     signal (SIGINT,SIG_IGN);
@@ -529,7 +626,7 @@ void board_run(){
 
     int stoprun = 0;
 
-    pthread_create(&refthread, NULL, refresh_thread, NULL);
+    pthread_create(&refthread, NULL, refresh_thread, board);
     pthread_create(&clkthread, NULL, clock_thread, NULL);
 
     board_set_refresh();
@@ -559,22 +656,31 @@ void board_run(){
                 break;
             }
 
-            int i;
-            for (i = 0; i < nobjs; i++)
-                if (obja[i].type == MANUAL_SWITCH){
+            board_object *pboardfocused = board->board_on_focus;
+            board_object *p;
 
-                    if (obja[i].key == key){
+            if (pboardfocused)
+                p = pboardfocused->objptr_root;
+            else
+                p = NULL;
+
+            while(p){
+
+                if (p->type == MANUAL_SWITCH){
+
+                    if (p->key == key){
 
                         pthread_mutex_lock(&transitionmutex);
-                        bitswitch *bs = obja[i].objptr;
+                        bitswitch *bs = p->objptr;
                         bitswitch_setval(bs, 1 ^ bs->value);
                         pthread_mutex_unlock(&transitionmutex);
 
                         board_set_refresh();
                     }
                 }
+                p = p->objptr_next;
+            }
         }
-
     }
 
     refresh_thread_stop();
@@ -582,4 +688,5 @@ void board_run(){
     pthread_mutex_destroy(&transitionmutex);
 
     endwin();
+    return 0;
 }

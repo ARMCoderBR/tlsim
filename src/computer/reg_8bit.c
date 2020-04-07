@@ -114,3 +114,70 @@ void reg_8bit_in_clock(void (*connect_fn)(void *source, void *dest, void (*dest_
     connect_fn(from,dest->ls173_hi,(void*)&ls173_in_clk);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+board_object *reg_8bit_board_create(reg_8bit *reg, int key, char *name){
+
+    board_object *board = board_create(100, 25, key, name);
+
+    if (!board) return board;
+
+    bitswitch *sw_load = bitswitch_create();
+    bitswitch *sw_clr = bitswitch_create();
+
+    bitswitch *sw_enable = bitswitch_create();
+
+    bitswitch *mainclk = bitswitch_create();
+    indicator *indclk = indicator_create(NULL);
+    bitswitch_connect_out(mainclk, indclk, (void*)&indicator_in_d0);
+
+    bitswitch_setval(sw_load,0);
+    bitswitch_setval(sw_clr,0);
+
+    bitswitch_setval(sw_enable,1);
+
+    bitswitch *sw[8];
+    indicator *oled[8];
+
+    int i;
+    for (i = 0; i < 8; i++){
+
+        sw[i] = bitswitch_create();
+        oled[i] = indicator_create(NULL);
+        reg_8bit_in_data((void*)&bitswitch_connect_out,sw[i],reg,i);
+    }
+
+    for (i = 0; i < 8; i++)
+        reg_8bit_connect_bit_out (reg, i, oled[i], (void*)&indicator_in_d0);
+
+    reg_8bit_in_load((void*)&bitswitch_connect_out,sw_load,reg);
+
+    reg_8bit_in_clear((void*)&bitswitch_connect_out,sw_clr,reg);
+
+    reg_8bit_in_enable((void*)&bitswitch_connect_out,sw_enable,reg);
+
+    reg_8bit_in_clock((void*)&bitswitch_connect_out,mainclk,reg);
+
+    char s[32];
+    int j;
+
+    for (i = 0; i < 8; i++){
+
+        j = 7-i;
+        sprintf(s,"SW%d",j);
+        board_add_manual_switch(board, sw[i], 12*i, 4, '0'+j, s);
+
+        sprintf(s,"Data%d",j);
+        board_add_led(board, reg->led[i],12*i,10,s);
+
+        sprintf(s,"Out%d",j);
+        board_add_led(board, oled[i],12*i,16,s);
+    }
+
+    board_add_manual_switch(board, sw_load, 0, 7, 'l', "Load");
+    board_add_manual_switch(board, sw_clr, 12, 7, 'c', "Clr");
+    board_add_led(board, indclk, 24, 7, "Clk");
+
+    board_add_manual_switch(board, sw_enable, 0, 13, 'e', "Enable");
+
+    return board;
+}
