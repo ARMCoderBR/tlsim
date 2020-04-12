@@ -430,10 +430,8 @@ void clock_pause(){
     }
     else{
 
-        pthread_mutex_lock(&transitionmutex);
         clock_set_val(1);
         clock_set_val(0);
-        pthread_mutex_unlock(&transitionmutex);
         board_set_refresh();
     }
 

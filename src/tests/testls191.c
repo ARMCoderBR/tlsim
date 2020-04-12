@@ -14,6 +14,7 @@
 #include "bitswitch.h"
 #include "bitconst.h"
 #include "board.h"
+#include "ls32.h"
 
 typedef struct {
 
@@ -102,18 +103,6 @@ void do_testls191(){
         exit(0);
     }
 
-    bitconst_connect_one(t191_1->ctr1,(void*)&ls191_in_load);
-    bitconst_connect_zero(t191_1->ctr1,(void*)&ls191_in_enable);
-    bitconst_connect_one(t191_2->ctr1,(void*)&ls191_in_load);
-    bitconst_connect_zero(t191_2->ctr1,(void*)&ls191_in_enable);
-
-    bitconst_connect_one(t191_3->ctr1,(void*)&ls191_in_load);
-    bitconst_connect_zero(t191_3->ctr1,(void*)&ls191_in_enable);
-    bitconst_connect_one(t191_4->ctr1,(void*)&ls191_in_load);
-    bitconst_connect_zero(t191_4->ctr1,(void*)&ls191_in_enable);
-
-
-
     printf("### UP\n");
     bitswitch_setval(t191_1->updownsel, 0);  //UP
     bitswitch_setval(t191_2->updownsel, 0);  //UP
@@ -131,6 +120,28 @@ void do_testls191(){
         exit(0);
     }
 
+
+    ls32 *quad_or1 = ls32_create();
+    if (!quad_or1){
+
+        perror("quad_or1 create");
+        exit(0);
+    }
+
+    void ls32_in_a1(ls32 *dest, int *valptr, int timestamp);
+
+/*
+
++-------+ EN    +-------+ EN    +-------+ EN    +-------+
+|LS191-1|--+    |LS191-2|--+    |LS191-3|--+    |LS191-4|
++-------+  |    +-------+  |    +-------+  |    +-------+
+           |          |RIP |          |RIP |          |RIP
+           |    /-/B2-+    |    /-/B1-+    |          |
+           +-Y2( (         +-Y1( (         |          |
+                \-\A2------+    \-\A1------+----------+
+               LS32(2)         LS32(1)
+*/
+
     board_object *mainboard = mainboard_create("My LS191 Test");
     board_add_board(mainboard, b191_b1, 2, 4);
     board_add_board(mainboard, b191_b2, 42, 4);
@@ -138,20 +149,36 @@ void do_testls191(){
     board_add_board(mainboard, b191_b3, 2, 14);
     board_add_board(mainboard, b191_b4, 42, 14);
 
+
     board_clock_connect(t191_1->ctr1, (void*)&ls191_in_clk);
     board_clock_connect(t191_1->oclk, (void*)&indicator_in_d0);
+    bitconst_connect_one(t191_1->ctr1,(void*)&ls191_in_load);
+    //bitconst_connect_zero(t191_1->ctr1,(void*)&ls191_in_enable);
+
 
     board_clock_connect(t191_2->ctr1, (void*)&ls191_in_clk);
     board_clock_connect(t191_2->oclk, (void*)&indicator_in_d0);
+    bitconst_connect_one(t191_2->ctr1,(void*)&ls191_in_load);
+    //bitconst_connect_zero(t191_2->ctr1,(void*)&ls191_in_enable);
+    ls191_connect_ripclk(t191_2->ctr1, quad_or1,(void*)&ls32_in_b2);
+    ls32_connect_y2(quad_or1,t191_1->ctr1,(void*)&ls191_in_enable);
+
 
     board_clock_connect(t191_3->ctr1, (void*)&ls191_in_clk);
     board_clock_connect(t191_3->oclk, (void*)&indicator_in_d0);
+    bitconst_connect_one(t191_3->ctr1,(void*)&ls191_in_load);
+    //bitconst_connect_zero(t191_3->ctr1,(void*)&ls191_in_enable);
+    ls191_connect_ripclk(t191_3->ctr1, quad_or1, (void*)&ls32_in_b1);
+    ls32_connect_y1(quad_or1,quad_or1,(void*)&ls32_in_a2);
+    ls32_connect_y1(quad_or1,t191_2->ctr1, (void*)&ls191_in_enable);
+
 
     board_clock_connect(t191_4->ctr1, (void*)&ls191_in_clk);
     board_clock_connect(t191_4->oclk, (void*)&indicator_in_d0);
-
-
-
+    bitconst_connect_one(t191_4->ctr1,(void*)&ls191_in_load);
+    bitconst_connect_zero(t191_4->ctr1,(void*)&ls191_in_enable);
+    ls191_connect_ripclk(t191_4->ctr1, t191_3->ctr1, (void*)&ls191_in_enable);
+    ls191_connect_ripclk(t191_4->ctr1, quad_or1, (void*)&ls32_in_a1);
 
     board_run(mainboard);
 }
