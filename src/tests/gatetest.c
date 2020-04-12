@@ -44,8 +44,8 @@ void gatetest(){
 
     printf("===================== 0 ==== 0\n");
 
-    bitswitch_setval(s1, 0, 0);
-    bitswitch_setval(s2, 0, 0);
+    bitswitch_setval(s1, 0);
+    bitswitch_setval(s2, 0);
 
     indicator_prints(os1);
     indicator_prints(os2);
@@ -55,8 +55,8 @@ void gatetest(){
 
     printf("===================== 1 ==== 0\n");
 
-    bitswitch_setval(s1, 1, 0);
-    bitswitch_setval(s2, 0, 0);
+    bitswitch_setval(s1, 1);
+    bitswitch_setval(s2, 0);
 
     indicator_prints(os1);
     indicator_prints(os2);
@@ -66,8 +66,8 @@ void gatetest(){
 
     printf("===================== 0 ==== 1\n");
 
-    bitswitch_setval(s1, 0, 0);
-    bitswitch_setval(s2, 1, 0);
+    bitswitch_setval(s1, 0);
+    bitswitch_setval(s2, 1);
 
     indicator_prints(os1);
     indicator_prints(os2);
@@ -77,8 +77,8 @@ void gatetest(){
 
     printf("===================== 1 ==== 1\n");
 
-    bitswitch_setval(s1, 1, 0);
-    bitswitch_setval(s2, 1, 0);
+    bitswitch_setval(s1, 1);
+    bitswitch_setval(s2, 1);
 
     indicator_prints(os1);
     indicator_prints(os2);
@@ -88,7 +88,7 @@ void gatetest(){
 
     printf("===================== 1 ==== 1 and 1\n");
 
-    bitswitch_setval(s3, 1, 0);
+    bitswitch_setval(s3, 1);
 
     indicator_prints(os1);
     indicator_prints(os2);

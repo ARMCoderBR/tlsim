@@ -45,14 +45,12 @@ int board_add_xdigit(board_object *b, indicator *out, int pos_w, int pos_h, char
 
 int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h);
 
-int board_assign_clock_to_switch(bitswitch *bs);
-
 int board_run(board_object *board);
 
 board_object *board_create(int width, int height, int key, char *name);
 
 board_object *mainboard_create(char *name);
 
-
+void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp));
 
 #endif /* BOARD_H_ */

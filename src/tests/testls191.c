@@ -29,7 +29,6 @@ typedef struct {
     indicator *oclk;
     indicator *oupdown;
 
-    bitswitch *clk;
     bitswitch *updownsel;
 
 } testls191;
@@ -53,15 +52,10 @@ testls191 *testls191_create(){
     b->oclk = indicator_create("CLK");
     b->oupdown = indicator_create("-UP/+DOWN");
 
-    b->clk = bitswitch_create();
     b->updownsel = bitswitch_create();
 
     bitswitch_connect_out(b->updownsel,b->ctr1,(void*)&ls191_in_updown);
     bitswitch_connect_out(b->updownsel, b->oupdown, (void*)&indicator_in_d0);
-
-    bitswitch_connect_out(b->clk, b->ctr1, (void*)&ls191_in_clk);
-
-    bitswitch_connect_out(b->clk, b->oclk, (void*)&indicator_in_d0);
 
     ls191_connect_qa(b->ctr1, b->oqa1, (void*)&indicator_in_d0);
     ls191_connect_qb(b->ctr1, b->oqb1, (void*)&indicator_in_d0);
@@ -121,10 +115,10 @@ void do_testls191(){
 
 
     printf("### UP\n");
-    bitswitch_setval(t191_1->updownsel, 0, 0);  //UP
-    bitswitch_setval(t191_2->updownsel, 0, 0);  //UP
-    bitswitch_setval(t191_3->updownsel, 0, 0);  //UP
-    bitswitch_setval(t191_4->updownsel, 0, 0);  //UP
+    bitswitch_setval(t191_1->updownsel, 0);  //UP
+    bitswitch_setval(t191_2->updownsel, 0);  //UP
+    bitswitch_setval(t191_3->updownsel, 0);  //UP
+    bitswitch_setval(t191_4->updownsel, 0);  //UP
 
     board_object *b191_b1 = testls191_board_create(t191_1, 0, "LS191-1");
     board_object *b191_b2 = testls191_board_create(t191_2, 0, "LS191-2");
@@ -137,12 +131,6 @@ void do_testls191(){
         exit(0);
     }
 
-    board_assign_clock_to_switch(t191_1->clk);
-    board_assign_clock_to_switch(t191_2->clk);
-    board_assign_clock_to_switch(t191_3->clk);
-    board_assign_clock_to_switch(t191_4->clk);
-
-
     board_object *mainboard = mainboard_create("My LS191 Test");
     board_add_board(mainboard, b191_b1, 2, 4);
     board_add_board(mainboard, b191_b2, 42, 4);
@@ -150,7 +138,20 @@ void do_testls191(){
     board_add_board(mainboard, b191_b3, 2, 14);
     board_add_board(mainboard, b191_b4, 42, 14);
 
-    board_run(mainboard);
+    board_clock_connect(t191_1->ctr1, (void*)&ls191_in_clk);
+    board_clock_connect(t191_1->oclk, (void*)&indicator_in_d0);
 
-    //board_run(ls191_test1);
+    board_clock_connect(t191_2->ctr1, (void*)&ls191_in_clk);
+    board_clock_connect(t191_2->oclk, (void*)&indicator_in_d0);
+
+    board_clock_connect(t191_3->ctr1, (void*)&ls191_in_clk);
+    board_clock_connect(t191_3->oclk, (void*)&indicator_in_d0);
+
+    board_clock_connect(t191_4->ctr1, (void*)&ls191_in_clk);
+    board_clock_connect(t191_4->oclk, (void*)&indicator_in_d0);
+
+
+
+
+    board_run(mainboard);
 }

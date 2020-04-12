@@ -21,6 +21,6 @@ bitswitch *bitswitch_create();
 
 void bitswitch_connect_out(bitswitch *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 
-void bitswitch_setval(bitswitch *s, int val, int timestamp);
+void bitswitch_setval(bitswitch *s, int val);
 
 #endif /* BITSWITCH_H_ */

@@ -32,7 +32,7 @@ void bitswitch_connect_out(bitswitch *source, void *dest, void (*dest_event_hand
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void bitswitch_setval(bitswitch *s, int val, int timestamp){
+void bitswitch_setval(bitswitch *s, int val){
 
     s->value = val;
 
@@ -42,7 +42,7 @@ void bitswitch_setval(bitswitch *s, int val, int timestamp){
         event e;
         e.event_handler_root = s->out_event_handler_root;
         e.valueptr = &s->value;
-        e.timestamp = timestamp;
+        e.timestamp = 0;
         event_insert(&e);
     }
 }

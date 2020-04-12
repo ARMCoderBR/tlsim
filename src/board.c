@@ -32,6 +32,8 @@ WINDOW *janela1;
 WINDOW *janela2;
 WINDOW *janela3;
 
+pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
+
 ////////////////////////////////////////////////////////////////////////////////
 void desenha_janelas(void)
 {
@@ -88,7 +90,49 @@ void sigterm_handler(int sig){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-bitswitch *switch_to_clock = NULL;
+ehandler *clock_event_handler_root = NULL;
+
+
+void clock_set_val(int val){
+
+    ehandler *e = clock_event_handler_root;
+
+    pthread_mutex_lock(&transitionmutex);
+    while (e){
+
+        e->objdest_event_handler(e->objdest, &val, 0);
+        e = e->next;
+    }
+    pthread_mutex_unlock(&transitionmutex);
+}
+
+
+void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp)){
+
+    ehandler *newe = malloc(sizeof(ehandler));
+    if (!newe)
+        return;
+
+    newe->objdest_event_handler = objdest_event_handler;
+    newe->objdest = objdest;
+    newe->next = NULL;
+
+    ehandler *e = clock_event_handler_root;
+    if (e){
+
+        while (e->next)
+            e = e->next;
+
+        e->next = newe;
+    }
+    else
+        clock_event_handler_root = newe;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 #define NOBJ 1000
 
@@ -245,8 +289,6 @@ void refresh_thread_stop(){
 ////////////////////////////////////////////////////////////////////////////////
 
 
-pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
-
 pthread_t clkthread;
 
 int clock_run = 0;
@@ -308,13 +350,11 @@ void *clock_thread(void *args){
 
     while (clock_run){
 
-        if (switch_to_clock){
+        if (clock_event_handler_root){
 
             if (clock_pausing){
 
-                pthread_mutex_lock(&transitionmutex);
-                bitswitch_setval(switch_to_clock, 0, 0);
-                pthread_mutex_unlock(&transitionmutex);
+                clock_set_val(0);
                 clock_state_paused = 1;
                 usleep(100000);
                 continue;
@@ -322,16 +362,12 @@ void *clock_thread(void *args){
             else
                 clock_state_paused = 0;
 
-            pthread_mutex_lock(&transitionmutex);
-            bitswitch_setval(switch_to_clock, 1, 0);
-            pthread_mutex_unlock(&transitionmutex);
+            clock_set_val(1);
 
             board_set_refresh();
             usleep(clock_period_us/2);
 
-            pthread_mutex_lock(&transitionmutex);
-            bitswitch_setval(switch_to_clock, 0, 0);
-            pthread_mutex_unlock(&transitionmutex);
+            clock_set_val(0);
 
             board_set_refresh();
             usleep(clock_period_us/2);
@@ -395,8 +431,8 @@ void clock_pause(){
     else{
 
         pthread_mutex_lock(&transitionmutex);
-        bitswitch_setval(switch_to_clock, 1, 0);
-        bitswitch_setval(switch_to_clock, 0, 0);
+        clock_set_val(1);
+        clock_set_val(0);
         pthread_mutex_unlock(&transitionmutex);
         board_set_refresh();
     }
@@ -588,13 +624,6 @@ int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int board_assign_clock_to_switch(bitswitch *bs){
-
-    switch_to_clock = bs;
-    return 0;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -720,7 +749,7 @@ int board_run(board_object *board){
 
                         pthread_mutex_lock(&transitionmutex);
                         bitswitch *bs = p->objptr;
-                        bitswitch_setval(bs, 1 ^ bs->value, 0);
+                        bitswitch_setval(bs, 1 ^ bs->value);
                         pthread_mutex_unlock(&transitionmutex);
 
                         board_set_refresh();
