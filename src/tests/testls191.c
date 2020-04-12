@@ -12,6 +12,7 @@
 #include "ls191.h"
 #include "indicator.h"
 #include "bitswitch.h"
+#include "bitconst.h"
 #include "board.h"
 
 typedef struct {
@@ -30,9 +31,6 @@ typedef struct {
 
     bitswitch *clk;
     bitswitch *updownsel;
-
-    bitswitch *level0;
-    bitswitch *level1;
 
 } testls191;
 
@@ -57,16 +55,6 @@ testls191 *testls191_create(){
 
     b->clk = bitswitch_create();
     b->updownsel = bitswitch_create();
-
-    b->level0 = bitswitch_create();
-    b->level1 = bitswitch_create();
-
-    bitswitch_setval(b->level0,0);
-    bitswitch_setval(b->level1,1);
-
-    bitswitch_connect_out(b->level1,b->ctr1,(void*)&ls191_in_load);
-
-    bitswitch_connect_out(b->level0,b->ctr1,(void*)&ls191_in_enable);
 
     bitswitch_connect_out(b->updownsel,b->ctr1,(void*)&ls191_in_updown);
     bitswitch_connect_out(b->updownsel, b->oupdown, (void*)&indicator_in_d0);
@@ -110,29 +98,58 @@ board_object *testls191_board_create(testls191 *t, int key, char *name){
 void do_testls191(){
 
     testls191 *t191_1 = testls191_create();
+    testls191 *t191_2 = testls191_create();
+    testls191 *t191_3 = testls191_create();
+    testls191 *t191_4 = testls191_create();
 
-    if (!t191_1){
+    if ((!t191_1)||(!t191_2)||(!t191_3)||(!t191_4))    {
 
-        perror("t191_1 create");
+        perror("t191_x create");
         exit(0);
     }
 
+    bitconst_connect_one(t191_1->ctr1,(void*)&ls191_in_load);
+    bitconst_connect_zero(t191_1->ctr1,(void*)&ls191_in_enable);
+    bitconst_connect_one(t191_2->ctr1,(void*)&ls191_in_load);
+    bitconst_connect_zero(t191_2->ctr1,(void*)&ls191_in_enable);
+
+    bitconst_connect_one(t191_3->ctr1,(void*)&ls191_in_load);
+    bitconst_connect_zero(t191_3->ctr1,(void*)&ls191_in_enable);
+    bitconst_connect_one(t191_4->ctr1,(void*)&ls191_in_load);
+    bitconst_connect_zero(t191_4->ctr1,(void*)&ls191_in_enable);
+
+
+
     printf("### UP\n");
-    bitswitch_setval(t191_1->updownsel,0);  //UP
+    bitswitch_setval(t191_1->updownsel, 0, 0);  //UP
+    bitswitch_setval(t191_2->updownsel, 0, 0);  //UP
+    bitswitch_setval(t191_3->updownsel, 0, 0);  //UP
+    bitswitch_setval(t191_4->updownsel, 0, 0);  //UP
 
+    board_object *b191_b1 = testls191_board_create(t191_1, 0, "LS191-1");
+    board_object *b191_b2 = testls191_board_create(t191_2, 0, "LS191-2");
+    board_object *b191_b3 = testls191_board_create(t191_3, 0, "LS191-3");
+    board_object *b191_b4 = testls191_board_create(t191_4, 0, "LS191-4");
 
-    board_object *b191_b1 = testls191_board_create(t191_1, 0, "LS191 TEST");
+    if ((!b191_b1)||(!b191_b2)||(!b191_b3)||(!b191_b4)){
 
-    if (!b191_b1){
-
-        perror("ls191_board1 create");
+        perror("b191_bx create");
         exit(0);
     }
 
     board_assign_clock_to_switch(t191_1->clk);
+    board_assign_clock_to_switch(t191_2->clk);
+    board_assign_clock_to_switch(t191_3->clk);
+    board_assign_clock_to_switch(t191_4->clk);
+
 
     board_object *mainboard = mainboard_create("My LS191 Test");
-    board_add_board(mainboard, b191_b1, 8, 13);
+    board_add_board(mainboard, b191_b1, 2, 4);
+    board_add_board(mainboard, b191_b2, 42, 4);
+
+    board_add_board(mainboard, b191_b3, 2, 14);
+    board_add_board(mainboard, b191_b4, 42, 14);
+
     board_run(mainboard);
 
     //board_run(ls191_test1);

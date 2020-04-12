@@ -134,10 +134,10 @@ board_object *reg_8bit_board_create(reg_8bit *reg, int key, char *name){
     indicator *indclk = indicator_create(NULL);
     bitswitch_connect_out(mainclk, indclk, (void*)&indicator_in_d0);
 
-    bitswitch_setval(sw_load,0);
-    bitswitch_setval(sw_clr,0);
+    bitswitch_setval(sw_load, 0, 0);
+    bitswitch_setval(sw_clr, 0, 0);
 
-    bitswitch_setval(sw_enable,1);
+    bitswitch_setval(sw_enable, 1, 0);
 
     bitswitch *sw[8];
     indicator *oled[8];

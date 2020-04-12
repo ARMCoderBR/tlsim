@@ -313,7 +313,7 @@ void *clock_thread(void *args){
             if (clock_pausing){
 
                 pthread_mutex_lock(&transitionmutex);
-                bitswitch_setval(switch_to_clock, 0);
+                bitswitch_setval(switch_to_clock, 0, 0);
                 pthread_mutex_unlock(&transitionmutex);
                 clock_state_paused = 1;
                 usleep(100000);
@@ -323,14 +323,14 @@ void *clock_thread(void *args){
                 clock_state_paused = 0;
 
             pthread_mutex_lock(&transitionmutex);
-            bitswitch_setval(switch_to_clock, 1);
+            bitswitch_setval(switch_to_clock, 1, 0);
             pthread_mutex_unlock(&transitionmutex);
 
             board_set_refresh();
             usleep(clock_period_us/2);
 
             pthread_mutex_lock(&transitionmutex);
-            bitswitch_setval(switch_to_clock, 0);
+            bitswitch_setval(switch_to_clock, 0, 0);
             pthread_mutex_unlock(&transitionmutex);
 
             board_set_refresh();
@@ -395,8 +395,8 @@ void clock_pause(){
     else{
 
         pthread_mutex_lock(&transitionmutex);
-        bitswitch_setval(switch_to_clock, 1);
-        bitswitch_setval(switch_to_clock, 0);
+        bitswitch_setval(switch_to_clock, 1, 0);
+        bitswitch_setval(switch_to_clock, 0, 0);
         pthread_mutex_unlock(&transitionmutex);
         board_set_refresh();
     }
@@ -720,7 +720,7 @@ int board_run(board_object *board){
 
                         pthread_mutex_lock(&transitionmutex);
                         bitswitch *bs = p->objptr;
-                        bitswitch_setval(bs, 1 ^ bs->value);
+                        bitswitch_setval(bs, 1 ^ bs->value, 0);
                         pthread_mutex_unlock(&transitionmutex);
 
                         board_set_refresh();
