@@ -11,7 +11,7 @@
 
 void gatetest();
 
-void testls191();
+void do_testls191();
 
 
 #endif /* SRC_TESTS_TESTS_H_ */
