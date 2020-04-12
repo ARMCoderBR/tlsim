@@ -13,7 +13,10 @@
 #include "bitconst.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_8bit_init(reg_8bit *reg){
+reg_8bit *reg_8bit_create(){
+
+    reg_8bit *reg = malloc (sizeof(reg_8bit));
+    if (!reg) return reg;
 
     reg->ls173_hi = ls173_create();
     reg->ls173_lo = ls173_create();
@@ -48,6 +51,8 @@ void reg_8bit_init(reg_8bit *reg){
     ls173_connect_4q(reg->ls173_hi, reg->ls245_1, (void*)&ls245_in_a8);
 
     bitconst_connect_one(reg->ls245_1, (void*)&ls245_in_dir);
+
+    return reg;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -118,7 +123,6 @@ void reg_8bit_in_clock(void (*connect_fn)(void *source, void *dest, void (*dest_
 board_object *reg_8bit_board_create(reg_8bit *reg, int key, char *name){
 
     board_object *board = board_create(100, 25, key, name);
-
     if (!board) return board;
 
     bitswitch *sw_load = bitswitch_create();

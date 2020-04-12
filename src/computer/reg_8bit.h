@@ -24,7 +24,7 @@ typedef struct {
 
 } reg_8bit;
 
-void reg_8bit_init(reg_8bit *reg);
+reg_8bit *reg_8bit_create();
 
 void reg_8bit_connect_bit_out (reg_8bit *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 

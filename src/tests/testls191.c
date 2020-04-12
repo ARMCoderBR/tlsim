@@ -95,7 +95,6 @@ testls191 *testls191_create(){
 board_object *testls191_board_create(testls191 *t, int key, char *name){
 
     board_object *board = board_create(40,7, key, name);
-
     if (!board) return board;
 
     board_add_led(board, t->oclk,1,1,"CLK");
