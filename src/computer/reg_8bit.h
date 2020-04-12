@@ -48,6 +48,17 @@ void reg_8bit_in_clock_from(void (*connect_fn)(void *source, void *dest, void (*
 void reg_8bit_in_clock(reg_8bit *dest, int *valptr, int timestamp);
 
 
+extern void (*reg_8bit_in_dataN[])(void *dest, int *valptr, int timestamp);
+
+
+void reg_8bit_in_data0(reg_8bit *dest, int *valptr, int timestamp);
+void reg_8bit_in_data1(reg_8bit *dest, int *valptr, int timestamp);
+void reg_8bit_in_data2(reg_8bit *dest, int *valptr, int timestamp);
+void reg_8bit_in_data3(reg_8bit *dest, int *valptr, int timestamp);
+void reg_8bit_in_data4(reg_8bit *dest, int *valptr, int timestamp);
+void reg_8bit_in_data5(reg_8bit *dest, int *valptr, int timestamp);
+void reg_8bit_in_data6(reg_8bit *dest, int *valptr, int timestamp);
+void reg_8bit_in_data7(reg_8bit *dest, int *valptr, int timestamp);
 
 
 

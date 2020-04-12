@@ -85,18 +85,62 @@ void computer_sim(){
     reg_8bit_in_load_from((void*)&bitswitch_connect_out,sw_load2,reg_2);
     reg_8bit_in_load_from((void*)&bitswitch_connect_out,sw_load3,reg_3);
 
-    board_add_manual_switch(mainboard, sw_load1, 44, 2, '1', "Load1");
-    board_add_manual_switch(mainboard, sw_load2, 44, 6, '2', "Load2");
-    board_add_manual_switch(mainboard, sw_load3, 44, 10, '3', "Load3");
+    board_add_manual_switch(mainboard, sw_load1, 44, 2, 'q', "Load1");
+    board_add_manual_switch(mainboard, sw_load2, 44, 6, 'a', "Load2");
+    board_add_manual_switch(mainboard, sw_load3, 44, 10, 'z', "Load3");
 
 
     reg_8bit_in_enable_from((void*)&bitswitch_connect_out,sw_enable1,reg_1);
     reg_8bit_in_enable_from((void*)&bitswitch_connect_out,sw_enable2,reg_2);
     reg_8bit_in_enable_from((void*)&bitswitch_connect_out,sw_enable3,reg_3);
 
-    board_add_manual_switch(mainboard, sw_enable1, 55, 2, 'q', "EN1");
-    board_add_manual_switch(mainboard, sw_enable2, 55, 6, 'w', "EN2");
-    board_add_manual_switch(mainboard, sw_enable3, 55, 10, 'e', "EN3");
+    board_add_manual_switch(mainboard, sw_enable1, 55, 2, 'w', "EN1");
+    board_add_manual_switch(mainboard, sw_enable2, 55, 6, 's', "EN2");
+    board_add_manual_switch(mainboard, sw_enable3, 55, 10, 'x', "EN3");
+
+    indicator *ledbus[8];
+    bitswitch *swbus[8];
+
+    int i;
+
+    for (i = 0; i < 8; i++){
+
+        ledbus[i] = indicator_create("Data");
+
+        swbus[i] = bitswitch_create();
+        bitswitch_setval(swbus[i], 1);
+
+        bitswitch_connect_out(swbus[i], ledbus[i], (void*)indicator_in_d0);
+
+        bitswitch_connect_out(swbus[i], reg_1, (void*)reg_8bit_in_dataN[i]);
+        bitswitch_connect_out(swbus[i], reg_2, (void*)reg_8bit_in_dataN[i]);
+        bitswitch_connect_out(swbus[i], reg_3, (void*)reg_8bit_in_dataN[i]);
+
+        reg_8bit_connect_bit_out (reg_1, i, ledbus[i], (void*)indicator_in_d0);
+        reg_8bit_connect_bit_out (reg_2, i, ledbus[i], (void*)indicator_in_d0);
+        reg_8bit_connect_bit_out (reg_3, i, ledbus[i], (void*)indicator_in_d0);
+
+        reg_8bit_connect_bit_out (reg_1, i, reg_2, reg_8bit_in_dataN[i]);
+        reg_8bit_connect_bit_out (reg_1, i, reg_3, reg_8bit_in_dataN[i]);
+
+        reg_8bit_connect_bit_out (reg_2, i, reg_1, reg_8bit_in_dataN[i]);
+        reg_8bit_connect_bit_out (reg_2, i, reg_3, reg_8bit_in_dataN[i]);
+
+        reg_8bit_connect_bit_out (reg_3, i, reg_1, reg_8bit_in_dataN[i]);
+        reg_8bit_connect_bit_out (reg_3, i, reg_2, reg_8bit_in_dataN[i]);
+
+        int j = 7-i;
+
+        board_add_led(mainboard,ledbus[i],1+8*i, 15, "Dn");
+
+        board_add_manual_switch(mainboard, swbus[i], 1+8*i, 18, '0'+j, "Dn");
+    }
+
+    //bitswitch_connect_out(swbus[0], reg_1, (void*)reg_8bit_in_data0);
+
+
+
+
 
 
     board_run(mainboard);

@@ -130,6 +130,79 @@ void reg_8bit_in_clock(reg_8bit *dest, int *valptr, int timestamp){
     indicator_in_d0(dest->ledclk, valptr, timestamp);
 }
 
+
+
+
+void reg_8bit_in_data0(reg_8bit *dest, int *valptr, int timestamp){
+
+    ls173_in_1d(dest->ls173_lo, valptr, timestamp);
+}
+
+void reg_8bit_in_data1(reg_8bit *dest, int *valptr, int timestamp){
+
+    ls173_in_2d(dest->ls173_lo, valptr, timestamp);
+}
+
+void reg_8bit_in_data2(reg_8bit *dest, int *valptr, int timestamp){
+
+    ls173_in_3d(dest->ls173_lo, valptr, timestamp);
+}
+
+void reg_8bit_in_data3(reg_8bit *dest, int *valptr, int timestamp){
+
+    ls173_in_4d(dest->ls173_lo, valptr, timestamp);
+}
+
+void reg_8bit_in_data4(reg_8bit *dest, int *valptr, int timestamp){
+
+    ls173_in_1d(dest->ls173_hi, valptr, timestamp);
+}
+
+void reg_8bit_in_data5(reg_8bit *dest, int *valptr, int timestamp){
+
+    ls173_in_2d(dest->ls173_hi, valptr, timestamp);
+}
+
+void reg_8bit_in_data6(reg_8bit *dest, int *valptr, int timestamp){
+
+    ls173_in_3d(dest->ls173_hi, valptr, timestamp);
+}
+
+void reg_8bit_in_data7(reg_8bit *dest, int *valptr, int timestamp){
+
+    ls173_in_4d(dest->ls173_hi, valptr, timestamp);
+}
+
+
+void (*reg_8bit_in_dataN[])(void *dest, int *valptr, int timestamp) = {
+
+        (void*)reg_8bit_in_data0,
+        (void*)reg_8bit_in_data1,
+        (void*)reg_8bit_in_data2,
+        (void*)reg_8bit_in_data3,
+        (void*)reg_8bit_in_data4,
+        (void*)reg_8bit_in_data5,
+        (void*)reg_8bit_in_data6,
+        (void*)reg_8bit_in_data7,
+};
+
+
+//////////////////////////////////////////////////////////////////////////////////
+//void reg_8bit_in_dataN(reg_8bit *dest, int index, int *valptr, int timestamp){
+//
+//    switch(index){
+//        case 0: connect_fn(from,dest->ls173_lo,(void*)&ls173_in_1d); break;
+//        case 1: connect_fn(from,dest->ls173_lo,(void*)&ls173_in_2d); break;
+//        case 2: connect_fn(from,dest->ls173_lo,(void*)&ls173_in_3d); break;
+//        case 3: connect_fn(from,dest->ls173_lo,(void*)&ls173_in_4d); break;
+//        case 4: connect_fn(from,dest->ls173_hi,(void*)&ls173_in_1d); break;
+//        case 5: connect_fn(from,dest->ls173_hi,(void*)&ls173_in_2d); break;
+//        case 6: connect_fn(from,dest->ls173_hi,(void*)&ls173_in_3d); break;
+//        case 7: connect_fn(from,dest->ls173_hi,(void*)&ls173_in_4d); break;
+//    }
+//}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 board_object *reg_8bit_board_create(reg_8bit *reg, int key, char *name){
 
