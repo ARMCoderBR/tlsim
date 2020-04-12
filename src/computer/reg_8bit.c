@@ -22,6 +22,7 @@ reg_8bit *reg_8bit_create(){
     reg->ls173_hi = ls173_create();
     reg->ls173_lo = ls173_create();
     reg->ls245_1  = ls245_create();
+    reg->ledclk = indicator_create("Clk");
 
     int i;
     for (i = 0; i < 8; i++)
@@ -72,7 +73,7 @@ void reg_8bit_connect_bit_out (reg_8bit *source, int index, void *dest, void (*d
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_8bit_in_data(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void reg_8bit_in_data_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
                         void *from, reg_8bit *dest, int index){
 
     switch(index){
@@ -88,7 +89,7 @@ void reg_8bit_in_data(void (*connect_fn)(void *source, void *dest, void (*dest_e
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_8bit_in_load(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void reg_8bit_in_load_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
                         void *from, reg_8bit *dest){
 
     connect_fn(from,dest->ls173_lo,(void*)&ls173_in_g1);
@@ -98,7 +99,7 @@ void reg_8bit_in_load(void (*connect_fn)(void *source, void *dest, void (*dest_e
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_8bit_in_clear(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void reg_8bit_in_clear_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
                         void *from, reg_8bit *dest){
 
     connect_fn(from,dest->ls173_lo,(void*)&ls173_in_clr);
@@ -106,83 +107,48 @@ void reg_8bit_in_clear(void (*connect_fn)(void *source, void *dest, void (*dest_
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_8bit_in_enable(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void reg_8bit_in_enable_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
                         void *from, reg_8bit *dest){
 
     connect_fn(from,dest->ls245_1,(void*)&ls245_in_oe);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_8bit_in_clock(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void reg_8bit_in_clock_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
                         void *from, reg_8bit *dest){
 
     connect_fn(from,dest->ls173_lo,(void*)&ls173_in_clk);
     connect_fn(from,dest->ls173_hi,(void*)&ls173_in_clk);
+    connect_fn(from,dest->ledclk,(void*)&indicator_in_d0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void reg_8bit_in_clock(reg_8bit *dest, int *valptr, int timestamp){
+
+    ls173_in_clk(dest->ls173_lo, valptr, timestamp);
+    ls173_in_clk(dest->ls173_hi, valptr, timestamp);
+    indicator_in_d0(dest->ledclk, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 board_object *reg_8bit_board_create(reg_8bit *reg, int key, char *name){
 
-    board_object *board = board_create(100, 25, key, name);
+    board_object *board = board_create(40, 4, key, name);
+
     if (!board) return board;
 
-    bitswitch *sw_load = bitswitch_create();
-    bitswitch *sw_clr = bitswitch_create();
-
-    bitswitch *sw_enable = bitswitch_create();
-
-    bitswitch *mainclk = bitswitch_create();
-    indicator *indclk = indicator_create(NULL);
-    bitswitch_connect_out(mainclk, indclk, (void*)&indicator_in_d0);
-
-    bitswitch_setval(sw_load, 0);
-    bitswitch_setval(sw_clr, 0);
-
-    bitswitch_setval(sw_enable, 1);
-
-    bitswitch *sw[8];
-    indicator *oled[8];
-
-    int i;
-    for (i = 0; i < 8; i++){
-
-        sw[i] = bitswitch_create();
-        oled[i] = indicator_create(NULL);
-        reg_8bit_in_data((void*)&bitswitch_connect_out,sw[i],reg,i);
-    }
-
-    for (i = 0; i < 8; i++)
-        reg_8bit_connect_bit_out (reg, i, oled[i], (void*)&indicator_in_d0);
-
-    reg_8bit_in_load((void*)&bitswitch_connect_out,sw_load,reg);
-
-    reg_8bit_in_clear((void*)&bitswitch_connect_out,sw_clr,reg);
-
-    reg_8bit_in_enable((void*)&bitswitch_connect_out,sw_enable,reg);
-
-    reg_8bit_in_clock((void*)&bitswitch_connect_out,mainclk,reg);
-
     char s[32];
-    int j;
+    int i,j;
 
     for (i = 0; i < 8; i++){
 
         j = 7-i;
-        sprintf(s,"SW%d",j);
-        board_add_manual_switch(board, sw[i], 12*i, 4, '0'+j, s);
 
-        sprintf(s,"Data%d",j);
-        board_add_led(board, reg->led[i],12*i,10,s);
-
-        sprintf(s,"Out%d",j);
-        board_add_led(board, oled[i],12*i,16,s);
+        sprintf(s,"D%d",j);
+        board_add_led(board, reg->led[i],1+4*i,1,s);
     }
 
-    board_add_manual_switch(board, sw_load, 0, 7, 'l', "Load");
-    board_add_manual_switch(board, sw_clr, 12, 7, 'c', "Clr");
-    board_add_led(board, indclk, 24, 7, "Clk");
-
-    board_add_manual_switch(board, sw_enable, 0, 13, 'e', "Enable");
+    board_add_led(board, reg->ledclk,35,1,"CLK");
 
     return board;
 }
