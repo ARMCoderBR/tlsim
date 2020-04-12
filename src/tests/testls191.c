@@ -28,9 +28,6 @@ typedef struct {
     indicator *omaxmin1;
     indicator *oripclk1;
     indicator *oclk;
-    indicator *oupdown;
-
-    bitswitch *updownsel;
 
 } testls191;
 
@@ -51,12 +48,6 @@ testls191 *testls191_create(){
     b->omaxmin1 = indicator_create("MAXMIN");
     b->oripclk1 = indicator_create("RIPCLK");
     b->oclk = indicator_create("CLK");
-    b->oupdown = indicator_create("-UP/+DOWN");
-
-    b->updownsel = bitswitch_create();
-
-    bitswitch_connect_out(b->updownsel,b->ctr1,(void*)&ls191_in_updown);
-    bitswitch_connect_out(b->updownsel, b->oupdown, (void*)&indicator_in_d0);
 
     ls191_connect_qa(b->ctr1, b->oqa1, (void*)&indicator_in_d0);
     ls191_connect_qb(b->ctr1, b->oqb1, (void*)&indicator_in_d0);
@@ -77,14 +68,13 @@ testls191 *testls191_create(){
 ////////////////////////////////////////////////////////////////////////////////
 board_object *testls191_board_create(testls191 *t, int key, char *name){
 
-    board_object *board = board_create(40,7, key, name);
+    board_object *board = board_create(40,4, key, name);
     if (!board) return board;
 
     board_add_led(board, t->oclk,1,1,"CLK");
     board_add_xdigit(board, t->ohex1,10,1,"COUNT");
     board_add_led(board, t->omaxmin1,20,1,"MAXMIN");
     board_add_led(board, t->oripclk1,30,1,"RIPPLE");
-    board_add_manual_switch(board, t->updownsel, 1, 4, KEY_F(1), "UP/DN");
 
     return board;
 }
@@ -103,11 +93,21 @@ void do_testls191(){
         exit(0);
     }
 
-    printf("### UP\n");
-    bitswitch_setval(t191_1->updownsel, 0);  //UP
-    bitswitch_setval(t191_2->updownsel, 0);  //UP
-    bitswitch_setval(t191_3->updownsel, 0);  //UP
-    bitswitch_setval(t191_4->updownsel, 0);  //UP
+
+    bitswitch *updownsel = bitswitch_create();
+    if (!updownsel){
+
+        perror("updownsel create");
+        exit(0);
+    }
+
+    bitswitch_setval(updownsel, 0);  //UP
+
+    bitswitch_connect_out(updownsel,t191_1->ctr1,(void*)&ls191_in_updown);
+    bitswitch_connect_out(updownsel,t191_2->ctr1,(void*)&ls191_in_updown);
+    bitswitch_connect_out(updownsel,t191_3->ctr1,(void*)&ls191_in_updown);
+    bitswitch_connect_out(updownsel,t191_4->ctr1,(void*)&ls191_in_updown);
+
 
     board_object *b191_b1 = testls191_board_create(t191_1, 0, "LS191-1");
     board_object *b191_b2 = testls191_board_create(t191_2, 0, "LS191-2");
@@ -147,8 +147,12 @@ SYSCLK
     board_add_board(mainboard, b191_b1, 2, 4);
     board_add_board(mainboard, b191_b2, 42, 4);
 
-    board_add_board(mainboard, b191_b3, 2, 14);
-    board_add_board(mainboard, b191_b4, 42, 14);
+    board_add_board(mainboard, b191_b3, 2, 10);
+    board_add_board(mainboard, b191_b4, 42, 10);
+
+
+    board_add_manual_switch(mainboard, updownsel, 2, 15, KEY_F(1), "UP/DN");
+
 
 
     board_clock_connect(t191_1->ctr1, (void*)&ls191_in_clk);
