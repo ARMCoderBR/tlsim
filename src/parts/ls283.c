@@ -134,6 +134,7 @@ ls283 *ls283_create(){
         b->y_event_handler_root[i] = NULL;
     }
 
+    b->cout = 0;
     b->cin_rootptr = NULL;
     b->oldcout = 2;
     b->cout_event_handler_root = NULL;

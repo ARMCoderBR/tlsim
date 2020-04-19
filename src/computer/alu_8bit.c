@@ -29,25 +29,25 @@ alu_8bit *alu_8bit_create(){
     for (i = 0; i < 8; i++)
         alu->led[i] = indicator_create(NULL);
 
-//    ls283_connect_y1(alu->ls283_lo, alu->led[0], (void*)&indicator_in_d0);
-//    ls283_connect_y2(alu->ls283_lo, alu->led[1], (void*)&indicator_in_d0);
-//    ls283_connect_y3(alu->ls283_lo, alu->led[2], (void*)&indicator_in_d0);
-//    ls283_connect_y4(alu->ls283_lo, alu->led[3], (void*)&indicator_in_d0);
+    ls283_connect_y1(alu->ls283_lo, alu->led[0], (void*)&indicator_in_d0);
+    ls283_connect_y2(alu->ls283_lo, alu->led[1], (void*)&indicator_in_d0);
+    ls283_connect_y3(alu->ls283_lo, alu->led[2], (void*)&indicator_in_d0);
+    ls283_connect_y4(alu->ls283_lo, alu->led[3], (void*)&indicator_in_d0);
+
+    ls283_connect_y1(alu->ls283_hi, alu->led[4], (void*)&indicator_in_d0);
+    ls283_connect_y2(alu->ls283_hi, alu->led[5], (void*)&indicator_in_d0);
+    ls283_connect_y3(alu->ls283_hi, alu->led[6], (void*)&indicator_in_d0);
+    ls283_connect_y4(alu->ls283_hi, alu->led[7], (void*)&indicator_in_d0);
+
+//    ls86_connect_y1(alu->ls86_lo, alu->led[0], (void*)&indicator_in_d0);
+//    ls86_connect_y2(alu->ls86_lo, alu->led[1], (void*)&indicator_in_d0);
+//    ls86_connect_y3(alu->ls86_lo, alu->led[2], (void*)&indicator_in_d0);
+//    ls86_connect_y4(alu->ls86_lo, alu->led[3], (void*)&indicator_in_d0);
 //
-//    ls283_connect_y1(alu->ls283_hi, alu->led[4], (void*)&indicator_in_d0);
-//    ls283_connect_y2(alu->ls283_hi, alu->led[5], (void*)&indicator_in_d0);
-//    ls283_connect_y3(alu->ls283_hi, alu->led[6], (void*)&indicator_in_d0);
-//    ls283_connect_y4(alu->ls283_hi, alu->led[7], (void*)&indicator_in_d0);
-
-    ls86_connect_y1(alu->ls86_lo, alu->led[0], (void*)&indicator_in_d0);
-    ls86_connect_y2(alu->ls86_lo, alu->led[1], (void*)&indicator_in_d0);
-    ls86_connect_y3(alu->ls86_lo, alu->led[2], (void*)&indicator_in_d0);
-    ls86_connect_y4(alu->ls86_lo, alu->led[3], (void*)&indicator_in_d0);
-
-    ls86_connect_y1(alu->ls86_hi, alu->led[4], (void*)&indicator_in_d0);
-    ls86_connect_y2(alu->ls86_hi, alu->led[5], (void*)&indicator_in_d0);
-    ls86_connect_y3(alu->ls86_hi, alu->led[6], (void*)&indicator_in_d0);
-    ls86_connect_y4(alu->ls86_hi, alu->led[7], (void*)&indicator_in_d0);
+//    ls86_connect_y1(alu->ls86_hi, alu->led[4], (void*)&indicator_in_d0);
+//    ls86_connect_y2(alu->ls86_hi, alu->led[5], (void*)&indicator_in_d0);
+//    ls86_connect_y3(alu->ls86_hi, alu->led[6], (void*)&indicator_in_d0);
+//    ls86_connect_y4(alu->ls86_hi, alu->led[7], (void*)&indicator_in_d0);
 
     ls283_connect_y1(alu->ls283_lo, alu->ls245_1, (void*)&ls245_in_a1);
     ls283_connect_y2(alu->ls283_lo, alu->ls245_1, (void*)&ls245_in_a2);
@@ -284,8 +284,8 @@ board_object *alu_8bit_board_create(alu_8bit *alu, int key, char *name){
 
         j = 7-i;
 
-        sprintf(s,"D%d",j);
-        board_add_led(board, alu->led[i],1+4*i,1,s);
+        sprintf(s,"D%d",i);
+        board_add_led(board, alu->led[i],1+4*j,1,s);
     }
 
     return board;

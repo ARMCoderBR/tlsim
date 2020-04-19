@@ -11,7 +11,7 @@
 
 #include "update.h"
 
-#define EVQUEUELEN 200
+#define EVQUEUELEN 2000
 
 event evqueue[EVQUEUELEN];
 int evins = 0;

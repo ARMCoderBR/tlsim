@@ -161,9 +161,9 @@ void computer_sim(){
 
         int j = 7-i;
 
-        board_add_led(mainboard,ledbus[i],1+8*i, 4+15, "Dn");
+        board_add_led(mainboard,ledbus[i],1+8*j, 4+15, "Dn");
 
-        board_add_manual_switch(mainboard, swbus[i], 1+8*i, 4+18, '0'+j, "Dn");
+        board_add_manual_switch(mainboard, swbus[i], 1+8*j, 4+18, '0'+i, "Dn");
     }
 
     board_add_manual_switch(mainboard, sw_sub, 44, 6, 'S', "SUB");
