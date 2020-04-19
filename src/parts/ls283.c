@@ -128,6 +128,7 @@ ls283 *ls283_create(){
 
     for (i = 0; i < LS283_NBITS; i++){
 
+        b->y[i] = 0;
         b->ina_rootptr[i] = b->inb_rootptr[i] = NULL;
         b->oldy[i] = 2;
         b->y_event_handler_root[i] = NULL;
