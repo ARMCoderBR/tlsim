@@ -91,19 +91,22 @@ void sigterm_handler(int sig){
 ////////////////////////////////////////////////////////////////////////////////
 
 ehandler *clock_event_handler_root = NULL;
-
+volatile int clock_last_val = 0;
 
 void clock_set_val(int val){
 
+    if (val)
+        clock_last_val = 1;
+    else
+        clock_last_val = 0;
+
     ehandler *e = clock_event_handler_root;
 
-    pthread_mutex_lock(&transitionmutex);
     while (e){
 
         e->objdest_event_handler(e->objdest, &val, 0);
         e = e->next;
     }
-    pthread_mutex_unlock(&transitionmutex);
 }
 
 
@@ -295,11 +298,13 @@ int clock_run = 0;
 int clock_pausing = 0;
 int clock_state_paused = 0;
 int clock_period_us = 500000;
-int iclk = 1;
+int iclk = 2;
 
-#define NCLKS 9
+#define NCLKS 10
 
-int CLKS_PERIOD_US[NCLKS] = {1000000,    //1s
+int CLKS_PERIOD_US[NCLKS] = {
+                             2000000,    //2s
+                             1000000,    //1s
                              500000,     //500ms
                              250000,     //250ms
                              100000,     //100ms
@@ -340,6 +345,8 @@ void clock_redraw(){
     pthread_mutex_unlock(&ncursesmutex);
 }
 
+int clock_pulse = 0;
+
 ////////////////////////////////////////////////////////////////////////////////
 void *clock_thread(void *args){
 
@@ -354,20 +361,38 @@ void *clock_thread(void *args){
 
             if (clock_pausing){
 
-                clock_set_val(0);
                 clock_state_paused = 1;
-                usleep(100000);
+
+                if (clock_pulse){
+
+                    clock_pulse = 0;
+
+                    pthread_mutex_lock(&transitionmutex);
+
+                    if (clock_last_val)
+                        clock_set_val(0);
+                    else
+                        clock_set_val(1);
+
+                    pthread_mutex_unlock(&transitionmutex);
+
+                    board_set_refresh();
+                }
+
+                usleep(10000);
                 continue;
             }
             else
                 clock_state_paused = 0;
 
-            clock_set_val(1);
+            pthread_mutex_lock(&transitionmutex);
 
-            board_set_refresh();
-            usleep(clock_period_us/2);
+            if (clock_last_val)
+                clock_set_val(0);
+            else
+                clock_set_val(1);
 
-            clock_set_val(0);
+            pthread_mutex_unlock(&transitionmutex);
 
             board_set_refresh();
             usleep(clock_period_us/2);
@@ -430,9 +455,17 @@ void clock_pause(){
     }
     else{
 
-        clock_set_val(1);
-        clock_set_val(0);
-        board_set_refresh();
+        clock_pulse = 1;
+//        pthread_mutex_lock(&transitionmutex);
+//
+//        if (clock_last_val)
+//            clock_set_val(0);
+//        else
+//            clock_set_val(1);
+//
+//        pthread_mutex_unlock(&transitionmutex);
+//        board_set_refresh();
+        usleep(10000);
     }
 
     clock_redraw();
