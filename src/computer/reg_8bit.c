@@ -9,18 +9,32 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "reg_8bit.h"
 #include "bitconst.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-reg_8bit *reg_8bit_create(){
+reg_8bit *reg_8bit_create(char *name){
 
     reg_8bit *reg = malloc (sizeof(reg_8bit));
     if (!reg) return reg;
 
-    reg->ls173_hi = ls173_create();
-    reg->ls173_lo = ls173_create();
+    char lshi[60];
+    char lslo[60];
+
+    lshi[0] = lslo[0] = 0;
+    if (name){
+
+        strncpy(lshi,name,sizeof(lshi));
+        strncpy(lslo,name,sizeof(lslo));
+    }
+
+    strncat(lshi,"-hiWord",sizeof(lshi)/2);
+    strncat(lslo,"-loWord",sizeof(lslo)/2);
+
+    reg->ls173_hi = ls173_create(lshi);
+    reg->ls173_lo = ls173_create(lslo);
     reg->ls245_1  = ls245_create();
     reg->ledclk = indicator_create("Clk");
 
@@ -53,6 +67,11 @@ reg_8bit *reg_8bit_create(){
     ls173_connect_4q(reg->ls173_hi, reg->ls245_1, (void*)&ls245_in_a8);
 
     bitconst_connect_one(reg->ls245_1, (void*)&ls245_in_dir);
+
+    if (name)
+        strncpy(reg->name,name,sizeof(reg->name));
+    else
+        reg->name[0] = 0;
 
     return reg;
 }

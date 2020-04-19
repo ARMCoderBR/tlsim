@@ -95,6 +95,8 @@ volatile int clock_last_val = 0;
 
 void clock_set_val(int val){
 
+    logger("==>clock_set_val:%d",val);
+
     if (val)
         clock_last_val = 1;
     else
@@ -298,7 +300,7 @@ int clock_run = 0;
 int clock_pausing = 0;
 int clock_state_paused = 0;
 int clock_period_us = 500000;
-int iclk = 2;
+int iclk = 0;
 
 #define NCLKS 10
 
@@ -377,9 +379,10 @@ void *clock_thread(void *args){
                     pthread_mutex_unlock(&transitionmutex);
 
                     board_set_refresh();
+                    usleep(10000);
                 }
-
-                usleep(10000);
+                else
+                    usleep(100000);
                 continue;
             }
             else

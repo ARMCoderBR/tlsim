@@ -20,9 +20,9 @@ void gatetest(){
     ls08 *ands;
     indicator *os1,*os2,*os3,*oand1,*oand2;
 
-    s1 = bitswitch_create();
-    s2 = bitswitch_create();
-    s3 = bitswitch_create();
+    s1 = bitswitch_create("S1");
+    s2 = bitswitch_create("S2");
+    s3 = bitswitch_create("S3");
     ands = ls08_create();
     os1 = indicator_create("S1");
     os2 = indicator_create("S2");

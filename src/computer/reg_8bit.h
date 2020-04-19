@@ -22,10 +22,11 @@ typedef struct {
     ls245 *ls245_1;
     indicator *led[8];
     indicator *ledclk;
+    char name[30];
 
 } reg_8bit;
 
-reg_8bit *reg_8bit_create();
+reg_8bit *reg_8bit_create(char *name);
 
 void reg_8bit_connect_bit_out (reg_8bit *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 

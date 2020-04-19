@@ -15,9 +15,10 @@ typedef struct{
     int oldvalue;
     int value;
     ehandler *out_event_handler_root;
+    char name[30];
 } bitswitch;
 
-bitswitch *bitswitch_create();
+bitswitch *bitswitch_create(char *name);
 
 void bitswitch_connect_out(bitswitch *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 

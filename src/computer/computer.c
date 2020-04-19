@@ -21,9 +21,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 void computer_sim(){
 
-    reg_8bit *regA = reg_8bit_create();
-    reg_8bit *regB = reg_8bit_create();
-    reg_8bit *regIN = reg_8bit_create();
+    reg_8bit *regA = reg_8bit_create("regA");
+    reg_8bit *regB = reg_8bit_create("regB");
+    reg_8bit *regIN = reg_8bit_create("regIN");
 
     alu_8bit *alu = alu_8bit_create();
 
@@ -56,7 +56,7 @@ void computer_sim(){
     board_add_board(mainboard,regB_board,1,9);
     board_add_board(mainboard,regIN_board,1,13);
 
-    bitswitch *sw_clr = bitswitch_create();
+    bitswitch *sw_clr = bitswitch_create("CLR");
     bitswitch_setval(sw_clr, 0);
 
     reg_8bit_in_clear_from((void*)&bitswitch_connect_out,sw_clr,regA);
@@ -65,16 +65,16 @@ void computer_sim(){
 
     board_add_manual_switch(mainboard, sw_clr, 2, 17, 'c', "Clr");
 
-    bitswitch *sw_load1 = bitswitch_create();
-    bitswitch *sw_load2 = bitswitch_create();
-    bitswitch *sw_load3 = bitswitch_create();
+    bitswitch *sw_load1 = bitswitch_create("LOADA");
+    bitswitch *sw_load2 = bitswitch_create("LOADB");
+    bitswitch *sw_load3 = bitswitch_create("LOADIN");
 
-    bitswitch *sw_enable1 = bitswitch_create();
-    bitswitch *sw_enable2 = bitswitch_create();
-    bitswitch *sw_enable3 = bitswitch_create();
+    bitswitch *sw_enable1 = bitswitch_create("ENA");
+    bitswitch *sw_enable2 = bitswitch_create("ENB");
+    bitswitch *sw_enable3 = bitswitch_create("ENIN");
 
-    bitswitch *sw_sub = bitswitch_create();
-    bitswitch *sw_eo = bitswitch_create();
+    bitswitch *sw_sub = bitswitch_create("SUB");
+    bitswitch *sw_eo = bitswitch_create("EO");
 
 
     bitswitch_setval(sw_load1, 1);
@@ -132,7 +132,10 @@ void computer_sim(){
 
         ledbus[i] = indicator_create("Data");
 
-        swbus[i] = bitswitch_create();
+        char dname[10];
+        sprintf(dname,"D%d",i);
+
+        swbus[i] = bitswitch_create(dname);
         bitswitch_setval(swbus[i], 1);
 
         bitswitch_connect_out(swbus[i], ledbus[i], (void*)indicator_in_d0);
@@ -161,9 +164,9 @@ void computer_sim(){
 
         int j = 7-i;
 
-        board_add_led(mainboard,ledbus[i],1+8*j, 4+15, "Dn");
+        board_add_led(mainboard,ledbus[i],1+8*j, 4+15, dname);
 
-        board_add_manual_switch(mainboard, swbus[i], 1+8*j, 4+18, '0'+i, "Dn");
+        board_add_manual_switch(mainboard, swbus[i], 1+8*j, 4+18, '0'+i, dname);
     }
 
     board_add_manual_switch(mainboard, sw_sub, 44, 6, 'S', "SUB");

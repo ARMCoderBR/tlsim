@@ -44,4 +44,9 @@ void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)
 
 int update_val_multi(vallist **rootptr, int *valptr);
 
+////////////////////////////////////////////////////////////////////////////////
+void logger_init();
+void logger(const char *fmt, ...);
+void logger_end();
+
 #endif /* UPDATE_H_ */

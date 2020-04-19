@@ -94,7 +94,7 @@ void do_testls191(){
     }
 
 
-    bitswitch *updownsel = bitswitch_create();
+    bitswitch *updownsel = bitswitch_create("UP/DN");
     if (!updownsel){
 
         perror("updownsel create");

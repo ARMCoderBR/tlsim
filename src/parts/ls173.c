@@ -6,6 +6,7 @@
  */
 
 #include <malloc.h>
+#include <string.h>
 
 #include "update.h"
 #include "ls173.h"
@@ -71,6 +72,10 @@ static void ls173_update_d(ls173 *a, int *valptr, int timestamp, int index){
 
     if (val > 1) val = 1;
 
+    if (a->inpd[index] == val) return;
+
+    logger("ls173_update_d%d [%s] *valptr:%d val:%d",index,a->name,*valptr,val);
+
     a->inpd[index] = val;
 }
 
@@ -79,7 +84,7 @@ static void ls173_update_d(ls173 *a, int *valptr, int timestamp, int index){
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls173 *ls173_create(){
+ls173 *ls173_create(char *name){
 
     ls173 *b = malloc(sizeof(ls173));
 
@@ -101,6 +106,11 @@ ls173 *ls173_create(){
         b->latd[i] = 0;
         b->outq_event_handler_root[i] = NULL;
     }
+
+    if (name)
+        strncpy(b->name,name,sizeof(b->name));
+    else
+        b->name[0] = 0;
 
     return b;
 }
@@ -169,6 +179,8 @@ void ls173_in_clk(ls173 *dest, int *valptr, int timestamp){
 
     if (dest->clk == val) return;
 
+    logger("ls173_in_clk [%s] *valptr:%d val:%d",dest->name,*valptr,val);
+
     dest->clk = val;
     ls173_update(dest, timestamp);
 }
@@ -181,6 +193,8 @@ void ls173_in_clr(ls173 *dest, int *valptr, int timestamp){
     if (val > 1) val = 1;
 
     if (dest->in_clr == val) return;
+
+    logger("ls173_in_clr [%s] *valptr:%d val:%d",dest->name,*valptr,val);
 
     dest->in_clr = val;
     ls173_update(dest, timestamp);
@@ -195,6 +209,8 @@ void ls173_in_m(ls173 *dest, int *valptr, int timestamp){
 
     if (dest->in_m == val) return;
 
+    logger("ls173_in_m [%s] *valptr:%d val:%d",dest->name,*valptr,val);
+
     dest->in_m = val;
     ls173_update(dest, timestamp);
 }
@@ -207,6 +223,8 @@ void ls173_in_n(ls173 *dest, int *valptr, int timestamp){
     if (val > 1) val = 1;
 
     if (dest->in_n == val) return;
+
+    logger("ls173_in_n [%s] *valptr:%d val:%d",dest->name,*valptr,val);
 
     dest->in_n = val;
     ls173_update(dest, timestamp);
@@ -221,6 +239,8 @@ void ls173_in_g1(ls173 *dest, int *valptr, int timestamp){
 
     if (dest->in_g1 == val) return;
 
+    logger("ls173_in_g1 [%s] *valptr:%d val:%d",dest->name,*valptr,val);
+
     dest->in_g1 = val;
     ls173_update(dest, timestamp);
 }
@@ -233,6 +253,8 @@ void ls173_in_g2(ls173 *dest, int *valptr, int timestamp){
     if (val > 1) val = 1;
 
     if (dest->in_g2 == val) return;
+
+    logger("ls173_in_g2 [%s] *valptr:%d val:%d",dest->name,*valptr,val);
 
     dest->in_g2 = val;
     ls173_update(dest, timestamp);

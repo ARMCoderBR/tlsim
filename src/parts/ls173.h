@@ -28,9 +28,10 @@ typedef struct {
     int outq_o[NUM_ELEM_LS173];
     int outq[NUM_ELEM_LS173];
     ehandler *outq_event_handler_root[NUM_ELEM_LS173];
+    char name[32];
 } ls173;
 
-ls173 *ls173_create();
+ls173 *ls173_create(char *name);
 
 void ls173_connect_1q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls173_connect_2q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

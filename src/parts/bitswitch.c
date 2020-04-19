@@ -6,12 +6,13 @@
  */
 
 #include <malloc.h>
+#include <string.h>
 
 #include "bitswitch.h"
 #include "update.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-bitswitch *bitswitch_create(){
+bitswitch *bitswitch_create(char *name){
 
     bitswitch *b = malloc(sizeof(bitswitch));
 
@@ -20,6 +21,11 @@ bitswitch *bitswitch_create(){
 
     b->oldvalue = 2;
     b->out_event_handler_root = NULL;
+
+    if (name)
+        strncpy(b->name,name,sizeof(b->name));
+    else
+        b->name[0] = 0;
 
     return b;
 }
@@ -37,6 +43,8 @@ void bitswitch_setval(bitswitch *s, int val){
     s->value = val;
 
     if (s->oldvalue != s->value){
+
+        logger("== bitswitch_setval [%s] val:%d",s->name,val);
 
         s->oldvalue = s->value;
         event e;

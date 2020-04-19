@@ -8,6 +8,8 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #include "update.h"
 
@@ -160,3 +162,29 @@ int update_val_multi(vallist **rootptr, int *valptr){
     return val;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+FILE *logfile = NULL;
+
+void logger_init(){
+
+    logfile = fopen ("out.log","w");
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void logger(const char *fmt, ...) {
+
+    char buftxt[301];
+
+    va_list args;
+    va_start(args, fmt);
+    vsnprintf(buftxt, 300, fmt, args);
+    va_end(args);
+    fprintf(logfile,"%s\n",buftxt);
+    fflush(logfile);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void logger_end(){
+
+    if (logfile) fclose(logfile);
+}
