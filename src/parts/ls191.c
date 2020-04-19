@@ -225,7 +225,7 @@ void ls191_connect_ripclk(ls191 *source, void *dest, void (*dest_event_handler)(
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_in_da(ls191 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->da_rootptr, valptr);
+    int val = update_val_multi(&dest->da_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -237,7 +237,7 @@ void ls191_in_da(ls191 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_in_db(ls191 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->db_rootptr, valptr);
+    int val = update_val_multi(&dest->db_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -249,7 +249,7 @@ void ls191_in_db(ls191 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_in_dc(ls191 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->dc_rootptr, valptr);
+    int val = update_val_multi(&dest->dc_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -261,7 +261,7 @@ void ls191_in_dc(ls191 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_in_dd(ls191 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->dd_rootptr, valptr);
+    int val = update_val_multi(&dest->dd_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -273,7 +273,7 @@ void ls191_in_dd(ls191 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_in_load(ls191 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->load_rootptr, valptr);
+    int val = update_val_multi(&dest->load_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -285,7 +285,7 @@ void ls191_in_load(ls191 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_in_enable(ls191 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->enable_rootptr, valptr);
+    int val = update_val_multi(&dest->enable_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -297,7 +297,7 @@ void ls191_in_enable(ls191 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_in_updown(ls191 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->downup_rootptr, valptr);
+    int val = update_val_multi(&dest->downup_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -309,7 +309,7 @@ void ls191_in_updown(ls191 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls191_in_clk(ls191 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->clk_rootptr, valptr);
+    int val = update_val_multi(&dest->clk_rootptr, valptr);
 
     if (val > 1) val = 1;
 

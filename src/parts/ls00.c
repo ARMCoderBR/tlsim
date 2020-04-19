@@ -42,7 +42,7 @@ static void ls00_up(ls00 *a, int timestamp, int index){
 ////////////////////////////////////////////////////////////////////////////////
 static void ls00_update_pin_ina(ls00 *a, int *valptr, int timestamp, int index){
 
-    int val = update_val_multi(a->ina_rootptr[index], valptr);
+    int val = update_val_multi(&a->ina_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -55,7 +55,7 @@ static void ls00_update_pin_ina(ls00 *a, int *valptr, int timestamp, int index){
 ////////////////////////////////////////////////////////////////////////////////
 static void ls00_update_pin_inb(ls00 *a, int *valptr, int timestamp, int index){
 
-    int val = update_val_multi(a->inb_rootptr[index], valptr);
+    int val = update_val_multi(&a->inb_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 

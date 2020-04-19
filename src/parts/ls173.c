@@ -67,7 +67,7 @@ ls173_end:
 ////////////////////////////////////////////////////////////////////////////////
 static void ls173_update_d(ls173 *a, int *valptr, int timestamp, int index){
 
-    int val = update_val_multi(a->inpd_rootptr[index], valptr);
+    int val = update_val_multi(&a->inpd_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -163,7 +163,7 @@ void ls173_in_4d(ls173 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls173_in_clk(ls173 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->clk_rootptr, valptr);
+    int val = update_val_multi(&dest->clk_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -176,7 +176,7 @@ void ls173_in_clk(ls173 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls173_in_clr(ls173 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->in_clr_rootptr, valptr);
+    int val = update_val_multi(&dest->in_clr_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -189,7 +189,7 @@ void ls173_in_clr(ls173 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls173_in_m(ls173 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->in_m_rootptr, valptr);
+    int val = update_val_multi(&dest->in_m_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -202,7 +202,7 @@ void ls173_in_m(ls173 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls173_in_n(ls173 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->in_n_rootptr, valptr);
+    int val = update_val_multi(&dest->in_n_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -215,7 +215,7 @@ void ls173_in_n(ls173 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls173_in_g1(ls173 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->in_g1_rootptr, valptr);
+    int val = update_val_multi(&dest->in_g1_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -228,7 +228,7 @@ void ls173_in_g1(ls173 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls173_in_g2(ls173 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->in_g2_rootptr, valptr);
+    int val = update_val_multi(&dest->in_g2_rootptr, valptr);
 
     if (val > 1) val = 1;
 

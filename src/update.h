@@ -42,6 +42,6 @@ void update_run();
 
 void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp));
 
-int update_val_multi(vallist *rootptr, int *valptr);
+int update_val_multi(vallist **rootptr, int *valptr);
 
 #endif /* UPDATE_H_ */

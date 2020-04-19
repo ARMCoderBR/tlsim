@@ -66,7 +66,7 @@ end_ls245:
 ////////////////////////////////////////////////////////////////////////////////
 static void ls245_update_a(ls245 *a, int *valptr, int timestamp, int index){
 
-    int val = update_val_multi(a->inpa_rootptr[index], valptr);
+    int val = update_val_multi(&a->inpa_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -77,7 +77,7 @@ static void ls245_update_a(ls245 *a, int *valptr, int timestamp, int index){
 ////////////////////////////////////////////////////////////////////////////////
 static void ls245_update_b(ls245 *a, int *valptr, int timestamp, int index){
 
-    int val = update_val_multi(a->inpb_rootptr[index], valptr);
+    int val = update_val_multi(&a->inpb_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -323,7 +323,7 @@ void ls245_in_b8(ls245 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls245_in_dir(ls245 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->in_dir_rootptr, valptr);
+    int val = update_val_multi(&dest->in_dir_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -336,7 +336,7 @@ void ls245_in_dir(ls245 *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ls245_in_oe(ls245 *dest, int *valptr, int timestamp){
 
-    int val = update_val_multi(dest->in_oe_rootptr, valptr);
+    int val = update_val_multi(&dest->in_oe_rootptr, valptr);
 
     if (val > 1) val = 1;
 

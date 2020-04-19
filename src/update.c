@@ -97,34 +97,39 @@ void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int update_val_multi(vallist *rootptr, int *valptr){
+int update_val_multi(vallist **rootptr, int *valptr){
 
-    if (!rootptr){
+    vallist *entryptr = *rootptr;
 
-        rootptr = malloc(sizeof(vallist));
-        if (!rootptr){
-            perror ("update_val_multi() cant malloc()\n");
+    if (!entryptr){
+
+        entryptr = malloc(sizeof(vallist));
+        if (!entryptr){
+
+            perror("update_val_multi cant malloc()\n");
             exit(-1);
         }
 
-        rootptr->valptr = valptr;
-        rootptr->next = NULL;
+        entryptr->valptr = valptr;
+        entryptr->next = NULL;
+        *rootptr = entryptr;
+        return *valptr;
     }
 
     int val = 2;
     int found = 0;
     vallist *lastptr = NULL;
 
-    while (rootptr){
+    while (entryptr){
 
-        if (*rootptr->valptr < val)
-            val = *rootptr->valptr;
+        if (*entryptr->valptr < val)
+            val = *entryptr->valptr;
 
-        if (rootptr->valptr == valptr)
+        if (entryptr->valptr == valptr)
             found = 1;
 
-        lastptr = rootptr;
-        rootptr = rootptr->next;
+        lastptr = entryptr;
+        entryptr = entryptr->next;
     }
 
     if (!found){

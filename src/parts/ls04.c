@@ -42,7 +42,7 @@ static void ls04_up(ls04 *a, int timestamp, int index){
 ////////////////////////////////////////////////////////////////////////////////
 static void ls04_update_pin_in(ls04 *a, int *valptr, int timestamp, int index){
 
-    int val = update_val_multi(a->in_rootptr[index], valptr);
+    int val = update_val_multi(&a->in_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
