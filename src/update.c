@@ -14,6 +14,7 @@
 #define EVQUEUELEN 2000
 
 event evqueue[EVQUEUELEN];
+int evinq = 0;
 int evins = 0;
 int evget = 0;
 
@@ -27,23 +28,23 @@ void event_process(){
 #endif
 
     ehandler * ehandlerptr;
-    while (evins != evget){
+    while (evinq){
 
         ehandlerptr = evqueue[evget].event_handler_root;
         int *valueptr = evqueue[evget].valueptr;
         int timestamp = 1 + evqueue[evget].timestamp;
+
+        evget++;
+        evget %= EVQUEUELEN;
+        --evinq;
 
         while (ehandlerptr != NULL){
 
             ehandlerptr->objdest_event_handler(ehandlerptr->objdest,valueptr,timestamp);
             ehandlerptr = ehandlerptr->next;
         }
-
-        if (evins == evget) break;
-
-        evget++;
-        evget %= EVQUEUELEN;
     }
+
 #ifdef DEBUG
     printf("event_process END\n");
 #endif
@@ -55,6 +56,14 @@ void event_insert(event *e){
 #ifdef DEBUG
     printf("event_insert BEGIN\n");
 #endif
+
+    if (evinq == EVQUEUELEN){
+
+        perror ("Event queue FULL\n");
+        exit(-1);
+    }
+
+    evinq++;
 
     memcpy(&evqueue[evins],e,sizeof(event));
     evins++;
