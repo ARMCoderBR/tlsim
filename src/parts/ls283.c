@@ -6,6 +6,8 @@
  */
 
 #include <malloc.h>
+#include <string.h>
+
 #include "ls283.h"
 
 // 4-BIT BINARY ADDER WITH FAST CARRY
@@ -82,6 +84,8 @@ static void ls283_update_pin_ina(ls283 *a, int *valptr, int timestamp, int index
 
     if (val == a->ina[index]) return;
 
+    logger("ls283_update_pin_ina%d [%s] *valptr:%d val:%d TS:%d",index, a->name,*valptr,val,timestamp);
+
     a->ina[index] = val;
     ls283_up(a, timestamp);
 }
@@ -94,6 +98,8 @@ static void ls283_update_pin_inb(ls283 *a, int *valptr, int timestamp, int index
     if (val > 1) val = 1;
 
     if (val == a->inb[index]) return;
+
+    logger("ls283_update_pin_inb%d [%s] *valptr:%d val:%d TS:%d",index, a->name,*valptr,val,timestamp);
 
     a->inb[index] = val;
     ls283_up(a, timestamp);
@@ -108,6 +114,8 @@ static void ls283_update_pin_cin(ls283 *a, int *valptr, int timestamp){
 
     if (val == a->cin) return;
 
+    logger("ls283_update_pin_cin [%s] *valptr:%d val:%d TS:%d",a->name,*valptr,val,timestamp);
+
     a->cin = val;
     ls283_up(a, timestamp);
 }
@@ -117,7 +125,7 @@ static void ls283_update_pin_cin(ls283 *a, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls283 *ls283_create(){
+ls283 *ls283_create(char *name){
 
     ls283 *b = malloc(sizeof(ls283));
 
@@ -138,6 +146,11 @@ ls283 *ls283_create(){
     b->cin_rootptr = NULL;
     b->oldcout = 2;
     b->cout_event_handler_root = NULL;
+
+    if (name)
+        strncpy(b->name,name,sizeof(b->name));
+    else
+        b->name[0] = 0;
 
     return b;
 }

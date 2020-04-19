@@ -9,20 +9,34 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "alu_8bit.h"
 #include "bitconst.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-alu_8bit *alu_8bit_create(){
+alu_8bit *alu_8bit_create(char *name){
 
     alu_8bit *alu = malloc (sizeof(alu_8bit));
     if (!alu) return alu;
 
-    alu->ls86_hi = ls86_create();
-    alu->ls86_lo = ls86_create();
-    alu->ls283_hi = ls283_create();
-    alu->ls283_lo = ls283_create();
+    char lshi[60];
+    char lslo[60];
+
+    lshi[0] = lslo[0] = 0;
+    if (name){
+
+        strncpy(lshi,name,sizeof(lshi));
+        strncpy(lslo,name,sizeof(lslo));
+    }
+
+    strncat(lshi,"-hiWord",sizeof(lshi)/2);
+    strncat(lslo,"-loWord",sizeof(lslo)/2);
+
+    alu->ls86_hi = ls86_create(lshi);
+    alu->ls86_lo = ls86_create(lslo);
+    alu->ls283_hi = ls283_create(lshi);
+    alu->ls283_lo = ls283_create(lslo);
     alu->ls245_1  = ls245_create();
 
     int i;
@@ -72,6 +86,11 @@ alu_8bit *alu_8bit_create(){
     bitconst_connect_one(alu->ls245_1, (void*)&ls245_in_dir);
 
     ls283_connect_cout(alu->ls283_lo, alu->ls283_hi, (void*)&ls283_in_cin);
+
+    if (name)
+        strncpy(alu->name,name,sizeof(alu->name));
+    else
+        alu->name[0] = 0;
 
     return alu;
 }

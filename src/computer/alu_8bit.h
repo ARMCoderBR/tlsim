@@ -23,10 +23,11 @@ typedef struct {
     ls283 *ls283_hi, *ls283_lo;
     ls245 *ls245_1;
     indicator *led[8];
+    char name[30];
 
 } alu_8bit;
 
-alu_8bit *alu_8bit_create();
+alu_8bit *alu_8bit_create(char *name);
 
 void alu_8bit_connect_bit_out (alu_8bit *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 

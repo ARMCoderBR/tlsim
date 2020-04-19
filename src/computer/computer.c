@@ -25,7 +25,7 @@ void computer_sim(){
     reg_8bit *regB = reg_8bit_create("regB");
     reg_8bit *regIN = reg_8bit_create("regIN");
 
-    alu_8bit *alu = alu_8bit_create();
+    alu_8bit *alu = alu_8bit_create("ALU");
 
     if ((!regA)||(!regB)||(!regIN)){
 
