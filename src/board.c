@@ -91,7 +91,7 @@ void sigterm_handler(int sig){
 ////////////////////////////////////////////////////////////////////////////////
 
 ehandler *clock_event_handler_root = NULL;
-volatile int clock_last_val = 0;
+int clock_last_val = 0;
 
 void clock_set_val(int val){
 
@@ -102,13 +102,19 @@ void clock_set_val(int val){
     else
         clock_last_val = 0;
 
-    ehandler *e = clock_event_handler_root;
+    event e;
+    e.event_handler_root = clock_event_handler_root;
+    e.valueptr = &clock_last_val;
+    e.timestamp = 0;
+    event_insert(&e);
 
-    while (e){
-
-        e->objdest_event_handler(e->objdest, &val, 0);
-        e = e->next;
-    }
+//    ehandler *e = clock_event_handler_root;
+//
+//    while (e){
+//
+//        e->objdest_event_handler(e->objdest, &val, 0);
+//        e = e->next;
+//    }
 }
 
 
