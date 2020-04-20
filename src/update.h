@@ -32,6 +32,7 @@ typedef struct {
     ehandler *event_handler_root;
     int *valueptr;
     int timestamp;
+    void *next;
 } event;
 
 void event_insert(event *e);

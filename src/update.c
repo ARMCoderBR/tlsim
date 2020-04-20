@@ -13,14 +13,34 @@
 
 #include "update.h"
 
-#define EVQUEUELEN 2000
+//#define EVQUEUELEN 2000
 
-event evqueue[EVQUEUELEN];
-int evinq = 0;
-int evins = 0;
-int evget = 0;
+//event evqueue[EVQUEUELEN];
+//int evinq = 0;
+//int evins = 0;
+//int evget = 0;
 
 void event_insert(event *e);
+
+event *event_list = NULL;
+event *event_last = NULL;
+int scanning_timestamp = 0;
+int max_timestamp = 0;
+
+////////////////////////////////////////////////////////////////////////////////
+void event_flush(){
+
+    while (event_list){
+
+        event_last = event_list;
+        event_list = event_list->next;
+        free(event_last);
+    }
+
+    event_last = NULL;
+    scanning_timestamp = 0;
+    max_timestamp = 0;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void event_process(){
@@ -29,23 +49,36 @@ void event_process(){
     printf("event_process BEGIN evins:%d evget:%d\n",evins,evget);
 #endif
 
-    ehandler * ehandlerptr;
-    while (evinq){
+    if (!event_list) return;
 
-        ehandlerptr = evqueue[evget].event_handler_root;
-        int *valueptr = evqueue[evget].valueptr;
-        int timestamp = 1 + evqueue[evget].timestamp;
+    while (scanning_timestamp <= max_timestamp){
 
-        evget++;
-        evget %= EVQUEUELEN;
-        --evinq;
+        event * eventptr = event_list;
 
-        while (ehandlerptr != NULL){
+        while (eventptr){
 
-            ehandlerptr->objdest_event_handler(ehandlerptr->objdest,valueptr,timestamp);
-            ehandlerptr = ehandlerptr->next;
+            if (eventptr->timestamp == scanning_timestamp){
+
+                ehandler * ehandlerptr = eventptr->event_handler_root;
+
+                int *valueptr = eventptr->valueptr;
+                int timestamp = 1 + eventptr->timestamp;
+
+                while (ehandlerptr != NULL){
+
+                    ehandlerptr->objdest_event_handler(ehandlerptr->objdest,valueptr,timestamp);
+                    ehandlerptr = ehandlerptr->next;
+                }
+            }
+
+            eventptr = eventptr->next;
         }
+
+
+        scanning_timestamp++;
     }
+
+    event_flush();
 
 #ifdef DEBUG
     printf("event_process END\n");
@@ -59,17 +92,27 @@ void event_insert(event *e){
     printf("event_insert BEGIN\n");
 #endif
 
-    if (evinq == EVQUEUELEN){
+    event *newev = malloc(sizeof(event));
+    if (!newev){
 
-        perror ("Event queue FULL\n");
+        perror("event_insert() could not malloc()\n");
         exit(-1);
     }
 
-    evinq++;
+    memcpy(newev,e,sizeof(event));
+    newev->next = NULL;
 
-    memcpy(&evqueue[evins],e,sizeof(event));
-    evins++;
-    evins %= EVQUEUELEN;
+    if (!event_list){
+
+        event_list = newev;
+        scanning_timestamp = max_timestamp = 0;
+    }else
+        event_last->next = newev;
+
+    if (newev->timestamp > max_timestamp)
+        max_timestamp = newev->timestamp;
+
+    event_last = newev;
 
     event_process();
 
