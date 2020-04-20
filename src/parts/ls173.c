@@ -179,7 +179,7 @@ void ls173_in_clk(ls173 *dest, int *valptr, int timestamp){
 
     if (dest->clk == val) return;
 
-    logger("ls173_in_clk [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger("ls173_in_clk [%s] valptr:%p *valptr:%d val:%d TS:%d",dest->name,valptr,*valptr,val,timestamp);
 
     dest->clk = val;
     ls173_update(dest, timestamp);

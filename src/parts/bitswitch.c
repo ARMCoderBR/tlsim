@@ -44,7 +44,7 @@ void bitswitch_setval(bitswitch *s, int val){
 
     if (s->oldvalue != s->value){
 
-        logger("== bitswitch_setval [%s] val:%d",s->name,val);
+        logger("\n== bitswitch_setval [%s] val:%d",s->name,val);
 
         s->oldvalue = s->value;
         event e;

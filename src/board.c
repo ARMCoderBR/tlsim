@@ -14,6 +14,7 @@
 
 #include "board.h"
 #include "bitswitch.h"
+#include "update.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +62,7 @@ void restart_handlers(void)
     //FD_SET(tc_ipccom_ctx.piperx,&readfds);
 
     tv.tv_sec = 0;
-    tv.tv_usec = 100000;    // 100 ms
+    tv.tv_usec = 1000;    // 1 ms
 
     select (1/*+tc_ipccom_ctx.piperx*/,&readfds,NULL,NULL,&tv);
 }
@@ -95,17 +96,18 @@ int clock_last_val = 0;
 
 void clock_set_val(int val){
 
-    logger("==>clock_set_val:%d",val);
-
     if (val)
         clock_last_val = 1;
     else
         clock_last_val = 0;
 
+    logger("\n==>clock_set_val:%d ptr:%p",clock_last_val, &clock_last_val);
+
     event e;
     e.event_handler_root = clock_event_handler_root;
     e.valueptr = &clock_last_val;
     e.timestamp = 0;
+    e.done = 0;
     event_insert(&e);
 
 //    ehandler *e = clock_event_handler_root;
@@ -145,7 +147,7 @@ void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objd
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#define NOBJ 1000
+//#define NOBJ 1000
 
 pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -354,7 +356,7 @@ void clock_redraw(){
 }
 
 int clock_pulse = 0;
-
+int clocked = 0;
 ////////////////////////////////////////////////////////////////////////////////
 void *clock_thread(void *args){
 
@@ -384,7 +386,8 @@ void *clock_thread(void *args){
 
                     pthread_mutex_unlock(&transitionmutex);
 
-                    board_set_refresh();
+                    clocked = 1;
+                  //  board_set_refresh();
                     usleep(10000);
                 }
                 else
@@ -403,7 +406,8 @@ void *clock_thread(void *args){
 
             pthread_mutex_unlock(&transitionmutex);
 
-            board_set_refresh();
+            clocked = 1;
+           // board_set_refresh();
             usleep(clock_period_us/2);
         }
         else
@@ -724,6 +728,16 @@ int board_run(board_object *board){
     board_set_refresh();
 
     while (!stoprun){
+
+        pthread_mutex_lock(&transitionmutex);
+        while (event_process());
+        pthread_mutex_unlock(&transitionmutex);
+
+        if (clocked){
+
+            clocked = 0;
+            board_set_refresh();
+        }
 
         if (resize){
 

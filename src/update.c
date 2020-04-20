@@ -46,29 +46,34 @@ void event_flush(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void event_process(){
+int event_process(){
 
 #ifdef DEBUG
     printf("event_process BEGIN evins:%d evget:%d\n",evins,evget);
 #endif
 
-    if (!event_list) return;
+    if (!event_list) return 0;
 
     while (scanning_timestamp <= max_timestamp){
 
         event * eventptr = event_list;
+        int found = 0;
 
         while (eventptr){
 
-            if (eventptr->timestamp == scanning_timestamp){
+            if ((eventptr->timestamp == scanning_timestamp) && (!eventptr->done)){
+
+                found = 1;
+                eventptr->done = 1;
 
                 ehandler * ehandlerptr = eventptr->event_handler_root;
 
                 //int *valueptr = eventptr->valueptr;
                 //int timestamp = 1 + eventptr->timestamp;
-
+                int seq=0;
                 while (ehandlerptr != NULL){
 
+                    logger("### run(%d) valueptr:%p *valueptr:%d TS:%d",seq++,eventptr->valueptr,*eventptr->valueptr,eventptr->timestamp);
                     ehandlerptr->objdest_event_handler(ehandlerptr->objdest,eventptr->valueptr,eventptr->timestamp);
                     ehandlerptr = ehandlerptr->next;
                 }
@@ -77,8 +82,8 @@ void event_process(){
             eventptr = eventptr->next;
         }
 
-
-        scanning_timestamp++;
+        if (!found)
+            scanning_timestamp++;
     }
 
     event_flush();
@@ -86,6 +91,8 @@ void event_process(){
 #ifdef DEBUG
     printf("event_process END\n");
 #endif
+
+    return 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,7 +109,10 @@ void event_insert(event *e){
         exit(-1);
     }
 
+    logger("\n+++ event_insert valptr:%p *valptr:%d timestamp:%d", e->valueptr, *e->valueptr, e->timestamp);
+
     memcpy(newev,e,sizeof(event));
+    newev->done = 0;
     newev->next = NULL;
 
     if (!event_list){
@@ -117,7 +127,7 @@ void event_insert(event *e){
 
     event_last = newev;
 
-    event_process();
+    //event_process();
 
 #ifdef DEBUG
     printf("event_insert END evins:%d evget:%d\n",evins,evget);
@@ -211,7 +221,11 @@ int update_val_multi(vallist **rootptr, int *valptr){
 ////////////////////////////////////////////////////////////////////////////////
 FILE *logfile = NULL;
 
+int logging = 0;
+
 void logger_init(){
+
+    if (!logging) return;
 
     logfile = fopen ("out.log","w");
     logger("=============================");
@@ -221,6 +235,8 @@ void logger_init(){
 
 ////////////////////////////////////////////////////////////////////////////////
 void logger(const char *fmt, ...) {
+
+    if (!logging) return;
 
     char buftxt[301];
 
@@ -234,6 +250,8 @@ void logger(const char *fmt, ...) {
 
 ////////////////////////////////////////////////////////////////////////////////
 void logger_end(){
+
+    if (!logging) return;
 
     if (logfile) fclose(logfile);
 }
