@@ -32,6 +32,8 @@ static void ls283_up(ls283 *a, int timestamp){
         mask <<= 1;
     }
 
+    logger("ls283 suma:%d sumb:%d",suma,sumb);
+
     suma += sumb;
 
     if (a->cin)
@@ -136,6 +138,7 @@ ls283 *ls283_create(char *name){
 
     for (i = 0; i < LS283_NBITS; i++){
 
+        b->ina[i] = b->inb[i] = 2;
         b->y[i] = 0;
         b->ina_rootptr[i] = b->inb_rootptr[i] = NULL;
         b->oldy[i] = 2;

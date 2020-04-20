@@ -20,13 +20,10 @@ indicator *indicator_create(char *name){
     if (o == NULL)
         return NULL;
 
-    if (name){
-
-        o->name = malloc(1+strlen(name));
-        strcpy(o->name, name);
-    }
+    if (name)
+        strncpy(o->name, name, sizeof(o->name));
     else
-        o->name = NULL;
+        o->name[0] = 0;
 
     o->value = 0;
     o->ind0_rootptr = NULL;
@@ -45,6 +42,8 @@ void indicator_in_d0(indicator *dest, int *valptr, int timestamp){
 #endif
 
     int val = update_val_multi(&dest->ind0_rootptr, valptr);
+
+    logger("indicator_in_d0 [%s] *valptr:%d val:%d TS:%d", dest->name,*valptr,val,timestamp);
 
     if (val)
         dest->value |= 1;

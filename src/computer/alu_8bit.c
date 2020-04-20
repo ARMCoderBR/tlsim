@@ -40,8 +40,13 @@ alu_8bit *alu_8bit_create(char *name){
     alu->ls245_1  = ls245_create();
 
     int i;
-    for (i = 0; i < 8; i++)
-        alu->led[i] = indicator_create(NULL);
+    for (i = 0; i < 8; i++){
+
+        strncpy(lshi,name,sizeof(lshi));
+        sprintf(lslo,"-D%d",i);
+        strncat(lshi,lslo,sizeof(lshi)/2);
+        alu->led[i] = indicator_create(lshi);
+    }
 
     ls283_connect_y1(alu->ls283_lo, alu->led[0], (void*)&indicator_in_d0);
     ls283_connect_y2(alu->ls283_lo, alu->led[1], (void*)&indicator_in_d0);

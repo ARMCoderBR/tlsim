@@ -30,6 +30,9 @@ int max_timestamp = 0;
 ////////////////////////////////////////////////////////////////////////////////
 void event_flush(){
 
+    if (max_timestamp || event_list)
+        logger("== event_flush() max_timestamp:%d",max_timestamp);
+
     while (event_list){
 
         event_last = event_list;
@@ -61,12 +64,12 @@ void event_process(){
 
                 ehandler * ehandlerptr = eventptr->event_handler_root;
 
-                int *valueptr = eventptr->valueptr;
-                int timestamp = 1 + eventptr->timestamp;
+                //int *valueptr = eventptr->valueptr;
+                //int timestamp = 1 + eventptr->timestamp;
 
                 while (ehandlerptr != NULL){
 
-                    ehandlerptr->objdest_event_handler(ehandlerptr->objdest,valueptr,timestamp);
+                    ehandlerptr->objdest_event_handler(ehandlerptr->objdest,eventptr->valueptr,eventptr->timestamp);
                     ehandlerptr = ehandlerptr->next;
                 }
             }
@@ -211,6 +214,9 @@ FILE *logfile = NULL;
 void logger_init(){
 
     logfile = fopen ("out.log","w");
+    logger("=============================");
+    logger("======= SESSION START =======");
+    logger("=============================");
 }
 
 ////////////////////////////////////////////////////////////////////////////////

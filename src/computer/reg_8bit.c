@@ -39,8 +39,13 @@ reg_8bit *reg_8bit_create(char *name){
     reg->ledclk = indicator_create("Clk");
 
     int i;
-    for (i = 0; i < 8; i++)
-        reg->led[i] = indicator_create(NULL);
+    for (i = 0; i < 8; i++){
+
+        strncpy(lshi,name,sizeof(lshi));
+        sprintf(lslo,"-D%d",i);
+        strncat(lshi,lslo,sizeof(lshi)/2);
+        reg->led[i] = indicator_create(lshi);
+    }
 
     ls173_connect_1q(reg->ls173_lo, reg->led[0], (void*)&indicator_in_d0);
     ls173_connect_2q(reg->ls173_lo, reg->led[1], (void*)&indicator_in_d0);
