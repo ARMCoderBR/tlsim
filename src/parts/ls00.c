@@ -81,7 +81,7 @@ ls00 *ls00_create(){
     for (i = 0; i < NUM_ELEM_LS00; i++){
 
         b->ina[i] = b->inb[i] = 2;
-        b->value = b->oldvalue[i] = 0;
+        b->value[i] = b->oldvalue[i] = 0;
         b->ina_rootptr[i] = NULL;
         b->inb_rootptr[i] = NULL;
         b->out_event_handler_root[i] = NULL;

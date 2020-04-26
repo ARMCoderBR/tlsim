@@ -22,9 +22,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 void computer_sim(){
 
-    reg_8bit *regA = reg_8bit_create("regA");
-    reg_8bit *regB = reg_8bit_create("regB");
-    reg_8bit *regIN = reg_8bit_create("regIN");
+    reg_8bit *regA = reg_8bit_create(REG8BIT_NORMAL, "regA");
+    reg_8bit *regB = reg_8bit_create(REG8BIT_NORMAL, "regB");
+    reg_8bit *regIN = reg_8bit_create(REG8BIT_IR, "regIN");
 
     alu_8bit *alu = alu_8bit_create("ALU");
 
@@ -149,19 +149,21 @@ void computer_sim(){
         bitswitch_connect_out(swbus[i], regIN, (void*)reg_8bit_in_dataN[i]);
 
         reg_8bit_connect_bit_out (regA, i, ledbus[i], (void*)indicator_in_d0);
-        reg_8bit_connect_bit_out (regB, i, ledbus[i], (void*)indicator_in_d0);
-        reg_8bit_connect_bit_out (regIN, i, ledbus[i], (void*)indicator_in_d0);
-        alu_8bit_connect_bit_out (alu, i, ledbus[i], (void*)indicator_in_d0);
-
         reg_8bit_connect_bit_out (regA, i, regB, reg_8bit_in_dataN[i]);
         reg_8bit_connect_bit_out (regA, i, regIN, reg_8bit_in_dataN[i]);
 
+        reg_8bit_connect_bit_out (regB, i, ledbus[i], (void*)indicator_in_d0);
         reg_8bit_connect_bit_out (regB, i, regA, reg_8bit_in_dataN[i]);
         reg_8bit_connect_bit_out (regB, i, regIN, reg_8bit_in_dataN[i]);
 
-        reg_8bit_connect_bit_out (regIN, i, regA, reg_8bit_in_dataN[i]);
-        reg_8bit_connect_bit_out (regIN, i, regB, reg_8bit_in_dataN[i]);
+        if (i < 4){
 
+            reg_8bit_connect_bit_out (regIN, i, ledbus[i], (void*)indicator_in_d0);
+            reg_8bit_connect_bit_out (regIN, i, regA, reg_8bit_in_dataN[i]);
+            reg_8bit_connect_bit_out (regIN, i, regB, reg_8bit_in_dataN[i]);
+        }
+
+        alu_8bit_connect_bit_out (alu, i, ledbus[i], (void*)indicator_in_d0);
         alu_8bit_connect_bit_out (alu, i, regA, reg_8bit_in_dataN[i]);
         alu_8bit_connect_bit_out (alu, i, regB, reg_8bit_in_dataN[i]);
         alu_8bit_connect_bit_out (alu, i, regIN, reg_8bit_in_dataN[i]);

@@ -15,7 +15,7 @@
 #include "bitconst.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-reg_8bit *reg_8bit_create(char *name){
+reg_8bit *reg_8bit_create(reg8bit_type_t type, char *name){
 
     reg_8bit *reg = malloc (sizeof(reg_8bit));
     if (!reg) return reg;
@@ -37,6 +37,8 @@ reg_8bit *reg_8bit_create(char *name){
     reg->ls173_lo = ls173_create(lslo);
     reg->ls245_1  = ls245_create();
     reg->ledclk = indicator_create("Clk");
+
+    reg->type = type;
 
     int i;
     for (i = 0; i < 8; i++){
@@ -66,10 +68,13 @@ reg_8bit *reg_8bit_create(char *name){
     ls173_connect_3q(reg->ls173_lo, reg->ls245_1, (void*)&ls245_in_a3);
     ls173_connect_4q(reg->ls173_lo, reg->ls245_1, (void*)&ls245_in_a4);
 
-    ls173_connect_1q(reg->ls173_hi, reg->ls245_1, (void*)&ls245_in_a5);
-    ls173_connect_2q(reg->ls173_hi, reg->ls245_1, (void*)&ls245_in_a6);
-    ls173_connect_3q(reg->ls173_hi, reg->ls245_1, (void*)&ls245_in_a7);
-    ls173_connect_4q(reg->ls173_hi, reg->ls245_1, (void*)&ls245_in_a8);
+    if (reg->type == REG8BIT_NORMAL){
+
+        ls173_connect_1q(reg->ls173_hi, reg->ls245_1, (void*)&ls245_in_a5);
+        ls173_connect_2q(reg->ls173_hi, reg->ls245_1, (void*)&ls245_in_a6);
+        ls173_connect_3q(reg->ls173_hi, reg->ls245_1, (void*)&ls245_in_a7);
+        ls173_connect_4q(reg->ls173_hi, reg->ls245_1, (void*)&ls245_in_a8);
+    }
 
     bitconst_connect_one(reg->ls245_1, (void*)&ls245_in_dir);
 
@@ -242,7 +247,14 @@ board_object *reg_8bit_board_create(reg_8bit *reg, int key, char *name){
         j = 7-i;
 
         sprintf(s,"D%d",i);
-        board_add_led(board, reg->led[i],1+4*j,1,s, LED_RED);
+        if (reg->type == REG8BIT_NORMAL)
+            board_add_led(board, reg->led[i],1+4*j,1,s, LED_RED);
+        else{
+            if (i < 4)
+                board_add_led(board, reg->led[i],1+4*j,1,s, LED_YELLOW);
+            else
+                board_add_led(board, reg->led[i],1+4*j,1,s, LED_BLUE);
+        }
     }
 
     board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
