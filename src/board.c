@@ -775,14 +775,13 @@ int board_run(board_object *board){
             case 27:
                 stoprun = 1;
                 break;
-            case '+':
-            case '=':
+            case KEY_F(12):
                 clock_faster();
                 break;
-            case '-':
+            case KEY_F(11):
                 clock_slower();
                 break;
-            case 'p':
+            case KEY_F(10):
                 clock_pause();
                 break;
             }
