@@ -26,6 +26,8 @@ typedef struct {
     ls04 *ls04_hi, *ls04_lo;
     ls245 *ls245_1;
     indicator *leddata[8];
+    indicator *ledprog;
+    indicator *ledrun;
     //////////////
     ls157 *ls157_addr;
     ls173 *ls173_addreg;

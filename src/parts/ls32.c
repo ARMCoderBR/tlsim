@@ -78,7 +78,8 @@ ls32 *ls32_create(){
     int i;
     for (i = 0; i < NUM_ELEM_LS32; i++){
 
-        b->oldvalue[i] = 2;
+        b->ina[i] = b->inb[i] = 2;
+        b->value[i] = b->oldvalue[i] = 1;
         b->ina_rootptr[i] = NULL;
         b->inb_rootptr[i] = NULL;
         b->out_event_handler_root[i] = NULL;

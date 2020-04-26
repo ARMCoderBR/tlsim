@@ -109,6 +109,8 @@ ram_8bit *ram_8bit_create(char *name){
     ram->progdata[7] = bitswitch_create("RD7");
     ram->progwrite = bitswitch_create("PRW");
 
+    bitswitch_setval(ram->progwrite, 1);
+
     bitswitch_connect_out(ram->prog_run,ram->ls157_addr,(void*)&ls157_in_sel);
     bitswitch_connect_out(ram->prog_run,ram->ls157_datalo,(void*)&ls157_in_sel);
     bitswitch_connect_out(ram->prog_run,ram->ls157_datahi,(void*)&ls157_in_sel);
@@ -137,6 +139,15 @@ ram_8bit *ram_8bit_create(char *name){
     ls157_connect_y3(ram->ls157_addr,ram->ledaddr[2], (void*)&indicator_in_d0);
     ls157_connect_y4(ram->ls157_addr,ram->ledaddr[3], (void*)&indicator_in_d0);
 
+    bitswitch_connect_out(ram->progdata[0],ram->ls157_datalo,(void*)&ls157_in_a1);
+    bitswitch_connect_out(ram->progdata[1],ram->ls157_datalo,(void*)&ls157_in_a2);
+    bitswitch_connect_out(ram->progdata[2],ram->ls157_datalo,(void*)&ls157_in_a3);
+    bitswitch_connect_out(ram->progdata[3],ram->ls157_datalo,(void*)&ls157_in_a4);
+    bitswitch_connect_out(ram->progdata[4],ram->ls157_datahi,(void*)&ls157_in_a1);
+    bitswitch_connect_out(ram->progdata[5],ram->ls157_datahi,(void*)&ls157_in_a2);
+    bitswitch_connect_out(ram->progdata[6],ram->ls157_datahi,(void*)&ls157_in_a3);
+    bitswitch_connect_out(ram->progdata[7],ram->ls157_datahi,(void*)&ls157_in_a4);
+
     ls157_connect_y1(ram->ls157_datalo,ram->ls189_lo, (void*)&ls189_in_1d);
     ls157_connect_y2(ram->ls157_datalo,ram->ls189_lo, (void*)&ls189_in_2d);
     ls157_connect_y3(ram->ls157_datalo,ram->ls189_lo, (void*)&ls189_in_3d);
@@ -160,7 +171,11 @@ ram_8bit *ram_8bit_create(char *name){
     bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_n);
     bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_clr);
 
-
+    ram->ledprog = indicator_create("Ledprog");
+    ram->ledrun = indicator_create("Ledrun");
+    bitswitch_connect_out(ram->prog_run,ram->ledrun,(void*)&indicator_in_d0);
+    bitswitch_connect_out(ram->prog_run, ram->ls04_lo, (void*)&ls04_in_a6);
+    ls04_connect_y6(ram->ls04_lo, ram->ledprog, (void*)&indicator_in_d0);
 
     if (name)
         strncpy(ram->name,name,sizeof(ram->name));
@@ -334,9 +349,9 @@ board_object *ram_8bit_board_create(ram_8bit *ram, int key, char *name){
         j = 7-i;
 
         sprintf(s,"D%d",i);
-        board_add_led(board, ram->leddata[i],1+4*j,1,s, LED_RED);
+        board_add_led(board, ram->leddata[i],21+4*j,1,s, LED_RED);
 
-        board_add_manual_switch(board, ram->progdata[j], 1+7*j, 7, '0'+i, s);
+        board_add_manual_switch(board, ram->progdata[i], 1+7*j, 7, '0'+i, s);
     }
 
     char ka[]="hjkl";
@@ -346,13 +361,16 @@ board_object *ram_8bit_board_create(ram_8bit *ram, int key, char *name){
         j = 3-i;
 
         sprintf(s,"A%d",i);
-        board_add_led(board, ram->ledaddr[i],17+4*j,4,s, LED_YELLOW);
+        board_add_led(board, ram->ledaddr[i],37+4*j,4,s, LED_YELLOW);
         board_add_manual_switch(board, ram->progaddr[i], 1+7*j, 10, ka[j], s);
     }
 
 
     board_add_manual_switch(board, ram->prog_run, 1, 4, 'p',"Pr/Run");
     board_add_manual_switch(board, ram->progwrite, 48, 10, 'w',"Write");
+
+    board_add_led(board, ram->ledrun,1,1,"RUN", LED_GREEN);
+    board_add_led(board, ram->ledprog,5,1,"PRG", LED_RED);
 
     return board;
 }

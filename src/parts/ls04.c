@@ -67,7 +67,8 @@ ls04 *ls04_create(){
     int i;
     for (i = 0; i < NUM_ELEM_LS04; i++){
 
-        b->oldvalue[i] = 2;
+        b->in[i] = 2;
+        b->value[i] = b->oldvalue[i] = 0;
         b->in_rootptr[i] = NULL;
         b->out_event_handler_root[i] = NULL;
     }
