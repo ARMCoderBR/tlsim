@@ -71,10 +71,10 @@ board_object *testls191_board_create(testls191 *t, int key, char *name){
     board_object *board = board_create(40,4, key, name);
     if (!board) return board;
 
-    board_add_led(board, t->oclk,1,1,"CLK");
-    board_add_xdigit(board, t->ohex1,10,1,"COUNT");
-    board_add_led(board, t->omaxmin1,20,1,"MAXMIN");
-    board_add_led(board, t->oripclk1,30,1,"RIPPLE");
+    board_add_led(board, t->oclk,1,1,"CLK", LED_RED);
+    board_add_xdigit(board, t->ohex1,10,1,"COUNT", LED_RED);
+    board_add_led(board, t->omaxmin1,20,1,"MAXMIN", LED_RED);
+    board_add_led(board, t->oripclk1,30,1,"RIPPLE", LED_RED);
 
     return board;
 }

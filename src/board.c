@@ -188,6 +188,7 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 
     if (b->type != BOARD) return;   // Erro interno - nunca deve acontecer.
 
+    wattrset(janela1,A_NORMAL);
     rectangle(new_h, new_w, new_h+b->w_height-1, new_w+b->w_width-1);
 
     if (b->name[0]){
@@ -227,10 +228,14 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
         case LED:
             {
                 indicator* out = b->objptr;
-                if (out->value)
+                wattron(janela1,COLOR_PAIR(b->color));
+                if (out->value){
+                    wattron(janela1,A_STANDOUT);
                     waddstr(janela1,"[#]");
-                else
+                    wattroff(janela1,A_STANDOUT);
+                }else
                     waddstr(janela1,"[.]");
+                wattroff(janela1,COLOR_PAIR(b->color));
             }
             break;
 
@@ -622,7 +627,7 @@ int board_add_manual_switch(board_object *b, bitswitch *bs, int pos_w, int pos_h
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int board_add_led(board_object *b, indicator *out, int pos_w, int pos_h, char *name){
+int board_add_led(board_object *b, indicator *out, int pos_w, int pos_h, char *name, led_color_t color){
 
 /*
   [.]
@@ -640,6 +645,7 @@ int board_add_led(board_object *b, indicator *out, int pos_w, int pos_h, char *n
     obja->pos_w  = pos_w;
     obja->pos_h  = pos_h;
     obja->type   = LED;
+    obja->color = color;
     obja->objptr = out;
     obja->key    = 0;
     if (name)
@@ -653,7 +659,7 @@ int board_add_led(board_object *b, indicator *out, int pos_w, int pos_h, char *n
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int board_add_xdigit(board_object *b, indicator *out, int pos_w, int pos_h, char *name){
+int board_add_xdigit(board_object *b, indicator *out, int pos_w, int pos_h, char *name, led_color_t color){
 
 /*
   A
@@ -737,6 +743,14 @@ int board_run(board_object *board){
     ESCDELAY=200;
     TERM_LINES = LINES;
     TERM_COLS = COLS;
+
+
+    start_color();
+    init_pair(1, 8|COLOR_RED, 16|COLOR_BLACK);
+    init_pair(2, 8|COLOR_GREEN, 16|COLOR_BLACK);
+    init_pair(3, 8|COLOR_YELLOW, 16|COLOR_BLACK);
+    init_pair(4, 8|COLOR_BLUE, 16|COLOR_BLACK);
+    init_pair(5, COLOR_WHITE, 16|COLOR_BLACK);
 
     janela0 = newwin(TERM_LINES,TERM_COLS,0,0);
     //janela1 = newwin(TERM_LINES-1-LINHAS_JANELA2B,TERM_COLS-2,1,1);

@@ -334,7 +334,7 @@ board_object *ram_8bit_board_create(ram_8bit *ram, int key, char *name){
         j = 7-i;
 
         sprintf(s,"D%d",i);
-        board_add_led(board, ram->leddata[i],1+4*j,1,s);
+        board_add_led(board, ram->leddata[i],1+4*j,1,s, LED_RED);
 
         board_add_manual_switch(board, ram->progdata[j], 1+7*j, 7, '0'+i, s);
     }
@@ -346,7 +346,7 @@ board_object *ram_8bit_board_create(ram_8bit *ram, int key, char *name){
         j = 3-i;
 
         sprintf(s,"A%d",i);
-        board_add_led(board, ram->ledaddr[i],17+4*j,4,s);
+        board_add_led(board, ram->ledaddr[i],17+4*j,4,s, LED_YELLOW);
         board_add_manual_switch(board, ram->progaddr[i], 1+7*j, 10, ka[j], s);
     }
 

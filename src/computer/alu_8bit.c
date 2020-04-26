@@ -309,7 +309,7 @@ board_object *alu_8bit_board_create(alu_8bit *alu, int key, char *name){
         j = 7-i;
 
         sprintf(s,"D%d",i);
-        board_add_led(board, alu->led[i],1+4*j,1,s);
+        board_add_led(board, alu->led[i],1+4*j,1,s, LED_RED);
     }
 
     return board;

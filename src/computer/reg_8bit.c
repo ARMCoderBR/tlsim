@@ -242,10 +242,10 @@ board_object *reg_8bit_board_create(reg_8bit *reg, int key, char *name){
         j = 7-i;
 
         sprintf(s,"D%d",i);
-        board_add_led(board, reg->led[i],1+4*j,1,s);
+        board_add_led(board, reg->led[i],1+4*j,1,s, LED_RED);
     }
 
-    board_add_led(board, reg->ledclk,35,1,"CLK");
+    board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
 
     return board;
 }

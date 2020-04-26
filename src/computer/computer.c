@@ -168,7 +168,7 @@ void computer_sim(){
 
         int j = 7-i;
 
-        board_add_led(mainboard,ledbus[i],2+7*j, 4+15, dname);
+        board_add_led(mainboard,ledbus[i],2+7*j, 4+15, dname, LED_RED);
 
         board_add_manual_switch(mainboard, swbus[i], 2+7*j, 4+18, '0'+i, dname);
     }
