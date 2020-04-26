@@ -11,6 +11,7 @@
 
 #include "reg_8bit.h"
 #include "alu_8bit.h"
+#include "ram_8bit.h"
 
 #include "computer.h"
 
@@ -27,6 +28,8 @@ void computer_sim(){
 
     alu_8bit *alu = alu_8bit_create("ALU");
 
+    ram_8bit *ram = ram_8bit_create("RAM");
+
     if ((!regA)||(!regB)||(!regIN)){
 
         perror("reg_x create");
@@ -40,6 +43,7 @@ void computer_sim(){
     board_object *regIN_board = reg_8bit_board_create(regIN, KEY_F(3), "Reg IN"); // Requer NCURSES
 
     board_object *alu_board = alu_8bit_board_create(alu, KEY_F(4), "ALU"); // Requer NCURSES
+    board_object *ram_board = ram_8bit_board_create(ram, KEY_F(5), "RAM"); // Requer NCURSES
 
     if ((!regA_board)||(!regB_board)||(!regIN_board)||(!alu_board)){
 
@@ -94,17 +98,17 @@ void computer_sim(){
     reg_8bit_in_load_from((void*)&bitswitch_connect_out,sw_load2,regB);
     reg_8bit_in_load_from((void*)&bitswitch_connect_out,sw_load3,regIN);
 
-    board_add_manual_switch(mainboard, sw_load1, 44, 2, 'q', "Load1");
-    board_add_manual_switch(mainboard, sw_load2, 44, 4+6, 'a', "Load2");
-    board_add_manual_switch(mainboard, sw_load3, 44, 4+10, 'z', "Load3");
+    board_add_manual_switch(mainboard, sw_load1, 42, 2, 'q', "Load1");
+    board_add_manual_switch(mainboard, sw_load2, 42, 4+6, 'a', "Load2");
+    board_add_manual_switch(mainboard, sw_load3, 42, 4+10, 'z', "Load3");
 
     reg_8bit_in_enable_from((void*)&bitswitch_connect_out,sw_enable1,regA);
     reg_8bit_in_enable_from((void*)&bitswitch_connect_out,sw_enable2,regB);
     reg_8bit_in_enable_from((void*)&bitswitch_connect_out,sw_enable3,regIN);
 
-    board_add_manual_switch(mainboard, sw_enable1, 55, 2, 'w', "EN1");
-    board_add_manual_switch(mainboard, sw_enable2, 55, 4+6, 's', "EN2");
-    board_add_manual_switch(mainboard, sw_enable3, 55, 4+10, 'x', "EN3");
+    board_add_manual_switch(mainboard, sw_enable1, 53, 2, 'w', "EN1");
+    board_add_manual_switch(mainboard, sw_enable2, 53, 4+6, 's', "EN2");
+    board_add_manual_switch(mainboard, sw_enable3, 53, 4+10, 'x', "EN3");
 
     indicator *ledbus[8];
     bitswitch *swbus[8];
@@ -164,16 +168,22 @@ void computer_sim(){
 
         int j = 7-i;
 
-        board_add_led(mainboard,ledbus[i],1+8*j, 4+15, dname);
+        board_add_led(mainboard,ledbus[i],2+7*j, 4+15, dname);
 
-        board_add_manual_switch(mainboard, swbus[i], 1+8*j, 4+18, '0'+i, dname);
+        board_add_manual_switch(mainboard, swbus[i], 2+7*j, 4+18, '0'+i, dname);
     }
 
-    board_add_manual_switch(mainboard, sw_sub, 44, 6, 'S', "SUB");
-    board_add_manual_switch(mainboard, sw_eo, 55, 6, 'E', "EO");
+    board_add_manual_switch(mainboard, sw_sub, 42, 6, 'S', "SUB");
+    board_add_manual_switch(mainboard, sw_eo, 53, 6, 'E', "EO");
 
     alu_8bit_in_sub_from((void*)&bitswitch_connect_out, sw_sub, alu);
     alu_8bit_in_enable_from((void*)&bitswitch_connect_out, sw_eo, alu);
+
+
+    board_add_board(mainboard,ram_board,66,1);
+
+
+
 
     board_run(mainboard);
 }
