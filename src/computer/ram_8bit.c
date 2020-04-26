@@ -147,6 +147,21 @@ ram_8bit *ram_8bit_create(char *name){
     ls157_connect_y3(ram->ls157_datahi,ram->ls189_hi, (void*)&ls189_in_3d);
     ls157_connect_y4(ram->ls157_datahi,ram->ls189_hi, (void*)&ls189_in_4d);
 
+    bitswitch_connect_out(ram->progwrite,ram->ls157_write,(void*)&ls157_in_a1);
+    ls157_connect_y1(ram->ls157_write,ram->ls189_lo, (void*)&ls189_in_we);
+    ls157_connect_y1(ram->ls157_write,ram->ls189_hi, (void*)&ls189_in_we);
+
+    ls173_connect_1q(ram->ls173_addreg,ram->ls157_addr,(void*)&ls157_in_b1);
+    ls173_connect_2q(ram->ls173_addreg,ram->ls157_addr,(void*)&ls157_in_b2);
+    ls173_connect_3q(ram->ls173_addreg,ram->ls157_addr,(void*)&ls157_in_b3);
+    ls173_connect_4q(ram->ls173_addreg,ram->ls157_addr,(void*)&ls157_in_b4);
+
+    bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_m);
+    bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_n);
+    bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_clr);
+
+
+
     if (name)
         strncpy(ram->name,name,sizeof(ram->name));
     else
@@ -210,8 +225,8 @@ void ram_8bit_in_addr_from(void (*connect_fn)(void *source, void *dest, void (*d
 void ram_8bit_in_we_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
                         void *from, ram_8bit *dest){
 
-    connect_fn(from,dest->ls189_lo,(void*)&ls189_in_we);
-    connect_fn(from,dest->ls189_hi,(void*)&ls189_in_we);
+    //connect_fn(from,dest->ls189_lo,(void*)&ls189_in_we);
+    //connect_fn(from,dest->ls189_hi,(void*)&ls189_in_we);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
