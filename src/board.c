@@ -296,6 +296,180 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void display_7seg(int val, int pos_w, int pos_h){
+
+    wmove(janela1, pos_h, pos_w);
+
+    /////////////// LINHA 1
+    switch(val){
+
+    case 2:
+    case 3:
+    case 7:
+        waddch(janela1,ACS_S1);
+        break;
+    case 1:
+        waddch(janela1,' ');
+        break;
+    case 4:
+        waddch(janela1,ACS_VLINE);
+        break;
+    default:
+        waddch(janela1,ACS_ULCORNER);
+        break;
+    }
+
+    ///////////////
+    switch(val){
+
+    case 1:
+    case 4:
+        waddch(janela1,' ');
+        waddch(janela1,' ');
+        break;
+    default:
+        waddch(janela1,ACS_S1);
+        waddch(janela1,ACS_S1);
+        break;
+    }
+
+    switch(val){
+
+    case 0:
+    case 2:
+    case 3:
+    case 7:
+    case 8:
+    case 9:
+        waddch(janela1,ACS_URCORNER);
+        break;
+    case 1:
+    case 4:
+        waddch(janela1,ACS_VLINE);
+        break;
+    case 6:
+        waddch(janela1,' ');
+        break;
+    default:
+        waddch(janela1,ACS_S1);
+        break;
+
+    }
+
+    wmove(janela1, pos_h+1, pos_w); //LINHA 2
+
+    switch(val){
+
+    case 0:
+        waddch(janela1,ACS_VLINE);
+        break;
+    case 1:
+    case 7:
+        waddch(janela1,' ');
+        break;
+    case 2:
+        waddch(janela1,ACS_ULCORNER);
+        break;
+    case 3:
+        waddch(janela1,ACS_HLINE);
+        break;
+    case 6:
+    case 8:
+        waddch(janela1,ACS_LTEE);
+        break;
+    case 4:
+    case 5:
+    case 9:
+        waddch(janela1,ACS_LLCORNER);
+        break;
+    }
+
+    switch(val){
+
+    case 0:
+    case 1:
+    case 7:
+        waddch(janela1,' ');
+        waddch(janela1,' ');
+        break;
+    default:
+        waddch(janela1,ACS_HLINE);
+        waddch(janela1,ACS_HLINE);
+        break;
+    }
+
+    switch(val){
+
+    case 0:
+    case 1:
+    case 7:
+        waddch(janela1,ACS_VLINE);
+        break;
+    case 2:
+        waddch(janela1,ACS_LRCORNER);
+        break;
+    case 5:
+    case 6:
+        waddch(janela1,ACS_URCORNER);
+        break;
+    default:
+        waddch(janela1,ACS_RTEE);
+        break;
+    }
+
+    wmove(janela1, pos_h+2, pos_w); //LINHA 3
+
+    switch(val){
+
+    case 0:
+    case 2:
+    case 6:
+    case 8:
+        waddch(janela1,ACS_LLCORNER);
+        break;
+    case 3:
+    case 5:
+        waddch(janela1,ACS_S9);
+        break;
+    default:
+        waddch(janela1,' ');
+        break;
+    }
+
+    switch(val){
+
+    case 1:
+    case 4:
+    case 7:
+        waddch(janela1,' ');
+        waddch(janela1,' ');
+        break;
+    default:
+        waddch(janela1,ACS_S9);
+        waddch(janela1,ACS_S9);
+        break;
+    }
+
+    switch(val){
+
+    case 1:
+    case 4:
+    case 7:
+        waddch(janela1,ACS_VLINE);
+        break;
+    case 2:
+        waddch(janela1,ACS_S9);
+        break;
+    default:
+        waddch(janela1,ACS_LRCORNER);
+        break;
+
+    }
+
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void board_refresh(board_object *b){
 
     pthread_mutex_lock(&ncursesmutex);
@@ -303,6 +477,11 @@ void board_refresh(board_object *b){
     board_refresh_a(b,0,0);
 
     focustable_done = 1;
+
+    int i;
+    for (i = 0; i <= 9; i++){
+        display_7seg(i, 4+6*i, 27);
+    }
 
     wrefresh(janela1);
     wrefresh(janela0);
