@@ -34,7 +34,6 @@ typedef struct {
     int w_height;
     void/*board_object*/ *objptr_root;
     void/*board_object*/ *objptr_next;
-    void/*board_object*/ *board_on_focus;
 } board_object;
 
 int board_add_manual_switch(board_object *b, bitswitch *bs, int pos_w, int pow_h, int key, char *name);

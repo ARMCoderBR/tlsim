@@ -175,6 +175,15 @@ void rectangle(int y1, int x1, int y2, int x2)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+#define MAX_FOCUSEABLES_BOARDS 50
+
+int focustable_done = 0;
+int num_focuseable_boards = 0;
+int current_board_on_focus = 0;
+board_object *board_on_focus[MAX_FOCUSEABLES_BOARDS];
+
+////////////////////////////////////////////////////////////////////////////////
 void board_refresh_a(board_object *b, int new_h, int new_w){
 
     if (b->type != BOARD) return;   // Erro interno - nunca deve acontecer.
@@ -189,6 +198,9 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
         waddch(janela1,']');
     }
 
+    int has_key = 0;
+    board_object *thisboard = b;
+
     b = b->objptr_root;
 
     while (b){
@@ -200,7 +212,6 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
         case MANUAL_SWITCH:
             {
                 bitswitch* bs = b->objptr;
-
                 if (bs->value)
                     waddstr(janela1,"[0 >1]");
                 else
@@ -241,6 +252,8 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 
         if (b->type == MANUAL_SWITCH){
 
+            has_key = 1;
+
             int key = b->key;
             char s[10];
             if ((key >= KEY_F(1)) && (key <= KEY_F(12))){
@@ -255,6 +268,11 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 
         b = b->objptr_next;
     }
+
+    if (!focustable_done)
+        if (has_key)
+            if (num_focuseable_boards < MAX_FOCUSEABLES_BOARDS)
+                board_on_focus[num_focuseable_boards++] = thisboard;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -263,6 +281,8 @@ void board_refresh(board_object *b){
     pthread_mutex_lock(&ncursesmutex);
 
     board_refresh_a(b,0,0);
+
+    focustable_done = 1;
 
     wrefresh(janela1);
     wrefresh(janela0);
@@ -514,7 +534,7 @@ board_object *board_create(int width, int height, int key, char *name){
     b->w_height = height;
     b->objptr_root = NULL;
     b->objptr_next = NULL;
-    b->board_on_focus = b;  // Focada nela própria no início.
+    //b->board_on_focus = b;  // Focada nela própria no início.
 
     return b;
 }
@@ -775,6 +795,18 @@ int board_run(board_object *board){
             case 27:
                 stoprun = 1;
                 break;
+            case KEY_F(2):
+                if (num_focuseable_boards > 1){
+
+                    current_board_on_focus = (current_board_on_focus-1) % num_focuseable_boards;
+                }
+                break;
+            case KEY_F(3):
+                if (num_focuseable_boards > 1){
+
+                    current_board_on_focus = (current_board_on_focus+1) % num_focuseable_boards;
+                }
+                break;
             case KEY_F(12):
                 clock_faster();
                 break;
@@ -786,7 +818,11 @@ int board_run(board_object *board){
                 break;
             }
 
-            board_object *pboardfocused = board->board_on_focus;
+            board_object *pboardfocused = NULL;
+
+            if (num_focuseable_boards)
+                pboardfocused = board_on_focus[current_board_on_focus];
+
             board_object *p;
 
             if (pboardfocused)
