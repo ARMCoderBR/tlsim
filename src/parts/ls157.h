@@ -43,4 +43,8 @@ void ls157_in_b3(ls157 *dest, int *valptr, int timestamp);
 void ls157_in_a4(ls157 *dest, int *valptr, int timestamp);
 void ls157_in_b4(ls157 *dest, int *valptr, int timestamp);
 
+void ls157_in_sel(ls157 *dest, int *valptr, int timestamp);
+
+void ls157_in_g(ls157 *dest, int *valptr, int timestamp);
+
 #endif /* LS157_H_ */

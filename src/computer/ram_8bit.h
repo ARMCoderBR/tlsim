@@ -10,7 +10,10 @@
 
 // Baseado no projeto do Ben Eater (https://www.youtube.com/watch?v=CiMaWbz_6E8)
 
+#include "bitswitch.h"
 #include "ls04.h"
+#include "ls157.h"
+#include "ls173.h"
 #include "ls189.h"
 #include "ls245.h"
 #include "indicator.h"
@@ -22,7 +25,17 @@ typedef struct {
     ls189 *ls189_hi, *ls189_lo;
     ls04 *ls04_hi, *ls04_lo;
     ls245 *ls245_1;
-    indicator *led[8];
+    indicator *leddata[8];
+    //////////////
+    ls157 *ls157_addr;
+    ls173 *ls173_addreg;
+    ls157 *ls157_datalo, *ls157_datahi;
+    ls157 *ls157_write;
+    indicator *ledaddr[4];
+    bitswitch *prog_run;
+    bitswitch *progaddr[4];
+    bitswitch *progdata[8];
+    bitswitch *progwrite;
     char name[30];
 
 } ram_8bit;
