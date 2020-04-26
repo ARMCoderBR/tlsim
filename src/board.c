@@ -211,11 +211,16 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 
         case MANUAL_SWITCH:
             {
+                if (thisboard == board_on_focus[current_board_on_focus]){
+
+                    wattrset(janela1,A_STANDOUT);
+                }
                 bitswitch* bs = b->objptr;
                 if (bs->value)
                     waddstr(janela1,"[0 >1]");
                 else
                     waddstr(janela1,"[0< 1]");
+                wattrset(janela1,A_NORMAL);
             }
             break;
 
@@ -246,13 +251,25 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 
         if (b->type != BOARD){
 
+            if (b->type == MANUAL_SWITCH){
+
+                if (thisboard == board_on_focus[current_board_on_focus]){
+
+                    wattrset(janela1,A_STANDOUT);
+                }
+            }
             wmove(janela1,1 + new_h + b->pos_h, new_w + b->pos_w);
             waddstr(janela1,b->name);
+            wattrset(janela1,A_NORMAL);
         }
 
         if (b->type == MANUAL_SWITCH){
 
             has_key = 1;
+            if (thisboard == board_on_focus[current_board_on_focus]){
+
+                wattrset(janela1,A_STANDOUT);
+            }
 
             int key = b->key;
             char s[10];
@@ -264,6 +281,7 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
                 sprintf(s,"[%c]",key);
 
             waddstr(janela1,s);
+            wattrset(janela1,A_NORMAL);
         }
 
         b = b->objptr_next;
@@ -801,12 +819,14 @@ int board_run(board_object *board){
                         current_board_on_focus--;
                     else
                         current_board_on_focus = num_focuseable_boards - 1;
+                    board_set_refresh();
                 }
                 break;
             case KEY_F(3):
                 if (num_focuseable_boards > 1){
 
                     current_board_on_focus = (current_board_on_focus+1) % num_focuseable_boards;
+                    board_set_refresh();
                 }
                 break;
             case KEY_F(12):
