@@ -23,7 +23,6 @@ typedef struct {
     ls04 *ls04_hi, *ls04_lo;
     ls245 *ls245_1;
     indicator *led[8];
-    indicator *ledclk;
     char name[30];
 
 } ram_8bit;

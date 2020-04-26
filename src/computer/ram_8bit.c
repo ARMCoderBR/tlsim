@@ -36,8 +36,6 @@ ram_8bit *ram_8bit_create(char *name){
     ram->ls189_hi = ls189_create(lshi);
     ram->ls189_lo = ls189_create(lslo);
     ram->ls245_1  = ls245_create();
-    ram->ledclk = indicator_create("Clk");
-
     ram->ls04_hi = ls04_create();
     ram->ls04_lo = ls04_create();
 
@@ -216,8 +214,7 @@ void (*ram_8bit_in_dataN[])(void *dest, int *valptr, int timestamp) = {
         (void*)ram_8bit_in_data7,
 };
 
-
-
+////////////////////////////////////////////////////////////////////////////////
 
 void ram_8bit_in_addr0(ram_8bit *dest, int *valptr, int timestamp){
 
@@ -251,10 +248,8 @@ void (*ram_8bit_in_addrN[])(void *dest, int *valptr, int timestamp) = {
         (void*)ram_8bit_in_addr3,
 };
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
-board_object *ram_8bit_board_create(ram_8bit *reg, int key, char *name){
+board_object *ram_8bit_board_create(ram_8bit *ram, int key, char *name){
 
     board_object *board = board_create(40, 4, key, name);
 
@@ -268,10 +263,8 @@ board_object *ram_8bit_board_create(ram_8bit *reg, int key, char *name){
         j = 7-i;
 
         sprintf(s,"D%d",i);
-        board_add_led(board, reg->led[i],1+4*j,1,s);
+        board_add_led(board, ram->led[i],1+4*j,1,s);
     }
-
-    board_add_led(board, reg->ledclk,35,1,"CLK");
 
     return board;
 }
