@@ -322,7 +322,7 @@ void (*ram_8bit_in_addrN[])(void *dest, int *valptr, int timestamp) = {
 ////////////////////////////////////////////////////////////////////////////////
 board_object *ram_8bit_board_create(ram_8bit *ram, int key, char *name){
 
-    board_object *board = board_create(40, 9, key, name);
+    board_object *board = board_create(58, 13, key, name);
 
     if (!board) return board;
 
@@ -335,7 +335,11 @@ board_object *ram_8bit_board_create(ram_8bit *ram, int key, char *name){
 
         sprintf(s,"D%d",i);
         board_add_led(board, ram->leddata[i],1+4*j,1,s);
+
+        board_add_manual_switch(board, ram->progdata[j], 1+7*j, 7, '0'+i, s);
     }
+
+    char ka[]="hjkl";
 
     for (i = 0; i < 4; i++){
 
@@ -343,10 +347,12 @@ board_object *ram_8bit_board_create(ram_8bit *ram, int key, char *name){
 
         sprintf(s,"A%d",i);
         board_add_led(board, ram->ledaddr[i],17+4*j,4,s);
+        board_add_manual_switch(board, ram->progaddr[i], 1+7*j, 10, ka[j], s);
     }
 
 
-    board_add_manual_switch(board, ram->prog_run, 1, 4, 'r',"Pr/Run");
+    board_add_manual_switch(board, ram->prog_run, 1, 4, 'p',"Pr/Run");
+    board_add_manual_switch(board, ram->progwrite, 48, 10, 'w',"Write");
 
     return board;
 }
