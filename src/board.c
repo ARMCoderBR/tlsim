@@ -212,16 +212,13 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 
         case MANUAL_SWITCH:
             {
-                if (thisboard == board_on_focus[current_board_on_focus]){
-
-                    wattrset(janela1,A_STANDOUT);
-                }
                 bitswitch* bs = b->objptr;
+                wattron(janela1,COLOR_PAIR(LED_WHITE));
                 if (bs->value)
-                    waddstr(janela1,"[0 >1]");
+                    waddstr(janela1,"[ >1]");
                 else
-                    waddstr(janela1,"[0< 1]");
-                wattrset(janela1,A_NORMAL);
+                    waddstr(janela1,"[0< ]");
+                wattroff(janela1,COLOR_PAIR(LED_WHITE));
             }
             break;
 
