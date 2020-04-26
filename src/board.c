@@ -797,8 +797,10 @@ int board_run(board_object *board){
                 break;
             case KEY_F(2):
                 if (num_focuseable_boards > 1){
-
-                    current_board_on_focus = (current_board_on_focus-1) % num_focuseable_boards;
+                    if (current_board_on_focus)
+                        current_board_on_focus--;
+                    else
+                        current_board_on_focus = num_focuseable_boards - 1;
                 }
                 break;
             case KEY_F(3):
