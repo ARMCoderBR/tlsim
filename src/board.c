@@ -38,6 +38,11 @@ pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
 ////////////////////////////////////////////////////////////////////////////////
 void desenha_janelas(void)
 {
+    wbkgd(janela0,COLOR_PAIR(10));
+    wbkgd(janela1,COLOR_PAIR(10));
+    wbkgd(janela2,COLOR_PAIR(10));
+    wbkgd(janela3,COLOR_PAIR(10));
+
     /*box(janela0, 0 , 0);  */      /* 0, 0 gives default characters
                                  * for the vertical and horizontal
                                  * lines            */
@@ -478,10 +483,10 @@ void board_refresh(board_object *b){
 
     focustable_done = 1;
 
-    int i;
-    for (i = 0; i <= 9; i++){
-        display_7seg(i, 4+6*i, 27);
-    }
+//    int i;
+//    for (i = 0; i <= 9; i++){
+//        display_7seg(i, 4+6*i, 27);
+//    }
 
     wrefresh(janela1);
     wrefresh(janela0);
@@ -927,6 +932,8 @@ int board_run(board_object *board){
     init_pair(3, 8|COLOR_YELLOW, 16|COLOR_BLACK);
     init_pair(4, 8|COLOR_BLUE, 16|COLOR_BLACK);
     init_pair(5, COLOR_WHITE, 16|COLOR_BLACK);
+
+    init_pair(10, COLOR_WHITE, 8|COLOR_BLACK);
 
     janela0 = newwin(TERM_LINES,TERM_COLS,0,0);
     //janela1 = newwin(TERM_LINES-1-LINHAS_JANELA2B,TERM_COLS-2,1,1);

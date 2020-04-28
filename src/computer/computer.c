@@ -36,7 +36,7 @@ void computer_sim(){
         exit(0);
     }
 
-    board_object *mainboard = board_create(0,0,0,"COMPUTER");
+    board_object *mainboard = board_create(0,0,0,"BEN EATER'S 8-BIT COMPUTER");
 
     board_object *regA_board = reg_8bit_board_create(regA, KEY_F(1), "Reg A"); // Requer NCURSES
     board_object *regB_board = reg_8bit_board_create(regB, KEY_F(2), "Reg B"); // Requer NCURSES
