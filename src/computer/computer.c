@@ -143,6 +143,7 @@ void computer_sim(){
     ram_8bit *ram = ram_8bit_create("RAM");
     board_object *ram_board = ram_8bit_board_create(ram, KEY_F(5), "RAM"); // Requer NCURSES
     board_add_board(mainboard,ram_board,66,1);
+    board_clock_connect(ram, (void*)&ram_8bit_in_clk);
 
 
     //////// PROGRAM COUNTER ///////////////////////////////////////////////////
@@ -187,31 +188,46 @@ void computer_sim(){
         swbus[i] = bitswitch_create(dname);
         bitswitch_setval(swbus[i], 1);
 
+        /// BUS TEST SWITCHES
         bitswitch_connect_out(swbus[i], ledbus[i], (void*)indicator_in_d0);
-
         bitswitch_connect_out(swbus[i], regA, (void*)reg_8bit_in_dataN[i]);
         bitswitch_connect_out(swbus[i], regB, (void*)reg_8bit_in_dataN[i]);
         bitswitch_connect_out(swbus[i], regIN, (void*)reg_8bit_in_dataN[i]);
+        bitswitch_connect_out(swbus[i], ram, (void*)ram_8bit_in_dataN[i]);
 
+        /// REGA OUTPUT
         reg_8bit_connect_bit_out (regA, i, ledbus[i], (void*)indicator_in_d0);
         reg_8bit_connect_bit_out (regA, i, regB, reg_8bit_in_dataN[i]);
         reg_8bit_connect_bit_out (regA, i, regIN, reg_8bit_in_dataN[i]);
+        reg_8bit_connect_bit_out (regA, i, ram, ram_8bit_in_dataN[i]);
 
+        /// REGB OUTPUT
         reg_8bit_connect_bit_out (regB, i, ledbus[i], (void*)indicator_in_d0);
         reg_8bit_connect_bit_out (regB, i, regA, reg_8bit_in_dataN[i]);
         reg_8bit_connect_bit_out (regB, i, regIN, reg_8bit_in_dataN[i]);
+        reg_8bit_connect_bit_out (regB, i, ram, ram_8bit_in_dataN[i]);
 
+        /// REGIN OUTPUT
         if (i < 4){
 
             reg_8bit_connect_bit_out (regIN, i, ledbus[i], (void*)indicator_in_d0);
             reg_8bit_connect_bit_out (regIN, i, regA, reg_8bit_in_dataN[i]);
             reg_8bit_connect_bit_out (regIN, i, regB, reg_8bit_in_dataN[i]);
+            reg_8bit_connect_bit_out (regIN, i, ram, ram_8bit_in_dataN[i]);
         }
 
+        /// ALU OUTPUT
         alu_8bit_connect_bit_out (alu, i, ledbus[i], (void*)indicator_in_d0);
         alu_8bit_connect_bit_out (alu, i, regA, reg_8bit_in_dataN[i]);
         alu_8bit_connect_bit_out (alu, i, regB, reg_8bit_in_dataN[i]);
         alu_8bit_connect_bit_out (alu, i, regIN, reg_8bit_in_dataN[i]);
+        alu_8bit_connect_bit_out (alu, i, ram, ram_8bit_in_dataN[i]);
+
+        /// RAM OUTPUT
+        ram_8bit_connect_bit_out(ram, i, ledbus[i], (void*)indicator_in_d0);
+        ram_8bit_connect_bit_out (ram, i, regA, reg_8bit_in_dataN[i]);
+        ram_8bit_connect_bit_out (ram, i, regB, reg_8bit_in_dataN[i]);
+        ram_8bit_connect_bit_out (ram, i, regIN, reg_8bit_in_dataN[i]);
 
         int j = 7-i;
 
@@ -225,6 +241,8 @@ void computer_sim(){
         reg_8bit_connect_bit_out (regA, i, pctr, progctr_in_dataN[i]);
         reg_8bit_connect_bit_out (regB, i, pctr, progctr_in_dataN[i]);
         reg_8bit_connect_bit_out (regIN, i, pctr, progctr_in_dataN[i]);
+        alu_8bit_connect_bit_out (alu, i, pctr, progctr_in_dataN[i]);
+        ram_8bit_connect_bit_out (ram, i, pctr, progctr_in_dataN[i]);
 
         bitswitch_connect_out(swbus[i], pctr, (void*)progctr_in_dataN[i]);
 
@@ -232,6 +250,7 @@ void computer_sim(){
         progctr_connect_bit_out (pctr, i, regA, reg_8bit_in_dataN[i]);
         progctr_connect_bit_out (pctr, i, regB, reg_8bit_in_dataN[i]);
         progctr_connect_bit_out (pctr, i, regIN, reg_8bit_in_dataN[i]);
+        progctr_connect_bit_out (pctr, i, ram, ram_8bit_in_dataN[i]);
 
     }
 

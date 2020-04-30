@@ -16,6 +16,7 @@
 #include "ls173.h"
 #include "ls189.h"
 #include "ls245.h"
+#include "ls00.h"
 #include "indicator.h"
 #include "board.h"
 
@@ -33,6 +34,7 @@ typedef struct {
     ls173 *ls173_addreg;
     ls157 *ls157_datalo, *ls157_datahi;
     ls157 *ls157_write;
+    ls00 *ls00_clk;
     indicator *ledaddr[4];
     bitswitch *prog_run;
     bitswitch *progaddr[4];
@@ -73,14 +75,13 @@ void ram_8bit_in_data5(ram_8bit *dest, int *valptr, int timestamp);
 void ram_8bit_in_data6(ram_8bit *dest, int *valptr, int timestamp);
 void ram_8bit_in_data7(ram_8bit *dest, int *valptr, int timestamp);
 
+void ram_8bit_in_wdata(ram_8bit *dest, int *valptr, int timestamp);
 
-extern void (*ram_8bit_in_addrN[])(void *dest, int *valptr, int timestamp);
+void ram_8bit_in_waddr(ram_8bit *dest, int *valptr, int timestamp);
 
-void ram_8bit_in_addr0(ram_8bit *dest, int *valptr, int timestamp);
-void ram_8bit_in_addr1(ram_8bit *dest, int *valptr, int timestamp);
-void ram_8bit_in_addr2(ram_8bit *dest, int *valptr, int timestamp);
-void ram_8bit_in_addr3(ram_8bit *dest, int *valptr, int timestamp);
+void ram_8bit_in_oe(ram_8bit *dest, int *valptr, int timestamp);
 
+void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp);
 
 board_object *ram_8bit_board_create(ram_8bit *reg, int key, char *name); // Requer NCURSES
 

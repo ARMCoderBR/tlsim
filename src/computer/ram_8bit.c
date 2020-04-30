@@ -90,6 +90,10 @@ ram_8bit *ram_8bit_create(char *name){
     ram->ls157_datalo = ls157_create();
     ram->ls157_datahi = ls157_create();
     ram->ls157_write = ls157_create();
+    ram->ls00_clk = ls00_create();
+
+    ls00_connect_y1(ram->ls00_clk, ram->ls157_write, (void*)&ls157_in_b1);
+
     ram->ledaddr[0] = indicator_create("A0");
     ram->ledaddr[1] = indicator_create("A1");
     ram->ledaddr[2] = indicator_create("A2");
@@ -169,6 +173,7 @@ ram_8bit *ram_8bit_create(char *name){
 
     bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_m);
     bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_n);
+    bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_g1);
     bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_clr);
 
     ram->ledprog = indicator_create("Ledprog");
@@ -217,58 +222,28 @@ void ram_8bit_in_data_from(void (*connect_fn)(void *source, void *dest, void (*d
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ram_8bit_in_addr_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
-                        void *from, ram_8bit *dest, int index){
-
-    switch(index){
-        case 0:
-            connect_fn(from,dest->ls157_addr,(void*)&ls157_in_b1);
-            break;
-        case 1:
-            connect_fn(from,dest->ls157_addr,(void*)&ls157_in_b2);
-            break;
-        case 2:
-            connect_fn(from,dest->ls157_addr,(void*)&ls157_in_b3);
-            break;
-        case 3:
-            connect_fn(from,dest->ls157_addr,(void*)&ls157_in_b4);
-            break;
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ram_8bit_in_we_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
-                        void *from, ram_8bit *dest){
-
-    //connect_fn(from,dest->ls189_lo,(void*)&ls189_in_we);
-    //connect_fn(from,dest->ls189_hi,(void*)&ls189_in_we);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ram_8bit_in_oe_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
-                        void *from, ram_8bit *dest){
-
-    connect_fn(from,dest->ls245_1,(void*)&ls245_in_oe);
-}
-
 void ram_8bit_in_data0(ram_8bit *dest, int *valptr, int timestamp){
 
     ls157_in_b1(dest->ls157_datalo, valptr, timestamp);
+    ls173_in_1d(dest->ls173_addreg, valptr, timestamp);
 }
 
 void ram_8bit_in_data1(ram_8bit *dest, int *valptr, int timestamp){
 
     ls157_in_b2(dest->ls157_datalo, valptr, timestamp);
+    ls173_in_2d(dest->ls173_addreg, valptr, timestamp);
 }
 
 void ram_8bit_in_data2(ram_8bit *dest, int *valptr, int timestamp){
 
     ls157_in_b3(dest->ls157_datalo, valptr, timestamp);
+    ls173_in_3d(dest->ls173_addreg, valptr, timestamp);
 }
 
 void ram_8bit_in_data3(ram_8bit *dest, int *valptr, int timestamp){
 
     ls157_in_b4(dest->ls157_datalo, valptr, timestamp);
+    ls173_in_4d(dest->ls173_addreg, valptr, timestamp);
 }
 
 void ram_8bit_in_data4(ram_8bit *dest, int *valptr, int timestamp){
@@ -291,7 +266,6 @@ void ram_8bit_in_data7(ram_8bit *dest, int *valptr, int timestamp){
     ls157_in_b4(dest->ls157_datahi, valptr, timestamp);
 }
 
-
 void (*ram_8bit_in_dataN[])(void *dest, int *valptr, int timestamp) = {
 
         (void*)ram_8bit_in_data0,
@@ -305,34 +279,28 @@ void (*ram_8bit_in_dataN[])(void *dest, int *valptr, int timestamp) = {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
+void ram_8bit_in_wdata(ram_8bit *dest, int *valptr, int timestamp){
 
-void ram_8bit_in_addr0(ram_8bit *dest, int *valptr, int timestamp){
-
-    ls157_in_b1(dest->ls157_addr, valptr, timestamp);
+	ls00_in_a1(dest->ls00_clk, valptr, timestamp);
 }
 
-void ram_8bit_in_addr1(ram_8bit *dest, int *valptr, int timestamp){
+////////////////////////////////////////////////////////////////////////////////
+void ram_8bit_in_waddr(ram_8bit *dest, int *valptr, int timestamp){
 
-    ls157_in_b2(dest->ls157_addr, valptr, timestamp);
+	ls173_in_g2(dest->ls173_addreg, valptr, timestamp);
 }
 
-void ram_8bit_in_addr2(ram_8bit *dest, int *valptr, int timestamp){
+////////////////////////////////////////////////////////////////////////////////
+void ram_8bit_in_oe(ram_8bit *dest, int *valptr, int timestamp){
 
-    ls157_in_b3(dest->ls157_addr, valptr, timestamp);
+	ls245_in_oe(dest->ls245_1, valptr, timestamp);
 }
 
-void ram_8bit_in_addr3(ram_8bit *dest, int *valptr, int timestamp){
+////////////////////////////////////////////////////////////////////////////////
+void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp){
 
-    ls157_in_b4(dest->ls157_addr, valptr, timestamp);
+	ls00_in_b1(dest->ls00_clk, valptr, timestamp);
 }
-
-void (*ram_8bit_in_addrN[])(void *dest, int *valptr, int timestamp) = {
-
-        (void*)ram_8bit_in_addr0,
-        (void*)ram_8bit_in_addr1,
-        (void*)ram_8bit_in_addr2,
-        (void*)ram_8bit_in_addr3,
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 board_object *ram_8bit_board_create(ram_8bit *ram, int key, char *name){
