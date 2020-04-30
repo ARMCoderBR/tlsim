@@ -40,6 +40,10 @@ typedef struct {
     bitswitch *progaddr[4];
     bitswitch *progdata[8];
     bitswitch *progwrite;
+    int oldclk;
+    int clk;
+    vallist *clk_rootptr;
+    int valfwd;
     char name[30];
 
 } ram_8bit;

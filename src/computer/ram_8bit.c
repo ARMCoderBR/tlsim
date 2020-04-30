@@ -187,6 +187,9 @@ ram_8bit *ram_8bit_create(char *name){
     else
         ram->name[0] = 0;
 
+    ram->clk = 2;
+    ram->oldclk = 1;
+    ram->clk_rootptr = NULL;
     return ram;
 }
 
@@ -299,8 +302,30 @@ void ram_8bit_in_oe(ram_8bit *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp){
 
+#define DIFPULSE 1
+
+#if DIFPULSE
+	int val = update_val_multi(&dest->clk_rootptr, valptr);
+    if (val > 1) val = 1;
+
+    if (val == dest->oldclk) return;
+
+    dest->oldclk = val;
+
+    if (val){
+
+    	dest->valfwd = 1;
+    	ls173_in_clk(dest->ls173_addreg, &dest->valfwd, timestamp+1);
+    	ls00_in_b1(dest->ls00_clk, &dest->valfwd, timestamp+1);
+    	event_process();
+    	dest->valfwd = 0;
+    	ls173_in_clk(dest->ls173_addreg, &dest->valfwd, timestamp+100);
+    	ls00_in_b1(dest->ls00_clk, &dest->valfwd, timestamp+100);
+    }
+#else
 	ls173_in_clk(dest->ls173_addreg, valptr, timestamp);
 	ls00_in_b1(dest->ls00_clk, valptr, timestamp);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
