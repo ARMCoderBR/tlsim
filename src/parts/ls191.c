@@ -17,10 +17,10 @@ static int ls191_update(ls191 *a){
 
     if (!a->load){
 
-        a->qa = a->da;
-        a->qb = a->db;
-        a->qc = a->dc;
-        a->qd = a->dd;
+        a->qa = a->da?1:0;
+        a->qb = a->db?1:0;
+        a->qc = a->dc?1:0;
+        a->qd = a->dd?1:0;
     }
     else{
 
@@ -168,8 +168,9 @@ ls191 *ls191_create(){
         return NULL;
     }
 
+    b->da = b->db = b->dc = b->dd = b->load = b->enable = b->downup = b->clk = 2;
 	b->da_rootptr = b->db_rootptr = b->dc_rootptr = b->dd_rootptr = b->load_rootptr = b->enable_rootptr = b->downup_rootptr = b->clk_rootptr = NULL;
-    b->qa_o = b->qb_o = b->qc_o = b->qd_o = b->maxmin_o = b->ripclk_o = 2;
+    b->qa_o = b->qb_o = b->qc_o = b->qd_o = b->maxmin_o = b->ripclk_o = 0;
     b->qa_event_handler_root =
     b->qb_event_handler_root =
     b->qc_event_handler_root =

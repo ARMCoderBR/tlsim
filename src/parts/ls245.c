@@ -29,12 +29,12 @@ static void ls245_update (ls245 *a, int timestamp){
     if (a->in_dir){
 
         for (i = 0; i < NUM_ELEM_LS245; i++)
-            a->outb[i] = a->inpa[i];
+            a->outb[i] = a->inpa[i]?1:0;
     }
     else{
 
         for (i = 0; i < NUM_ELEM_LS245; i++)
-            a->outa[i] = a->inpb[i];
+            a->outa[i] = a->inpb[i]?1:0;
     }
 
     ////////////////////////////////
@@ -97,12 +97,13 @@ ls245 *ls245_create(){
     if (b == NULL)
         return NULL;
 
-    b->in_dir = b->in_oe = 1;
+    b->in_dir = b->in_oe = 2;
 
     int i;
 
     for (i = 0; i < NUM_ELEM_LS245; i++){
 
+        b->inpa[i] = b->inpb[i] = 2;
         b->inpa_rootptr[i] = NULL;
         b->inpb_rootptr[i] = NULL;
         b->outa[i] = b->outa_o[i] = 2;

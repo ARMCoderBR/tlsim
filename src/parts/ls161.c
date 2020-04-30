@@ -28,10 +28,10 @@ static int ls161_update(ls161 *a){
 
         if (!a->load){
 
-            a->qa = a->da;
-            a->qb = a->db;
-            a->qc = a->dc;
-            a->qd = a->dd;
+            a->qa = a->da?1:0;
+            a->qb = a->db?1:0;
+            a->qc = a->dc?1:0;
+            a->qd = a->dd?1:0;
             goto end_ls161;
         }
 
@@ -63,6 +63,8 @@ static int ls161_update(ls161 *a){
     int mask = 0;
 
 end_ls161:
+
+    mask = 0;
 
     a->clk_o = a->clk;
 

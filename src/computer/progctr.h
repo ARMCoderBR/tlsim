@@ -39,7 +39,9 @@ void progctr_in_load(progctr *dest, int *valptr, int timestamp);
 
 void progctr_in_clear(progctr *dest, int *valptr, int timestamp);
 
-void progctr_in_eable(progctr *dest, int *valptr, int timestamp);
+void progctr_in_ct_enable(progctr *dest, int *valptr, int timestamp);
+
+void progctr_in_oenable(progctr *dest, int *valptr, int timestamp);
 
 void progctr_in_data0(progctr *dest, int *valptr, int timestamp);
 void progctr_in_data1(progctr *dest, int *valptr, int timestamp);

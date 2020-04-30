@@ -97,16 +97,28 @@ void progctr_in_clock(progctr *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void progctr_in_load(progctr *dest, int *valptr, int timestamp){
+
+    ls161_in_load(dest->ls161, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void progctr_in_clear(progctr *dest, int *valptr, int timestamp){
 
     ls161_in_clear(dest->ls161, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void progctr_in_enable(progctr *dest, int *valptr, int timestamp){
+void progctr_in_ct_enable(progctr *dest, int *valptr, int timestamp){
 
     ls161_in_enp(dest->ls161, valptr, timestamp);
     ls161_in_ent(dest->ls161, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void progctr_in_oenable(progctr *dest, int *valptr, int timestamp){
+
+    ls245_in_oe(dest->ls245_1, valptr, timestamp);
 }
 
 void progctr_in_data0(progctr *dest, int *valptr, int timestamp){
