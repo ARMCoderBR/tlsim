@@ -12,6 +12,7 @@
 #include "reg_8bit.h"
 #include "alu_8bit.h"
 #include "ram_8bit.h"
+#include "progctr.h"
 
 #include "computer.h"
 
@@ -30,6 +31,8 @@ void computer_sim(){
 
     ram_8bit *ram = ram_8bit_create("RAM");
 
+    progctr *pctr = progctr_create("PC");
+
     if ((!regA)||(!regB)||(!regIN)){
 
         perror("reg_x create");
@@ -44,6 +47,8 @@ void computer_sim(){
 
     board_object *alu_board = alu_8bit_board_create(alu, KEY_F(4), "ALU"); // Requer NCURSES
     board_object *ram_board = ram_8bit_board_create(ram, KEY_F(5), "RAM"); // Requer NCURSES
+
+    board_object *pctr_board = progctr_board_create(pctr, KEY_F(6), "PC");
 
     if ((!regA_board)||(!regB_board)||(!regIN_board)||(!alu_board)){
 
@@ -185,6 +190,8 @@ void computer_sim(){
     board_add_board(mainboard,ram_board,66,1);
 
 
+    board_add_board(mainboard,pctr_board,1,26);
+    board_clock_connect(pctr, (void*)&progctr_in_clock);
 
 
     board_run(mainboard);

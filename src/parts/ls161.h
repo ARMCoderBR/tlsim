@@ -43,5 +43,6 @@ void ls161_in_load(ls161 *dest, int *valptr, int timestamp);
 void ls161_in_enp(ls161 *dest, int *valptr, int timestamp);
 void ls161_in_ent(ls161 *dest, int *valptr, int timestamp);
 void ls161_in_clk(ls161 *dest, int *valptr, int timestamp);
+void ls161_in_clear(ls161 *dest, int *valptr, int timestamp);
 
 #endif /* LS161_H_ */

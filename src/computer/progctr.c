@@ -96,6 +96,19 @@ void progctr_in_clock(progctr *dest, int *valptr, int timestamp){
     indicator_in_d0(dest->ledclk, valptr, timestamp);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void progctr_in_clear(progctr *dest, int *valptr, int timestamp){
+
+    ls161_in_clear(dest->ls161, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void progctr_in_enable(progctr *dest, int *valptr, int timestamp){
+
+    ls161_in_enp(dest->ls161, valptr, timestamp);
+    ls161_in_ent(dest->ls161, valptr, timestamp);
+}
+
 void progctr_in_data0(progctr *dest, int *valptr, int timestamp){
 
     ls161_in_da(dest->ls161, valptr, timestamp);
@@ -135,11 +148,11 @@ board_object *progctr_board_create(progctr *reg, int key, char *name){
     char s[32];
     int i,j;
 
-    for (i = 0; i < 8; i++){
+    for (i = 0; i < 4; i++){
 
-        j = 7-i;
+        j = 3-i;
         sprintf(s,"D%d",i);
-        board_add_led(board, reg->led[i],1+4*j,1,s, LED_YELLOW);
+        board_add_led(board, reg->led[i],1+4*j,1,s, LED_GREEN);
     }
 
     board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
