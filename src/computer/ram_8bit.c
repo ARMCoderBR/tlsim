@@ -299,6 +299,7 @@ void ram_8bit_in_oe(ram_8bit *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp){
 
+	ls173_in_clk(dest->ls173_addreg, valptr, timestamp);
 	ls00_in_b1(dest->ls00_clk, valptr, timestamp);
 }
 

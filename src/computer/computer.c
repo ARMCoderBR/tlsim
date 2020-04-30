@@ -145,18 +145,32 @@ void computer_sim(){
     board_add_board(mainboard,ram_board,66,1);
     board_clock_connect(ram, (void*)&ram_8bit_in_clk);
 
+    bitswitch *ram_oe = bitswitch_create("RAMOE");
+    bitswitch *ram_waddr = bitswitch_create("RAMWA");
+    bitswitch *ram_wdata = bitswitch_create("RAMWD");
+
+    bitswitch_setval(ram_oe, 1);
+    bitswitch_setval(ram_waddr, 1);
+
+    bitswitch_connect_out(ram_oe, ram, (void*)&ram_8bit_in_oe);
+    bitswitch_connect_out(ram_waddr, ram, (void*)&ram_8bit_in_waddr);
+    bitswitch_connect_out(ram_wdata, ram, (void*)&ram_8bit_in_wdata);
+
+    board_add_manual_switch(mainboard, ram_oe, 66, 14, 'j', "OE");
+    board_add_manual_switch(mainboard, ram_waddr, 74, 14, 'k', "WADD");
+    board_add_manual_switch(mainboard, ram_wdata, 82, 14, 'l', "WDAT");
+
 
     //////// PROGRAM COUNTER ///////////////////////////////////////////////////
 
     progctr *pctr = progctr_create("PC");
+    board_object *pctr_board = progctr_board_create(pctr, KEY_F(6), "PC");
+    board_add_board(mainboard,pctr_board,1,26);
+    board_clock_connect(pctr, (void*)&progctr_in_clock);
+
     bitswitch *prctr_cten = bitswitch_create("CTEN");
     bitswitch *prctr_eo = bitswitch_create("EO");
     bitswitch *prctr_jmp = bitswitch_create("JMP");
-
-    board_object *pctr_board = progctr_board_create(pctr, KEY_F(6), "PC");
-    board_add_board(mainboard,pctr_board,1,26);
-
-    board_clock_connect(pctr, (void*)&progctr_in_clock);
 
     bitswitch_setval(prctr_cten,1);
     bitswitch_setval(prctr_eo,1);
@@ -167,9 +181,9 @@ void computer_sim(){
     bitswitch_connect_out(prctr_jmp, pctr, (void*)&progctr_in_load);
     bitconst_connect_one(pctr,(void*)&progctr_in_clear);
 
-    board_add_manual_switch(mainboard, prctr_cten, 42, 27, 'n', "CTEn");
-    board_add_manual_switch(mainboard, prctr_eo, 50, 27, 'o', "EO");
-    board_add_manual_switch(mainboard, prctr_jmp, 58, 27, 'j', "JMP");
+    board_add_manual_switch(mainboard, prctr_cten, 42, 27, 'b', "CTEn");
+    board_add_manual_switch(mainboard, prctr_eo, 50, 27, 'n', "EO");
+    board_add_manual_switch(mainboard, prctr_jmp, 58, 27, 'm', "JMP");
 
 
     //////// BUS ///////////////////////////////////////////////////////////////
