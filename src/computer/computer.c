@@ -220,7 +220,20 @@ void computer_sim(){
         board_add_manual_switch(mainboard, swbus[i], 2+7*j, 4+18, '0'+i, dname);
     }
 
+    for (i = 0; i < 4; i++){
 
+        reg_8bit_connect_bit_out (regA, i, pctr, progctr_in_dataN[i]);
+        reg_8bit_connect_bit_out (regB, i, pctr, progctr_in_dataN[i]);
+        reg_8bit_connect_bit_out (regIN, i, pctr, progctr_in_dataN[i]);
+
+        bitswitch_connect_out(swbus[i], pctr, (void*)progctr_in_dataN[i]);
+
+        progctr_connect_bit_out (pctr, i, ledbus[i], (void*)indicator_in_d0);
+        progctr_connect_bit_out (pctr, i, regA, reg_8bit_in_dataN[i]);
+        progctr_connect_bit_out (pctr, i, regB, reg_8bit_in_dataN[i]);
+        progctr_connect_bit_out (pctr, i, regIN, reg_8bit_in_dataN[i]);
+
+    }
 
 
 
