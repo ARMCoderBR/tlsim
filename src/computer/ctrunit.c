@@ -23,6 +23,7 @@ ctrunit *ctrunit_create(char *name){
 
     ctru->ls00 = ls00_create();
     ctru->ls04_1 = ls04_create();
+    ctru->ls04_2 = ls04_create();
     ctru->reset_sw = bitswitch_create("Reset");
 
     int i;
@@ -106,13 +107,15 @@ void ctrunit_connect_out_hlt(ctrunit *source, void *dest, void (*dest_event_hand
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_in_mi(ctrunit *dest, int *valptr, int timestamp){
 
-    ctrunit_in(dest, MI, valptr, timestamp);
+    ls04_in_a4(dest->ls04_2, valptr, timestamp);
+    //ctrunit_in(dest, MI, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_connect_out_mi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
-    ctrunit_connect_out(source, MI, dest, dest_event_handler);
+    ls04_connect_y4(source->ls04_2, dest, dest_event_handler);
+    //ctrunit_connect_out(source, MI, dest, dest_event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -158,25 +161,29 @@ void ctrunit_connect_out_io(ctrunit *source, void *dest, void (*dest_event_handl
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_in_ii(ctrunit *dest, int *valptr, int timestamp){
 
-    ctrunit_in(dest, II, valptr, timestamp);
+    ls04_in_a3(dest->ls04_2, valptr, timestamp);
+    //ctrunit_in(dest, II, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_connect_out_ii(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
-    ctrunit_connect_out(source, II, dest, dest_event_handler);
+    ls04_connect_y3(source->ls04_2, dest, dest_event_handler);
+    //ctrunit_connect_out(source, II, dest, dest_event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_in_ai(ctrunit *dest, int *valptr, int timestamp){
 
-    ctrunit_in(dest, AI, valptr, timestamp);
+    ls04_in_a1(dest->ls04_2, valptr, timestamp);
+    //ctrunit_in(dest, AI, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_connect_out_ai(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
-    ctrunit_connect_out(source, AI, dest, dest_event_handler);
+    ls04_connect_y1(source->ls04_2, dest, dest_event_handler);
+    //ctrunit_connect_out(source, AI, dest, dest_event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -222,13 +229,15 @@ void ctrunit_connect_out_su(ctrunit *source, void *dest, void (*dest_event_handl
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_in_bi(ctrunit *dest, int *valptr, int timestamp){
 
-    ctrunit_in(dest, BI, valptr, timestamp);
+    ls04_in_a2(dest->ls04_2, valptr, timestamp);
+    //ctrunit_in(dest, BI, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_connect_out_bi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
-    ctrunit_connect_out(source, BI, dest, dest_event_handler);
+    ls04_connect_y2(source->ls04_2, dest, dest_event_handler);
+    //ctrunit_connect_out(source, BI, dest, dest_event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

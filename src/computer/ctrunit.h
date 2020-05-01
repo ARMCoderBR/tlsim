@@ -38,7 +38,7 @@
 typedef struct {
 
     ls00 *ls00;
-    ls04 *ls04_1;
+    ls04 *ls04_1, *ls04_2;
     bitswitch *reset_sw;
     indicator *led[NSIGNALS_CTRU];
     vallist *in_rootptr[NSIGNALS_CTRU];
