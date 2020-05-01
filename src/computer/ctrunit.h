@@ -53,4 +53,49 @@ ctrunit *ctrunit_create(char *name);
 
 board_object *ctrunit_board_create(ctrunit *reg, int key, char *name); // Requer NCURSES
 
+void ctrunit_in_hlt(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_hlt(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_mi(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_mi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_ri(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_ri(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_ro(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_ro(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_io(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_io(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_ii(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_ii(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_ai(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_ai(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_ao(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_ao(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_so(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_so(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_su(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_su(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_bi(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_bi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_oi(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_oi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_ce(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_ce(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_co(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_co(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_j(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_connect_out_j(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
 #endif /* REG_8BIT_H_ */

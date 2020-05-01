@@ -66,18 +66,6 @@ void ctrunit_connect_out(ctrunit *source, int index, void *dest, void (*dest_eve
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ctrunit_in_hlt(ctrunit *dest, int *valptr, int timestamp){
-
-    ctrunit_in(dest, HLT, valptr, timestamp);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void ctrunit_connect_hlt_out(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
-
-    ctrunit_connect_out(source, HLT, dest, dest_event_handler);
-}
-
-////////////////////////////////////////////////////////////////////////////////
 board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
 
     board_object *board = board_create(62, 4, key, name);
@@ -98,3 +86,184 @@ board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
 
     return board;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_hlt(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, HLT, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_hlt(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, HLT, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_mi(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, MI, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_mi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, MI, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_ri(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, RI, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_ri(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, RI, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_ro(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, RO, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_ro(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, RO, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_io(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, IO, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_io(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, IO, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_ii(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, II, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_ii(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, II, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_ai(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, AI, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_ai(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, AI, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_ao(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, AO, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_ao(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, AO, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_so(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, SO, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_so(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, SO, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_su(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, SU, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_su(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, SU, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_bi(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, BI, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_bi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, BI, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_oi(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, OI, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_oi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, OI, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_ce(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, CE, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_ce(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, CE, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_co(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, CO, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_co(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, CO, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_j(ctrunit *dest, int *valptr, int timestamp){
+
+    ctrunit_in(dest, J, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_j(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ctrunit_connect_out(source, J, dest, dest_event_handler);
+}
+
