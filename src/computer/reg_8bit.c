@@ -159,8 +159,11 @@ void reg_8bit_in_clock(reg_8bit *dest, int *valptr, int timestamp){
     indicator_in_d0(dest->ledclk, valptr, timestamp);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void reg_8bit_in_enable(reg_8bit *dest, int *valptr, int timestamp){
 
-
+    ls245_in_oe(dest->ls245_1, valptr, timestamp);
+}
 
 void reg_8bit_in_data0(reg_8bit *dest, int *valptr, int timestamp){
 

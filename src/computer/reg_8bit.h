@@ -54,6 +54,8 @@ void reg_8bit_in_clock_from(void (*connect_fn)(void *source, void *dest, void (*
                         void *from, reg_8bit *dest);
 
 ///////////////////////////////
+void reg_8bit_in_enable(reg_8bit *dest, int *valptr, int timestamp);
+
 void reg_8bit_in_clock(reg_8bit *dest, int *valptr, int timestamp);
 
 
