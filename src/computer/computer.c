@@ -14,6 +14,7 @@
 #include "ram_8bit.h"
 #include "progctr.h"
 #include "bitconst.h"
+#include "ctrunit.h"
 
 #include "computer.h"
 
@@ -269,8 +270,11 @@ void computer_sim(){
     }
 
 
+    //////// CONTROL UNIT //////////////////////////////////////////////////////
 
-
+    ctrunit *ctru =ctrunit_create("CONTROL UNIT");
+    board_object *ctru_board = ctrunit_board_create(ctru, '*', "CONTROL UNIT");
+    board_add_board(mainboard,ctru_board,1,32);
 
     board_run(mainboard);
 }
