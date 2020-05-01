@@ -15,6 +15,7 @@
 #include "progctr.h"
 #include "bitconst.h"
 #include "ctrunit.h"
+#include "reg_out.h"
 
 #include "computer.h"
 
@@ -109,6 +110,14 @@ void computer_sim(){
     board_clock_connect(pctr, (void*)&progctr_in_clock);
 
 
+    //////// REG OUT ///////////////////////////////////////////////////////////
+
+    reg_out *regout = reg_out_create("RO");
+    board_object *regout_board = reg_out_board_create(regout, KEY_F(6), "RO");
+    board_add_board(mainboard,regout_board,66,18);
+    board_clock_connect(regout, (void*)&reg_out_in_clock);
+
+
     //////// BUS ///////////////////////////////////////////////////////////////
 
     indicator *ledbus[8];
@@ -131,18 +140,21 @@ void computer_sim(){
         bitswitch_connect_out(swbus[i], regB, (void*)reg_8bit_in_dataN[i]);
         bitswitch_connect_out(swbus[i], regIN, (void*)reg_8bit_in_dataN[i]);
         bitswitch_connect_out(swbus[i], ram, (void*)ram_8bit_in_dataN[i]);
+        bitswitch_connect_out(swbus[i], regout, (void*)reg_out_in_dataN[i]);
 
         /// REGA OUTPUT
         reg_8bit_connect_bit_out (regA, i, ledbus[i], (void*)indicator_in_d0);
         reg_8bit_connect_bit_out (regA, i, regB, reg_8bit_in_dataN[i]);
         reg_8bit_connect_bit_out (regA, i, regIN, reg_8bit_in_dataN[i]);
         reg_8bit_connect_bit_out (regA, i, ram, ram_8bit_in_dataN[i]);
+        reg_8bit_connect_bit_out (regA, i, regout, reg_out_in_dataN[i]);
 
         /// REGB OUTPUT
         reg_8bit_connect_bit_out (regB, i, ledbus[i], (void*)indicator_in_d0);
         reg_8bit_connect_bit_out (regB, i, regA, reg_8bit_in_dataN[i]);
         reg_8bit_connect_bit_out (regB, i, regIN, reg_8bit_in_dataN[i]);
         reg_8bit_connect_bit_out (regB, i, ram, ram_8bit_in_dataN[i]);
+        reg_8bit_connect_bit_out (regB, i, regout, reg_out_in_dataN[i]);
 
         /// REGIN OUTPUT
         if (i < 4){
@@ -151,6 +163,7 @@ void computer_sim(){
             reg_8bit_connect_bit_out (regIN, i, regA, reg_8bit_in_dataN[i]);
             reg_8bit_connect_bit_out (regIN, i, regB, reg_8bit_in_dataN[i]);
             reg_8bit_connect_bit_out (regIN, i, ram, ram_8bit_in_dataN[i]);
+            reg_8bit_connect_bit_out (regIN, i, regout, reg_out_in_dataN[i]);
         }
 
         /// ALU OUTPUT
@@ -159,12 +172,14 @@ void computer_sim(){
         alu_8bit_connect_bit_out (alu, i, regB, reg_8bit_in_dataN[i]);
         alu_8bit_connect_bit_out (alu, i, regIN, reg_8bit_in_dataN[i]);
         alu_8bit_connect_bit_out (alu, i, ram, ram_8bit_in_dataN[i]);
+        alu_8bit_connect_bit_out (alu, i, regout, reg_out_in_dataN[i]);
 
         /// RAM OUTPUT
         ram_8bit_connect_bit_out(ram, i, ledbus[i], (void*)indicator_in_d0);
         ram_8bit_connect_bit_out (ram, i, regA, reg_8bit_in_dataN[i]);
         ram_8bit_connect_bit_out (ram, i, regB, reg_8bit_in_dataN[i]);
         ram_8bit_connect_bit_out (ram, i, regIN, reg_8bit_in_dataN[i]);
+        ram_8bit_connect_bit_out (ram, i, regout, reg_out_in_dataN[i]);
 
         int j = 7-i;
 
@@ -188,7 +203,7 @@ void computer_sim(){
         progctr_connect_bit_out (pctr, i, regB, reg_8bit_in_dataN[i]);
         progctr_connect_bit_out (pctr, i, regIN, reg_8bit_in_dataN[i]);
         progctr_connect_bit_out (pctr, i, ram, ram_8bit_in_dataN[i]);
-
+        progctr_connect_bit_out (pctr, i, regout, reg_out_in_dataN[i]);
     }
 
 
@@ -216,6 +231,8 @@ void computer_sim(){
     bitswitch *sw_ce = bitswitch_create("CE");
     bitswitch *sw_co = bitswitch_create("CO");
     bitswitch *sw_j = bitswitch_create("J");
+
+    bitswitch *sw_oi = bitswitch_create("OI");
 
     ////////////////
 
@@ -310,6 +327,17 @@ void computer_sim(){
     board_add_manual_switch(mainboard, sw_ce, 42, 27, 'b', "CE");
     board_add_manual_switch(mainboard, sw_co, 50, 27, 'n', "CO");
     board_add_manual_switch(mainboard, sw_j, 58, 27, 'm', "J");
+
+
+    ////////////////
+
+
+    bitswitch_connect_out(sw_oi, ctru->led[OI], (void*)&indicator_in_d0);
+    bitswitch_connect_out(sw_oi, ctru, (void*)&ctrunit_in_oi);
+    reg_out_in_load_from((void*)&ctrunit_connect_out_oi,ctru,regout);
+
+    board_add_manual_switch(mainboard, sw_oi, 66, 22, 'o', "OI");
+
 
     board_run(mainboard);
 }

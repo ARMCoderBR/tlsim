@@ -243,13 +243,15 @@ void ctrunit_connect_out_bi(ctrunit *source, void *dest, void (*dest_event_handl
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_in_oi(ctrunit *dest, int *valptr, int timestamp){
 
-    ctrunit_in(dest, OI, valptr, timestamp);
+    ls04_in_a5(dest->ls04_2, valptr, timestamp);
+    //ctrunit_in(dest, OI, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_connect_out_oi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
-    ctrunit_connect_out(source, OI, dest, dest_event_handler);
+    ls04_connect_y5(source->ls04_2, dest, dest_event_handler);
+    //ctrunit_connect_out(source, OI, dest, dest_event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
