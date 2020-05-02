@@ -300,179 +300,453 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
                 board_on_focus[num_focuseable_boards++] = thisboard;
 }
 
+int map7seg(int val){
+
+/*
+    A
+ +-----+
+F|     |B
+ +--G--+
+E|     |C
+ +-----+ o
+    D
+*/
+    int aseg[] = {
+
+
+            0b11111100,
+            0b01100000,
+            0b11011010,
+            0b11110010,
+            0b01100110,
+            0b10110110,
+            0b10111110,
+            0b11100000,
+            0b11111110,
+            0b11110110,
+    };
+
+    if (val < 10)
+        return aseg[val];
+    else
+        return 0;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
-void display_7seg(int val, int pos_w, int pos_h){
+void display_7seg(int segmap, int pos_w, int pos_h){
+
+#define MSK_A 0x80
+#define MSK_B 0x40
+#define MSK_C 0x20
+#define MSK_D 0x10
+#define MSK_E 0x08
+#define MSK_F 0x04
+#define MSK_G 0x02
+#define MSK_DP 0x01
+
+    int C[10];
+    int i;
+    for (i = 0; i < 10; i++)
+        C[i] = ' ';
+
+    /*
+       A
+    +-----+
+   F|     |B
+    +--G--+
+   E|     |C
+    +-----+
+       D
+
+   +----+----+----+
+   |              |
+   | C0   C1   C2 |
+   |              |
+   +----+----+----+
+   |              |
+   | C3   C4   C5 |
+   |              |
+   +----+----+----+----+
+   |              |    |
+   | C6   C7   C8 | C9 |
+   |              |    |
+   +----+----+----+----+
+
+   A F    C0
+   0 0    SPACE
+   0 1    ACS_ULCORNER
+   1 0    ACS_HLINE
+   1 1    ACS_ULCORNER
+*/
+    switch(segmap & (MSK_A|MSK_F)){
+
+    case MSK_F:
+        C[0] = ACS_URCORNER;
+        break;
+    case MSK_A|MSK_F:
+        C[0] = ACS_ULCORNER;
+        break;
+    case MSK_A:
+        C[0] = ACS_HLINE;
+        break;
+    }
+
+    /*
+   A      C1
+   0      SPACE
+   1      ACS_HLINE
+*/
+    if (segmap & MSK_A)
+        C[1] = ACS_HLINE;
+
+    /*
+   A B    C2
+   0 0    SPACE
+   0 1    ACS_URCORNER
+   1 0    ACS_HLINE
+   1 1    ACS_URCORNER
+*/
+
+    switch(segmap & (MSK_A|MSK_B)){
+
+    case MSK_B:
+    case MSK_A|MSK_B:
+        C[2] = ACS_URCORNER;
+        break;
+    case MSK_A:
+        C[2] = ACS_HLINE;
+        break;
+    }
+
+    /*
+   E F G  C3
+   0 0 0  SPACE
+   0 0 1  ACS_HLINE
+   0 1 0  ACS_LLCORNER
+   0 1 1  ACS_LLCORNER
+   1 0 0  ACS_ULCORNER
+   1 0 1  ACS_ULCORNER
+   1 1 0  ACS_VLINE
+   1 1 1  ACS_LTEE
+*/
+    switch(segmap & (MSK_E|MSK_F|MSK_G)){
+
+    case MSK_F:
+    case MSK_F|MSK_G:
+        C[3] = ACS_LLCORNER;
+        break;
+    case MSK_E:
+    case MSK_E|MSK_G:
+        C[3] = ACS_ULCORNER;
+        break;
+    case MSK_G:
+        C[3] = ACS_HLINE;
+        break;
+    case MSK_E|MSK_F:
+        C[3] = ACS_VLINE;
+        break;
+    case MSK_E|MSK_F|MSK_G:
+        C[3] = ACS_LTEE;
+        break;
+    }
+    /*
+   G      C4
+   0      SPACE
+   1      ACS_HLINE
+*/
+
+    if (segmap & MSK_G)
+        C[4] = ACS_HLINE;
+
+    /*
+   B C G  C5
+   0 0 0  SPACE
+   0 0 1  ACS_HLINE
+   0 1 0  ACS_URCORNER
+   0 1 1  ACS_URCORNER
+   1 0 0  ACS_LRCORNER
+   1 0 1  ACS_LRCORNER
+   1 1 0  ACS_VLINE
+   1 1 1  ACS_RTEE
+*/
+    switch(segmap & (MSK_B|MSK_C|MSK_G)){
+
+    case MSK_G:
+        C[5] = ACS_HLINE;
+        break;
+    case MSK_C:
+    case MSK_C|MSK_G:
+        C[5] = ACS_URCORNER;
+        break;
+    case MSK_B:
+    case MSK_B|MSK_G:
+        C[5] = ACS_LRCORNER;
+        break;
+    case MSK_B|MSK_C:
+        C[5] = ACS_VLINE;
+        break;
+    case MSK_B|MSK_C|MSK_G:
+        C[5] = ACS_RTEE;
+        break;
+    }
+
+    /*
+   D E    C6
+   0 0    SPACE
+   0 1    ACS_LLCORNER
+   1 0    ACS_HLINE
+   1 1    ACS_LLCORNER
+*/
+
+    switch(segmap & (MSK_D|MSK_E)){
+
+    case MSK_E:
+    case MSK_D|MSK_E:
+        C[6] = ACS_LLCORNER;
+        break;
+    case MSK_D:
+        C[6] = ACS_HLINE;
+        break;
+    }
+
+    /*
+   D      C7
+   0      SPACE
+   1      ACS_HLINE
+*/
+
+    if (segmap & MSK_D)
+        C[7] = ACS_HLINE;
+
+    /*
+   C D    C8
+   0 0    SPACE
+   0 1    ACS_HLINE
+   1 0    ACS_LRCORNER
+   1 1    ACS_LRCORNER
+*/
+    switch(segmap & (MSK_C|MSK_D)){
+
+    case MSK_C:
+        C[8] = ACS_LLCORNER;
+        break;
+    case MSK_C|MSK_D:
+        C[8] = ACS_LRCORNER;
+        break;
+    case MSK_D:
+        C[8] = ACS_HLINE;
+        break;
+    }
+
+    /*
+   DP     C9
+   0      SPACE
+   1      o
+     */
+
+    if (segmap & MSK_DP)
+        C[9] = 'o';
+
+    wattron(janela1,COLOR_PAIR(LED_RED));
 
     wmove(janela1, pos_h, pos_w);
+    waddch(janela1,' ');
+    waddch(janela1,C[0]);
+    waddch(janela1,C[1]);
+    waddch(janela1,C[1]);
+    waddch(janela1,C[2]);
+    waddch(janela1,' ');
 
-    /////////////// LINHA 1
-    switch(val){
+    wmove(janela1, pos_h+1, pos_w);
+    waddch(janela1,' ');
+    waddch(janela1,C[3]);
+    waddch(janela1,C[4]);
+    waddch(janela1,C[4]);
+    waddch(janela1,C[5]);
+    waddch(janela1,' ');
 
-    case 2:
-    case 3:
-    case 7:
-        waddch(janela1,ACS_S1);
-        break;
-    case 1:
-        waddch(janela1,' ');
-        break;
-    case 4:
-        waddch(janela1,ACS_VLINE);
-        break;
-    default:
-        waddch(janela1,ACS_ULCORNER);
-        break;
-    }
+    wmove(janela1, pos_h+2, pos_w);
+    waddch(janela1,' ');
+    waddch(janela1,C[6]);
+    waddch(janela1,C[7]);
+    waddch(janela1,C[7]);
+    waddch(janela1,C[8]);
+    waddch(janela1,C[9]);
 
-    ///////////////
-    switch(val){
-
-    case 1:
-    case 4:
-        waddch(janela1,' ');
-        waddch(janela1,' ');
-        break;
-    default:
-        waddch(janela1,ACS_S1);
-        waddch(janela1,ACS_S1);
-        break;
-    }
-
-    switch(val){
-
-    case 0:
-    case 2:
-    case 3:
-    case 7:
-    case 8:
-    case 9:
-        waddch(janela1,ACS_URCORNER);
-        break;
-    case 1:
-    case 4:
-        waddch(janela1,ACS_VLINE);
-        break;
-    case 6:
-        waddch(janela1,' ');
-        break;
-    default:
-        waddch(janela1,ACS_S1);
-        break;
-
-    }
-
-    wmove(janela1, pos_h+1, pos_w); //LINHA 2
-
-    switch(val){
-
-    case 0:
-        waddch(janela1,ACS_VLINE);
-        break;
-    case 1:
-    case 7:
-        waddch(janela1,' ');
-        break;
-    case 2:
-        waddch(janela1,ACS_ULCORNER);
-        break;
-    case 3:
-        waddch(janela1,ACS_HLINE);
-        break;
-    case 6:
-    case 8:
-        waddch(janela1,ACS_LTEE);
-        break;
-    case 4:
-    case 5:
-    case 9:
-        waddch(janela1,ACS_LLCORNER);
-        break;
-    }
-
-    switch(val){
-
-    case 0:
-    case 1:
-    case 7:
-        waddch(janela1,' ');
-        waddch(janela1,' ');
-        break;
-    default:
-        waddch(janela1,ACS_HLINE);
-        waddch(janela1,ACS_HLINE);
-        break;
-    }
-
-    switch(val){
-
-    case 0:
-    case 1:
-    case 7:
-        waddch(janela1,ACS_VLINE);
-        break;
-    case 2:
-        waddch(janela1,ACS_LRCORNER);
-        break;
-    case 5:
-    case 6:
-        waddch(janela1,ACS_URCORNER);
-        break;
-    default:
-        waddch(janela1,ACS_RTEE);
-        break;
-    }
-
-    wmove(janela1, pos_h+2, pos_w); //LINHA 3
-
-    switch(val){
-
-    case 0:
-    case 2:
-    case 6:
-    case 8:
-        waddch(janela1,ACS_LLCORNER);
-        break;
-    case 3:
-    case 5:
-        waddch(janela1,ACS_S9);
-        break;
-    default:
-        waddch(janela1,' ');
-        break;
-    }
-
-    switch(val){
-
-    case 1:
-    case 4:
-    case 7:
-        waddch(janela1,' ');
-        waddch(janela1,' ');
-        break;
-    default:
-        waddch(janela1,ACS_S9);
-        waddch(janela1,ACS_S9);
-        break;
-    }
-
-    switch(val){
-
-    case 1:
-    case 4:
-    case 7:
-        waddch(janela1,ACS_VLINE);
-        break;
-    case 2:
-        waddch(janela1,ACS_S9);
-        break;
-    default:
-        waddch(janela1,ACS_LRCORNER);
-        break;
-
-    }
-
-
+    wattroff(janela1,COLOR_PAIR(LED_WHITE));
 }
+
+//////////////////////////////////////////////////////////////////////////////////
+//void display_7seg(int val, int pos_w, int pos_h){
+//
+//    wmove(janela1, pos_h, pos_w);
+//
+//    /////////////// LINHA 1
+//    switch(val){
+//
+//    case 2:
+//    case 3:
+//    case 7:
+//        waddch(janela1,ACS_S1);
+//        break;
+//    case 1:
+//        waddch(janela1,' ');
+//        break;
+//    case 4:
+//        waddch(janela1,ACS_VLINE);
+//        break;
+//    default:
+//        waddch(janela1,ACS_ULCORNER);
+//        break;
+//    }
+//
+//    ///////////////
+//    switch(val){
+//
+//    case 1:
+//    case 4:
+//        waddch(janela1,' ');
+//        waddch(janela1,' ');
+//        break;
+//    default:
+//        waddch(janela1,ACS_S1);
+//        waddch(janela1,ACS_S1);
+//        break;
+//    }
+//
+//    switch(val){
+//
+//    case 0:
+//    case 2:
+//    case 3:
+//    case 7:
+//    case 8:
+//    case 9:
+//        waddch(janela1,ACS_URCORNER);
+//        break;
+//    case 1:
+//    case 4:
+//        waddch(janela1,ACS_VLINE);
+//        break;
+//    case 6:
+//        waddch(janela1,' ');
+//        break;
+//    default:
+//        waddch(janela1,ACS_S1);
+//        break;
+//
+//    }
+//
+//    wmove(janela1, pos_h+1, pos_w); //LINHA 2
+//
+//    switch(val){
+//
+//    case 0:
+//        waddch(janela1,ACS_VLINE);
+//        break;
+//    case 1:
+//    case 7:
+//        waddch(janela1,' ');
+//        break;
+//    case 2:
+//        waddch(janela1,ACS_ULCORNER);
+//        break;
+//    case 3:
+//        waddch(janela1,ACS_HLINE);
+//        break;
+//    case 6:
+//    case 8:
+//        waddch(janela1,ACS_LTEE);
+//        break;
+//    case 4:
+//    case 5:
+//    case 9:
+//        waddch(janela1,ACS_LLCORNER);
+//        break;
+//    }
+//
+//    switch(val){
+//
+//    case 0:
+//    case 1:
+//    case 7:
+//        waddch(janela1,' ');
+//        waddch(janela1,' ');
+//        break;
+//    default:
+//        waddch(janela1,ACS_HLINE);
+//        waddch(janela1,ACS_HLINE);
+//        break;
+//    }
+//
+//    switch(val){
+//
+//    case 0:
+//    case 1:
+//    case 7:
+//        waddch(janela1,ACS_VLINE);
+//        break;
+//    case 2:
+//        waddch(janela1,ACS_LRCORNER);
+//        break;
+//    case 5:
+//    case 6:
+//        waddch(janela1,ACS_URCORNER);
+//        break;
+//    default:
+//        waddch(janela1,ACS_RTEE);
+//        break;
+//    }
+//
+//    wmove(janela1, pos_h+2, pos_w); //LINHA 3
+//
+//    switch(val){
+//
+//    case 0:
+//    case 2:
+//    case 6:
+//    case 8:
+//        waddch(janela1,ACS_LLCORNER);
+//        break;
+//    case 3:
+//    case 5:
+//        waddch(janela1,ACS_S9);
+//        break;
+//    default:
+//        waddch(janela1,' ');
+//        break;
+//    }
+//
+//    switch(val){
+//
+//    case 1:
+//    case 4:
+//    case 7:
+//        waddch(janela1,' ');
+//        waddch(janela1,' ');
+//        break;
+//    default:
+//        waddch(janela1,ACS_S9);
+//        waddch(janela1,ACS_S9);
+//        break;
+//    }
+//
+//    switch(val){
+//
+//    case 1:
+//    case 4:
+//    case 7:
+//        waddch(janela1,ACS_VLINE);
+//        break;
+//    case 2:
+//        waddch(janela1,ACS_S9);
+//        break;
+//    default:
+//        waddch(janela1,ACS_LRCORNER);
+//        break;
+//
+//    }
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 void board_refresh(board_object *b){
@@ -483,10 +757,10 @@ void board_refresh(board_object *b){
 
     focustable_done = 1;
 
-//    int i;
-//    for (i = 0; i <= 9; i++){
-//        display_7seg(i, 4+6*i, 27);
-//    }
+    int i;
+    for (i = 0; i <= 9; i++){
+        display_7seg(map7seg(i), 4+6*i, 38);
+    }
 
     wrefresh(janela1);
     wrefresh(janela0);
