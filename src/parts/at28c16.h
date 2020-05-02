@@ -20,8 +20,8 @@ typedef struct {
 
     int in_addr[11];
     vallist *in_addr_rootptr[11];
-    int in_cs, in_we;
-    vallist *in_cs_rootptr, *in_we_rootptr;
+    int in_cs, in_we, in_oe;
+    vallist *in_cs_rootptr, *in_we_rootptr, *in_oe_rootptr;
     int current_addr;
 
 	unsigned char eep_byte[NUM_WORDS_28C16];

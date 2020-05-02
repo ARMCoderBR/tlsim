@@ -42,6 +42,14 @@ static void at28c16_update (at28c16 *a, int timestamp){
         goto at28c16_end;
     }
 
+    if (a->in_oe){  // OE Not selected
+
+        for (i = 0; i < NUM_BITS_28C16; i++)
+            a->outq[i] = 2;
+
+        goto at28c16_end;
+    }
+
     // Read
     int msk = 1;
     for (i = 0; i < NUM_BITS_28C16; i++){
@@ -134,8 +142,8 @@ at28c16 *at28c16_create(char *name, unsigned char *template){
     }
 
     b->current_addr = 0x7f;
-    b->in_cs = b->in_we = 2;
-    b->in_cs_rootptr = b->in_we_rootptr = NULL;
+    b->in_cs = b->in_we = b->in_oe = 2;
+    b->in_cs_rootptr = b->in_we_rootptr = b->in_oe_rootptr = NULL;
 
     for (i = 0; i < NUM_BITS_28C16; i++){
 
@@ -339,6 +347,21 @@ void at28c16_in_we(at28c16 *dest, int *valptr, int timestamp){
     logger("at28c16_in_we [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_we = val;
+    at28c16_update(dest, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void at28c16_in_oe(at28c16 *dest, int *valptr, int timestamp){
+
+    int val = update_val_multi(&dest->in_oe_rootptr, valptr);
+
+    if (val > 1) val = 1;
+
+    if (dest->in_oe == val) return;
+
+    logger("at28c16_in_oe [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+
+    dest->in_oe = val;
     at28c16_update(dest, timestamp);
 }
 
