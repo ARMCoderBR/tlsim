@@ -15,6 +15,7 @@
 #include "board.h"
 #include "bitswitch.h"
 #include "update.h"
+#include "dis7seg.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -333,43 +334,25 @@ E|     |C
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void display_7seg(int segmap, int pos_w, int pos_h){
+void combine_7seg(int segmap, int C[]){
 
-#define MSK_A 0x80
-#define MSK_B 0x40
-#define MSK_C 0x20
-#define MSK_D 0x10
-#define MSK_E 0x08
-#define MSK_F 0x04
-#define MSK_G 0x02
-#define MSK_DP 0x01
-
-    int C[10];
     int i;
     for (i = 0; i < 10; i++)
         C[i] = ' ';
 
-    /*
-       A
-    +-----+
-   F|     |B
-    +--G--+
-   E|     |C
-    +-----+
-       D
-
-   +----+----+----+
-   |              |
-   | C0   C1   C2 |
-   |              |
-   +----+----+----+
-   |              |
-   | C3   C4   C5 |
-   |              |
+/*
    +----+----+----+----+
-   |              |    |
-   | C6   C7   C8 | C9 |
-   |              |    |
+   |                   |
+   | C0   C1   C2      |
+   |                   |
+   +----+----+----+----+
+   |                   |
+   | C3   C4   C5      |
+   |                   |
+   +----+----+----+----+
+   |                   |
+   | C6   C7   C8   C9 |
+   |                   |
    +----+----+----+----+
 
    A F    C0
@@ -378,6 +361,7 @@ void display_7seg(int segmap, int pos_w, int pos_h){
    1 0    ACS_HLINE
    1 1    ACS_ULCORNER
 */
+
     switch(segmap & (MSK_A|MSK_F)){
 
     case MSK_F:
@@ -391,15 +375,16 @@ void display_7seg(int segmap, int pos_w, int pos_h){
         break;
     }
 
-    /*
+/*
    A      C1
    0      SPACE
    1      ACS_HLINE
 */
+
     if (segmap & MSK_A)
         C[1] = ACS_HLINE;
 
-    /*
+/*
    A B    C2
    0 0    SPACE
    0 1    ACS_URCORNER
@@ -418,7 +403,7 @@ void display_7seg(int segmap, int pos_w, int pos_h){
         break;
     }
 
-    /*
+/*
    E F G  C3
    0 0 0  SPACE
    0 0 1  ACS_HLINE
@@ -429,6 +414,7 @@ void display_7seg(int segmap, int pos_w, int pos_h){
    1 1 0  ACS_VLINE
    1 1 1  ACS_LTEE
 */
+
     switch(segmap & (MSK_E|MSK_F|MSK_G)){
 
     case MSK_F:
@@ -449,7 +435,8 @@ void display_7seg(int segmap, int pos_w, int pos_h){
         C[3] = ACS_LTEE;
         break;
     }
-    /*
+
+/*
    G      C4
    0      SPACE
    1      ACS_HLINE
@@ -458,7 +445,7 @@ void display_7seg(int segmap, int pos_w, int pos_h){
     if (segmap & MSK_G)
         C[4] = ACS_HLINE;
 
-    /*
+/*
    B C G  C5
    0 0 0  SPACE
    0 0 1  ACS_HLINE
@@ -469,6 +456,7 @@ void display_7seg(int segmap, int pos_w, int pos_h){
    1 1 0  ACS_VLINE
    1 1 1  ACS_RTEE
 */
+
     switch(segmap & (MSK_B|MSK_C|MSK_G)){
 
     case MSK_G:
@@ -490,7 +478,7 @@ void display_7seg(int segmap, int pos_w, int pos_h){
         break;
     }
 
-    /*
+/*
    D E    C6
    0 0    SPACE
    0 1    ACS_LLCORNER
@@ -509,7 +497,7 @@ void display_7seg(int segmap, int pos_w, int pos_h){
         break;
     }
 
-    /*
+/*
    D      C7
    0      SPACE
    1      ACS_HLINE
@@ -518,13 +506,14 @@ void display_7seg(int segmap, int pos_w, int pos_h){
     if (segmap & MSK_D)
         C[7] = ACS_HLINE;
 
-    /*
+/*
    C D    C8
    0 0    SPACE
    0 1    ACS_HLINE
    1 0    ACS_LRCORNER
    1 1    ACS_LRCORNER
 */
+
     switch(segmap & (MSK_C|MSK_D)){
 
     case MSK_C:
@@ -538,14 +527,32 @@ void display_7seg(int segmap, int pos_w, int pos_h){
         break;
     }
 
-    /*
+/*
    DP     C9
    0      SPACE
    1      o
-     */
+*/
 
     if (segmap & MSK_DP)
         C[9] = 'o';
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void display_7seg(int segmap, int pos_w, int pos_h){
+
+/*
+       A
+    +-----+
+   F|     |B
+    +--G--+
+   E|     |C
+    +-----+
+       D
+*/
+
+    int C[10];
+
+    combine_7seg(segmap, C);
 
     wattron(janela1,COLOR_PAIR(LED_RED));
 

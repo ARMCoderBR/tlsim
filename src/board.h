@@ -17,6 +17,7 @@ typedef enum {
     LED,
     XDIGIT,
     BOARD,
+    DIS7SEG
 } control_type;
 
 typedef enum {
