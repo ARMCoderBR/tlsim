@@ -137,3 +137,35 @@ void dis7seg_in_common(dis7seg *dest, int *valptr, int timestamp){
     if ((dest->type == COMMON_A) && (val == 1))
         dest->common_val = 1;
 }
+
+int map7seg(int val){
+
+/*
+    A
+ +-----+
+F|     |B
+ +--G--+
+E|     |C
+ +-----+ o
+    D
+*/
+    int aseg[] = {
+
+
+            0b11111100,
+            0b01100000,
+            0b11011010,
+            0b11110010,
+            0b01100110,
+            0b10110110,
+            0b10111110,
+            0b11100000,
+            0b11111110,
+            0b11110110,
+    };
+
+    if (val < 10)
+        return aseg[val];
+    else
+        return 0;
+}

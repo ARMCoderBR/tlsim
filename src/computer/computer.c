@@ -336,7 +336,7 @@ void computer_sim(){
     bitswitch_connect_out(sw_oi, ctru, (void*)&ctrunit_in_oi);
     reg_out_in_load_from((void*)&ctrunit_connect_out_oi,ctru,regout);
 
-    board_add_manual_switch(mainboard, sw_oi, 66, 22, 'o', "OI");
+    board_add_manual_switch(mainboard, sw_oi, 66, 25, 'o', "OI");
 
 
     board_run(mainboard);

@@ -36,302 +36,7 @@ WINDOW *janela3;
 
 pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
 
-////////////////////////////////////////////////////////////////////////////////
-void desenha_janelas(void)
-{
-    wbkgd(janela0,COLOR_PAIR(10));
-    wbkgd(janela1,COLOR_PAIR(10));
-    wbkgd(janela2,COLOR_PAIR(10));
-    wbkgd(janela3,COLOR_PAIR(10));
 
-    /*box(janela0, 0 , 0);  */      /* 0, 0 gives default characters
-                                 * for the vertical and horizontal
-                                 * lines            */
-    wrefresh(janela0);
-
-    wclear(janela1);
-    wrefresh(janela1);
-
-    box(janela2, 0 , 0);        /* 0, 0 gives default characters
-                                 * for the vertical and horizontal
-                                 * lines            */
-    wrefresh(janela2);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void restart_handlers(void)
-{
-    struct timeval tv;
-
-    FD_ZERO (&readfds);
-    FD_SET(0,&readfds);
-    //FD_SET(tc_ipccom_ctx.piperx,&readfds);
-
-    tv.tv_sec = 0;
-    tv.tv_usec = 1000;    // 1 ms
-
-    select (1/*+tc_ipccom_ctx.piperx*/,&readfds,NULL,NULL,&tv);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-int received_key(void)
-{
-    return (FD_ISSET(0,&readfds));
-}
-
-////////////////////////////////////////////////////////////////////////////////
-int read_key(void)
-{
-    return wgetch(janela1);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void sigterm_handler(int sig){
-
-    endwin();
-    exit(0);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-ehandler *clock_event_handler_root = NULL;
-int clock_last_val = 0;
-
-void clock_set_val(int val){
-
-    if (val)
-        clock_last_val = 1;
-    else
-        clock_last_val = 0;
-
-    logger("\n==>clock_set_val:%d ptr:%p",clock_last_val, &clock_last_val);
-
-    event e;
-    e.event_handler_root = clock_event_handler_root;
-    e.valueptr = &clock_last_val;
-    e.timestamp = 0;
-    e.done = 0;
-    event_insert(&e);
-
-//    ehandler *e = clock_event_handler_root;
-//
-//    while (e){
-//
-//        e->objdest_event_handler(e->objdest, &val, 0);
-//        e = e->next;
-//    }
-}
-
-
-void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp)){
-
-    ehandler *newe = malloc(sizeof(ehandler));
-    if (!newe)
-        return;
-
-    newe->objdest_event_handler = objdest_event_handler;
-    newe->objdest = objdest;
-    newe->next = NULL;
-
-    ehandler *e = clock_event_handler_root;
-    if (e){
-
-        while (e->next)
-            e = e->next;
-
-        e->next = newe;
-    }
-    else
-        clock_event_handler_root = newe;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-//#define NOBJ 1000
-
-pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
-
-pthread_t refthread;
-int refresh_run = 0;
-int must_refresh = 0;
-
-////////////////////////////////////////////////////////////////////////////////
-void board_set_refresh(){
-
-    must_refresh = 1;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-void rectangle(int y1, int x1, int y2, int x2)
-{
-    mvwhline(janela1, y1, x1, 0, x2-x1);
-    mvwhline(janela1, y2, x1, 0, x2-x1);
-    mvwvline(janela1, y1, x1, 0, y2-y1);
-    mvwvline(janela1, y1, x2, 0, y2-y1);
-    mvwaddch(janela1, y1, x1, ACS_ULCORNER);
-    mvwaddch(janela1, y2, x1, ACS_LLCORNER);
-    mvwaddch(janela1, y1, x2, ACS_URCORNER);
-    mvwaddch(janela1, y2, x2, ACS_LRCORNER);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-#define MAX_FOCUSEABLES_BOARDS 50
-
-int focustable_done = 0;
-int num_focuseable_boards = 0;
-int current_board_on_focus = 0;
-board_object *board_on_focus[MAX_FOCUSEABLES_BOARDS];
-
-////////////////////////////////////////////////////////////////////////////////
-void board_refresh_a(board_object *b, int new_h, int new_w){
-
-    if (b->type != BOARD) return;   // Erro interno - nunca deve acontecer.
-
-    wattrset(janela1,A_NORMAL);
-    rectangle(new_h, new_w, new_h+b->w_height-1, new_w+b->w_width-1);
-
-    if (b->name[0]){
-
-        wmove(janela1, new_h, 1 + new_w);
-        waddch(janela1,'[');
-        waddstr(janela1,b->name);
-        waddch(janela1,']');
-    }
-
-    int has_key = 0;
-    board_object *thisboard = b;
-
-    b = b->objptr_root;
-
-    while (b){
-
-        wmove(janela1, new_h + b->pos_h, new_w + b->pos_w);
-
-        switch (b->type){
-
-        case MANUAL_SWITCH:
-            {
-                bitswitch* bs = b->objptr;
-                wattron(janela1,COLOR_PAIR(LED_WHITE));
-                if (bs->value)
-                    waddstr(janela1,"[ >1]");
-                else
-                    waddstr(janela1,"[0< ]");
-                wattroff(janela1,COLOR_PAIR(LED_WHITE));
-            }
-            break;
-
-        case LED:
-            {
-                indicator* out = b->objptr;
-                wattron(janela1,COLOR_PAIR(b->color));
-                if (out->value){
-                    wattron(janela1,A_STANDOUT);
-                    waddstr(janela1,"[#]");
-                    wattroff(janela1,A_STANDOUT);
-                }else
-                    waddstr(janela1,"[.]");
-                wattroff(janela1,COLOR_PAIR(b->color));
-            }
-            break;
-
-        case XDIGIT:
-            {
-                indicator* out = b->objptr;
-                char s[10];
-                sprintf(s,"%X",out->value & 0x0F);
-                waddstr(janela1,s);
-            }
-            break;
-
-        case BOARD:
-
-            board_refresh_a(b/*->objptr_root*/,b->pos_h, b->pos_w);
-            break;
-        }
-
-        if (b->type != BOARD){
-
-            if (b->type == MANUAL_SWITCH){
-
-                if (thisboard == board_on_focus[current_board_on_focus]){
-
-                    wattrset(janela1,A_STANDOUT);
-                }
-            }
-            wmove(janela1,1 + new_h + b->pos_h, new_w + b->pos_w);
-            waddstr(janela1,b->name);
-            wattrset(janela1,A_NORMAL);
-        }
-
-        if (b->type == MANUAL_SWITCH){
-
-            has_key = 1;
-            if (thisboard == board_on_focus[current_board_on_focus]){
-
-                wattrset(janela1,A_STANDOUT);
-            }
-
-            int key = b->key;
-            char s[10];
-            if ((key >= KEY_F(1)) && (key <= KEY_F(12))){
-
-                sprintf(s,"[F%d]",1+key-KEY_F(1));
-            }
-            else
-                sprintf(s,"[%c]",key);
-
-            waddstr(janela1,s);
-            wattrset(janela1,A_NORMAL);
-        }
-
-        b = b->objptr_next;
-    }
-
-    if (!focustable_done)
-        if (has_key)
-            if (num_focuseable_boards < MAX_FOCUSEABLES_BOARDS)
-                board_on_focus[num_focuseable_boards++] = thisboard;
-}
-
-int map7seg(int val){
-
-/*
-    A
- +-----+
-F|     |B
- +--G--+
-E|     |C
- +-----+ o
-    D
-*/
-    int aseg[] = {
-
-
-            0b11111100,
-            0b01100000,
-            0b11011010,
-            0b11110010,
-            0b01100110,
-            0b10110110,
-            0b10111110,
-            0b11100000,
-            0b11111110,
-            0b11110110,
-    };
-
-    if (val < 10)
-        return aseg[val];
-    else
-        return 0;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void combine_7seg(int segmap, int C[]){
@@ -538,7 +243,7 @@ void combine_7seg(int segmap, int C[]){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void display_7seg(int segmap, int pos_w, int pos_h){
+void display_7seg(int segmap, int common, int pos_w, int pos_h){
 
 /*
        A
@@ -583,6 +288,281 @@ void display_7seg(int segmap, int pos_w, int pos_h){
     wattroff(janela1,COLOR_PAIR(LED_WHITE));
 }
 
+
+
+////////////////////////////////////////////////////////////////////////////////
+void desenha_janelas(void)
+{
+    wbkgd(janela0,COLOR_PAIR(10));
+    wbkgd(janela1,COLOR_PAIR(10));
+    wbkgd(janela2,COLOR_PAIR(10));
+    wbkgd(janela3,COLOR_PAIR(10));
+
+    /*box(janela0, 0 , 0);  */      /* 0, 0 gives default characters
+                                 * for the vertical and horizontal
+                                 * lines            */
+    wrefresh(janela0);
+
+    wclear(janela1);
+    wrefresh(janela1);
+
+    box(janela2, 0 , 0);        /* 0, 0 gives default characters
+                                 * for the vertical and horizontal
+                                 * lines            */
+    wrefresh(janela2);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void restart_handlers(void)
+{
+    struct timeval tv;
+
+    FD_ZERO (&readfds);
+    FD_SET(0,&readfds);
+    //FD_SET(tc_ipccom_ctx.piperx,&readfds);
+
+    tv.tv_sec = 0;
+    tv.tv_usec = 1000;    // 1 ms
+
+    select (1/*+tc_ipccom_ctx.piperx*/,&readfds,NULL,NULL,&tv);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int received_key(void)
+{
+    return (FD_ISSET(0,&readfds));
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int read_key(void)
+{
+    return wgetch(janela1);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void sigterm_handler(int sig){
+
+    endwin();
+    exit(0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ehandler *clock_event_handler_root = NULL;
+int clock_last_val = 0;
+
+void clock_set_val(int val){
+
+    if (val)
+        clock_last_val = 1;
+    else
+        clock_last_val = 0;
+
+    logger("\n==>clock_set_val:%d ptr:%p",clock_last_val, &clock_last_val);
+
+    event e;
+    e.event_handler_root = clock_event_handler_root;
+    e.valueptr = &clock_last_val;
+    e.timestamp = 0;
+    e.done = 0;
+    event_insert(&e);
+
+//    ehandler *e = clock_event_handler_root;
+//
+//    while (e){
+//
+//        e->objdest_event_handler(e->objdest, &val, 0);
+//        e = e->next;
+//    }
+}
+
+
+void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp)){
+
+    ehandler *newe = malloc(sizeof(ehandler));
+    if (!newe)
+        return;
+
+    newe->objdest_event_handler = objdest_event_handler;
+    newe->objdest = objdest;
+    newe->next = NULL;
+
+    ehandler *e = clock_event_handler_root;
+    if (e){
+
+        while (e->next)
+            e = e->next;
+
+        e->next = newe;
+    }
+    else
+        clock_event_handler_root = newe;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+//#define NOBJ 1000
+
+pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
+
+pthread_t refthread;
+int refresh_run = 0;
+int must_refresh = 0;
+
+////////////////////////////////////////////////////////////////////////////////
+void board_set_refresh(){
+
+    must_refresh = 1;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void rectangle(int y1, int x1, int y2, int x2)
+{
+    mvwhline(janela1, y1, x1, 0, x2-x1);
+    mvwhline(janela1, y2, x1, 0, x2-x1);
+    mvwvline(janela1, y1, x1, 0, y2-y1);
+    mvwvline(janela1, y1, x2, 0, y2-y1);
+    mvwaddch(janela1, y1, x1, ACS_ULCORNER);
+    mvwaddch(janela1, y2, x1, ACS_LLCORNER);
+    mvwaddch(janela1, y1, x2, ACS_URCORNER);
+    mvwaddch(janela1, y2, x2, ACS_LRCORNER);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+#define MAX_FOCUSEABLES_BOARDS 50
+
+int focustable_done = 0;
+int num_focuseable_boards = 0;
+int current_board_on_focus = 0;
+board_object *board_on_focus[MAX_FOCUSEABLES_BOARDS];
+
+////////////////////////////////////////////////////////////////////////////////
+void board_refresh_a(board_object *b, int new_h, int new_w){
+
+    if (b->type != BOARD) return;   // Erro interno - nunca deve acontecer.
+
+    wattrset(janela1,A_NORMAL);
+    rectangle(new_h, new_w, new_h+b->w_height-1, new_w+b->w_width-1);
+
+    if (b->name[0]){
+
+        wmove(janela1, new_h, 1 + new_w);
+        waddch(janela1,'[');
+        waddstr(janela1,b->name);
+        waddch(janela1,']');
+    }
+
+    int has_key = 0;
+    board_object *thisboard = b;
+
+    b = b->objptr_root;
+
+    while (b){
+
+        wmove(janela1, new_h + b->pos_h, new_w + b->pos_w);
+
+        switch (b->type){
+
+        case MANUAL_SWITCH:
+            {
+                bitswitch* bs = b->objptr;
+                wattron(janela1,COLOR_PAIR(LED_WHITE));
+                if (bs->value)
+                    waddstr(janela1,"[ >1]");
+                else
+                    waddstr(janela1,"[0< ]");
+                wattroff(janela1,COLOR_PAIR(LED_WHITE));
+            }
+            break;
+
+        case LED:
+            {
+                indicator* out = b->objptr;
+                wattron(janela1,COLOR_PAIR(b->color));
+                if (out->value){
+                    wattron(janela1,A_STANDOUT);
+                    waddstr(janela1,"[#]");
+                    wattroff(janela1,A_STANDOUT);
+                }else
+                    waddstr(janela1,"[.]");
+                wattroff(janela1,COLOR_PAIR(b->color));
+            }
+            break;
+
+        case DIS7SEG:
+            {
+                dis7seg *dis = b->objptr;
+                display_7seg(dis->segmap, dis->common_val, new_w + b->pos_w, new_h + b->pos_h);
+            }
+            break;
+
+        case XDIGIT:
+            {
+                indicator* out = b->objptr;
+                char s[10];
+                sprintf(s,"%X",out->value & 0x0F);
+                waddstr(janela1,s);
+            }
+            break;
+
+        case BOARD:
+
+            board_refresh_a(b/*->objptr_root*/,b->pos_h, b->pos_w);
+            break;
+        }
+
+        if ((b->type != BOARD)&&(b->type != DIS7SEG)){
+
+            if (b->type == MANUAL_SWITCH){
+
+                if (thisboard == board_on_focus[current_board_on_focus]){
+
+                    wattrset(janela1,A_STANDOUT);
+                }
+            }
+            wmove(janela1,1 + new_h + b->pos_h, new_w + b->pos_w);
+            waddstr(janela1,b->name);
+            wattrset(janela1,A_NORMAL);
+        }
+
+        if (b->type == MANUAL_SWITCH){
+
+            has_key = 1;
+            if (thisboard == board_on_focus[current_board_on_focus]){
+
+                wattrset(janela1,A_STANDOUT);
+            }
+
+            int key = b->key;
+            char s[10];
+            if ((key >= KEY_F(1)) && (key <= KEY_F(12))){
+
+                sprintf(s,"[F%d]",1+key-KEY_F(1));
+            }
+            else
+                sprintf(s,"[%c]",key);
+
+            waddstr(janela1,s);
+            wattrset(janela1,A_NORMAL);
+        }
+
+        b = b->objptr_next;
+    }
+
+    if (!focustable_done)
+        if (has_key)
+            if (num_focuseable_boards < MAX_FOCUSEABLES_BOARDS)
+                board_on_focus[num_focuseable_boards++] = thisboard;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 void board_refresh(board_object *b){
 
@@ -592,10 +572,10 @@ void board_refresh(board_object *b){
 
     focustable_done = 1;
 
-    int i;
-    for (i = 0; i <= 9; i++){
-        display_7seg(map7seg(i), 4+6*i, 38);
-    }
+//    int i;
+//    for (i = 0; i <= 9; i++){
+//        display_7seg(map7seg(i), 4+6*i, 38);
+//    }
 
     wrefresh(janela1);
     wrefresh(janela0);
@@ -935,6 +915,31 @@ int board_add_led(board_object *b, indicator *out, int pos_w, int pos_h, char *n
     obja->pos_w  = pos_w;
     obja->pos_h  = pos_h;
     obja->type   = LED;
+    obja->color = color;
+    obja->objptr = out;
+    obja->key    = 0;
+    if (name)
+        strncpy(obja->name, name, NAMESIZE);
+    else
+        obja->name[0] = 0;
+    obja->objptr_root = NULL;
+    obja->objptr_next = NULL;
+
+    return board_add_object(b, obja);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int board_add_display_7seg(board_object *b, dis7seg *out, int pos_w, int pos_h, char *name, led_color_t color){
+
+    if (!b) return -2;
+    if (!out) return -2;
+
+    board_object *obja = malloc(sizeof(board_object));
+    if (!obja) return -1;
+
+    obja->pos_w  = pos_w;
+    obja->pos_h  = pos_h;
+    obja->type   = DIS7SEG;
     obja->color = color;
     obja->objptr = out;
     obja->key    = 0;

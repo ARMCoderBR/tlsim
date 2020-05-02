@@ -18,6 +18,7 @@
 typedef struct {
 
     ls173 *ls173_hi, *ls173_lo;
+    dis7seg *display[4];
     indicator *led[8];
     indicator *ledclk;
     char name[30];

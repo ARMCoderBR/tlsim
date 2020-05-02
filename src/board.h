@@ -10,6 +10,7 @@
 
 #include "bitswitch.h"
 #include "indicator.h"
+#include "dis7seg.h"
 
 typedef enum {
 
@@ -51,6 +52,8 @@ typedef struct {
 int board_add_manual_switch(board_object *b, bitswitch *bs, int pos_w, int pow_h, int key, char *name);
 
 int board_add_led(board_object *b, indicator *out, int pos_w, int pos_h, char *name, led_color_t color);
+
+int board_add_display_7seg(board_object *b, dis7seg *out, int pos_w, int pos_h, char *name, led_color_t color);
 
 int board_add_xdigit(board_object *b, indicator *out, int pos_w, int pos_h, char *name, led_color_t color);
 

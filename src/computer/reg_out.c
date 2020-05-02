@@ -46,6 +46,9 @@ reg_out *reg_out_create(char *name){
         reg->led[i] = indicator_create(lshi);
     }
 
+    for (i = 0; i < 4; i++)
+        reg->display[i] = dis7seg_create(COMMON_K,"");
+
     ls173_connect_1q(reg->ls173_lo, reg->led[0], (void*)&indicator_in_d0);
     ls173_connect_2q(reg->ls173_lo, reg->led[1], (void*)&indicator_in_d0);
     ls173_connect_3q(reg->ls173_lo, reg->led[2], (void*)&indicator_in_d0);
@@ -175,7 +178,7 @@ void (*reg_out_in_dataN[])(void *dest, int *valptr, int timestamp) = {
 ////////////////////////////////////////////////////////////////////////////////
 board_object *reg_out_board_create(reg_out *reg, int key, char *name){
 
-    board_object *board = board_create(40, 4, key, name);
+    board_object *board = board_create(40, 7, key, name);
 
     if (!board) return board;
 
@@ -190,6 +193,11 @@ board_object *reg_out_board_create(reg_out *reg, int key, char *name){
     }
 
     board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
+
+    board_add_display_7seg(board, reg->display[0],14,3,"DS0", LED_RED);
+    board_add_display_7seg(board, reg->display[1],20,3,"DS1", LED_RED);
+    board_add_display_7seg(board, reg->display[2],26,3,"DS2", LED_RED);
+    board_add_display_7seg(board, reg->display[3],32,3,"DS3", LED_RED);
 
     return board;
 }
