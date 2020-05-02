@@ -9,14 +9,14 @@
 #define DIS7SEG_H_
 
 
-#define MSK_A  0x80
-#define MSK_B  0x40
-#define MSK_C  0x20
-#define MSK_D  0x10
-#define MSK_E  0x08
-#define MSK_F  0x04
-#define MSK_G  0x02
-#define MSK_DP 0x01
+#define MSK_DP 0x80
+#define MSK_A  0x40
+#define MSK_B  0x20
+#define MSK_C  0x10
+#define MSK_D  0x08
+#define MSK_E  0x04
+#define MSK_F  0x02
+#define MSK_G  0x01
 
 
 typedef enum{
@@ -47,5 +47,7 @@ void dis7seg_in_segf(dis7seg *dest, int *valptr, int timestamp);
 void dis7seg_in_segg(dis7seg *dest, int *valptr, int timestamp);
 void dis7seg_in_segdp(dis7seg *dest, int *valptr, int timestamp);
 void dis7seg_in_common(dis7seg *dest, int *valptr, int timestamp);
+
+int map7seg(int val);
 
 #endif /* DIS7SEG_H_ */

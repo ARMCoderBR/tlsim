@@ -10,7 +10,7 @@
 #include "update.h"
 #include "ls161.h"
 
-// UP/DOWN BINARY COUNTER
+// 4-BIT BINARY COUNTER
 
 ////////////////////////////////////////////////////////////////////////////////
 static int ls161_update(ls161 *a){

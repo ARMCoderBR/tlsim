@@ -11,7 +11,7 @@
 #include <malloc.h>
 #include <string.h>
 
-const int segmasks[] = { MSK_A, MSK_B, MSK_C, MSK_D, MSK_E, MSK_F, MSK_G, MSK_DP };
+const int segmasks[] = { MSK_DP, MSK_A, MSK_B, MSK_C, MSK_D, MSK_E, MSK_F, MSK_G };
 
 ////////////////////////////////////////////////////////////////////////////////
 dis7seg *dis7seg_create(dis7seg_type type, char *name){
@@ -69,56 +69,56 @@ void dis7seg_up(dis7seg *dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_sega(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segdp(dis7seg *dest, int *valptr, int timestamp){
 
     dest->segval[0] = update_val_multi(&dest->seg_rootptr[0], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segb(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_sega(dis7seg *dest, int *valptr, int timestamp){
 
     dest->segval[1] = update_val_multi(&dest->seg_rootptr[1], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segc(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segb(dis7seg *dest, int *valptr, int timestamp){
 
     dest->segval[2] = update_val_multi(&dest->seg_rootptr[2], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segd(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segc(dis7seg *dest, int *valptr, int timestamp){
 
     dest->segval[3] = update_val_multi(&dest->seg_rootptr[3], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_sege(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segd(dis7seg *dest, int *valptr, int timestamp){
 
     dest->segval[4] = update_val_multi(&dest->seg_rootptr[4], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segf(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_sege(dis7seg *dest, int *valptr, int timestamp){
 
     dest->segval[5] = update_val_multi(&dest->seg_rootptr[5], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segg(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segf(dis7seg *dest, int *valptr, int timestamp){
 
     dest->segval[6] = update_val_multi(&dest->seg_rootptr[6], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segdp(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segg(dis7seg *dest, int *valptr, int timestamp){
 
     dest->segval[7] = update_val_multi(&dest->seg_rootptr[7], valptr);
     dis7seg_up(dest);
@@ -151,17 +151,16 @@ E|     |C
 */
     int aseg[] = {
 
-
-            0b11111100,
-            0b01100000,
-            0b11011010,
-            0b11110010,
-            0b01100110,
-            0b10110110,
-            0b10111110,
-            0b11100000,
-            0b11111110,
-            0b11110110,
+            0b01111110,
+            0b00110000,
+            0b01101101,
+            0b01111001,
+            0b00110011,
+            0b01011011,
+            0b01011111,
+            0b01110000,
+            0b01111111,
+            0b01111011,
     };
 
     if (val < 10)
