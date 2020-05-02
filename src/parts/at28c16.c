@@ -110,7 +110,7 @@ static void at28c16_update_addr(at28c16 *a, int *valptr, int timestamp, int inde
 
     a->current_addr = 0;
     int i;
-    for (i = 10; i <= 0; i--){
+    for (i = 10; i >= 0; i--){
 
         a->current_addr <<= 1;
         if (a->in_addr[i])

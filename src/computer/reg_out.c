@@ -49,8 +49,29 @@ reg_out *reg_out_create(char *name){
 
     unsigned char bufcreate[2048];
     memset(bufcreate,0xff,sizeof(bufcreate));
-    for (i = 0; i < 255; i++)
+
+    for (i = 0; i <= 255; i++){
         bufcreate[i] = map7seg(i % 10);
+        bufcreate[256+i] = map7seg((i/10) % 10);
+        bufcreate[512+i] = map7seg((i/100) % 10);
+        bufcreate[768+i] = 0;
+    }
+
+    for (i = -128; i <= 127; i++){
+        int ii = abs(i);
+        int addr;
+        if (i >= 0)
+            addr = 1024 + i;
+        else
+            addr = 1024 + 256 + i;
+        bufcreate[addr] = map7seg(ii % 10);
+        bufcreate[256+addr] = map7seg((ii/10) % 10);
+        bufcreate[512+addr] = map7seg((ii/100) % 10);
+        if (i < 0)
+            bufcreate[768+addr] = MSK_G;
+        else
+            bufcreate[768+addr] = 0;
+    }
 
     reg->eep1 = at28c16_create("",bufcreate);
 
@@ -69,14 +90,6 @@ reg_out *reg_out_create(char *name){
         at28c16_connect_o0(reg->eep1, reg->display[i], (void*)&dis7seg_in_segg);
     }
 
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a0);
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a1);
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a2);
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a3);
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a4);
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a5);
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a6);
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a7);
     bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a8);
     bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a9);
     bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a10);
@@ -89,6 +102,11 @@ reg_out *reg_out_create(char *name){
     ls173_connect_2q(reg->ls173_lo, reg->led[1], (void*)&indicator_in_d0);
     ls173_connect_3q(reg->ls173_lo, reg->led[2], (void*)&indicator_in_d0);
     ls173_connect_4q(reg->ls173_lo, reg->led[3], (void*)&indicator_in_d0);
+    ls173_connect_1q(reg->ls173_lo, reg->eep1, (void*)&at28c16_in_a0);
+    ls173_connect_2q(reg->ls173_lo, reg->eep1, (void*)&at28c16_in_a1);
+    ls173_connect_3q(reg->ls173_lo, reg->eep1, (void*)&at28c16_in_a2);
+    ls173_connect_4q(reg->ls173_lo, reg->eep1, (void*)&at28c16_in_a3);
+
     bitconst_connect_zero(reg->ls173_lo, (void*)&ls173_in_m);
     bitconst_connect_zero(reg->ls173_lo, (void*)&ls173_in_n);
 
@@ -96,6 +114,11 @@ reg_out *reg_out_create(char *name){
     ls173_connect_2q(reg->ls173_hi, reg->led[5], (void*)&indicator_in_d0);
     ls173_connect_3q(reg->ls173_hi, reg->led[6], (void*)&indicator_in_d0);
     ls173_connect_4q(reg->ls173_hi, reg->led[7], (void*)&indicator_in_d0);
+    ls173_connect_1q(reg->ls173_hi, reg->eep1, (void*)&at28c16_in_a4);
+    ls173_connect_2q(reg->ls173_hi, reg->eep1, (void*)&at28c16_in_a5);
+    ls173_connect_3q(reg->ls173_hi, reg->eep1, (void*)&at28c16_in_a6);
+    ls173_connect_4q(reg->ls173_hi, reg->eep1, (void*)&at28c16_in_a7);
+
     bitconst_connect_zero(reg->ls173_hi, (void*)&ls173_in_m);
     bitconst_connect_zero(reg->ls173_hi, (void*)&ls173_in_n);
 
