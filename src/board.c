@@ -239,7 +239,7 @@ void combine_7seg(int segmap, int C[]){
 */
 
     if (segmap & MSK_DP)
-        C[9] = 'o';
+        C[9] = ACS_DIAMOND;//'o';
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -265,7 +265,7 @@ void display_7seg(int segmap, int common, int pos_w, int pos_h){
     wattron(janela1,COLOR_PAIR(LED_RED));
 
     wmove(janela1, pos_h, pos_w);
-    waddch(janela1,' ');
+    //waddch(janela1,' ');
     waddch(janela1,C[0]);
     waddch(janela1,C[1]);
     waddch(janela1,C[1]);
@@ -273,7 +273,7 @@ void display_7seg(int segmap, int common, int pos_w, int pos_h){
     waddch(janela1,' ');
 
     wmove(janela1, pos_h+1, pos_w);
-    waddch(janela1,' ');
+    //waddch(janela1,' ');
     waddch(janela1,C[3]);
     waddch(janela1,C[4]);
     waddch(janela1,C[4]);
@@ -281,7 +281,7 @@ void display_7seg(int segmap, int common, int pos_w, int pos_h){
     waddch(janela1,' ');
 
     wmove(janela1, pos_h+2, pos_w);
-    waddch(janela1,' ');
+    //waddch(janela1,' ');
     waddch(janela1,C[6]);
     waddch(janela1,C[7]);
     waddch(janela1,C[7]);

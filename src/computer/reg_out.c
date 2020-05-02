@@ -225,9 +225,9 @@ board_object *reg_out_board_create(reg_out *reg, int key, char *name){
     board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
 
     board_add_display_7seg(board, reg->display[0],14,3,"DS0", LED_RED);
-    board_add_display_7seg(board, reg->display[1],20,3,"DS1", LED_RED);
-    board_add_display_7seg(board, reg->display[2],26,3,"DS2", LED_RED);
-    board_add_display_7seg(board, reg->display[3],32,3,"DS3", LED_RED);
+    board_add_display_7seg(board, reg->display[1],19,3,"DS1", LED_RED);
+    board_add_display_7seg(board, reg->display[2],24,3,"DS2", LED_RED);
+    board_add_display_7seg(board, reg->display[3],29,3,"DS3", LED_RED);
 
     return board;
 }
