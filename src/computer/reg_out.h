@@ -12,12 +12,14 @@
 
 #include "ls173.h"
 #include "board.h"
+#include "at28c16.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
 typedef struct {
 
     ls173 *ls173_hi, *ls173_lo;
+    at28c16 *eep1;
     dis7seg *display[4];
     indicator *led[8];
     indicator *ledclk;

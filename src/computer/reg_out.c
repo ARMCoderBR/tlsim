@@ -46,8 +46,38 @@ reg_out *reg_out_create(char *name){
         reg->led[i] = indicator_create(lshi);
     }
 
-    for (i = 0; i < 4; i++)
+    reg->eep1 = at28c16_create("",NULL);
+
+    for (i = 0; i < 4; i++){
+
         reg->display[i] = dis7seg_create(COMMON_K,"");
+
+        bitconst_connect_zero(reg->display[i], (void*)&dis7seg_in_common);
+        at28c16_connect_o0(reg->eep1, reg->display[i], (void*)&dis7seg_in_sega);
+        at28c16_connect_o1(reg->eep1, reg->display[i], (void*)&dis7seg_in_segb);
+        at28c16_connect_o2(reg->eep1, reg->display[i], (void*)&dis7seg_in_segc);
+        at28c16_connect_o3(reg->eep1, reg->display[i], (void*)&dis7seg_in_segd);
+        at28c16_connect_o4(reg->eep1, reg->display[i], (void*)&dis7seg_in_sege);
+        at28c16_connect_o5(reg->eep1, reg->display[i], (void*)&dis7seg_in_segf);
+        at28c16_connect_o6(reg->eep1, reg->display[i], (void*)&dis7seg_in_segg);
+        at28c16_connect_o7(reg->eep1, reg->display[i], (void*)&dis7seg_in_segdp);
+    }
+
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a0);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a1);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a2);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a3);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a4);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a5);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a6);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a7);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a8);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a9);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a10);
+
+    bitconst_connect_one(reg->eep1, (void*)&at28c16_in_we);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_cs);
+    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_oe);
 
     ls173_connect_1q(reg->ls173_lo, reg->led[0], (void*)&indicator_in_d0);
     ls173_connect_2q(reg->ls173_lo, reg->led[1], (void*)&indicator_in_d0);

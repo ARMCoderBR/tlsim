@@ -257,6 +257,9 @@ void display_7seg(int segmap, int common, int pos_w, int pos_h){
 
     int C[10];
 
+    if (!common)
+        segmap = 0;
+
     combine_7seg(segmap, C);
 
     wattron(janela1,COLOR_PAIR(LED_RED));
