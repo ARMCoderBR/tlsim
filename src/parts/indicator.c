@@ -7,10 +7,20 @@
 
 #include "update.h"
 #include "indicator.h"
+#include "board.h"
 
 #include <malloc.h>
 #include <string.h>
 
+static void indicator_up(indicator *o){
+
+    if (o->oldvalue != o->value){
+
+        o->oldvalue = o->value;
+        if (o->refreshable)
+            board_set_refresh();
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 indicator *indicator_create(char *name){
@@ -30,6 +40,8 @@ indicator *indicator_create(char *name){
     o->ind1_rootptr = NULL;
     o->ind2_rootptr = NULL;
     o->ind3_rootptr = NULL;
+    o->oldvalue = 0;
+    o->refreshable = 0;
 
     return o;
 }
@@ -49,6 +61,8 @@ void indicator_in_d0(indicator *dest, int *valptr, int timestamp){
         dest->value |= 1;
     else
         dest->value &= ~1;
+
+    indicator_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,6 +78,8 @@ void indicator_in_d1(indicator *dest, int *valptr, int timestamp){
         dest->value |= 2;
     else
         dest->value &= ~2;
+
+    indicator_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +95,8 @@ void indicator_in_d2(indicator *dest, int *valptr, int timestamp){
         dest->value |= 4;
     else
         dest->value &= ~4;
+
+    indicator_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,6 +112,8 @@ void indicator_in_d3(indicator *dest, int *valptr, int timestamp){
         dest->value |= 8;
     else
         dest->value &= ~8;
+
+    indicator_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

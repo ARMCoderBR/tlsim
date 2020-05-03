@@ -71,4 +71,6 @@ void board_mutex_lock();
 
 void board_mutex_unlock();
 
+void board_set_refresh();
+
 #endif /* BOARD_H_ */

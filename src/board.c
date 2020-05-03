@@ -39,6 +39,7 @@ WINDOW *janela3;
 
 pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
 
+pthread_mutex_t setrefmutex = PTHREAD_MUTEX_INITIALIZER;
 
 void board_mutex_lock(){
 
@@ -433,9 +434,12 @@ int pipefd[2];
 ////////////////////////////////////////////////////////////////////////////////
 void board_set_refresh(){
 
+    pthread_mutex_lock(&setrefmutex);
+
     char buf[] = "1";
     write(pipefd[1],buf,1);
-    //must_refresh = 1;
+
+    pthread_mutex_unlock(&setrefmutex);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -613,12 +617,15 @@ void *refresh_thread(void *args){
 
     pipe(pipefd);
 
+    struct timespec lastspec, nowspec;
+    clock_gettime(CLOCK_REALTIME, &lastspec);
+
     while (refresh_run){
 
         FD_ZERO(&rreadfds);
         FD_SET(pipefd[0],&rreadfds);
-        rtv.tv_sec = 0;
-        rtv.tv_usec = 500000;
+        rtv.tv_sec = 2;
+        rtv.tv_usec = 0;
         select(1+pipefd[0],&rreadfds,NULL,NULL,&rtv);
 
         if (FD_ISSET(pipefd[0],&rreadfds)){
@@ -626,7 +633,17 @@ void *refresh_thread(void *args){
             read(pipefd[0], buf, sizeof(buf));
         }
 
-        board_refresh(refboard);
+
+        clock_gettime(CLOCK_REALTIME, &nowspec);
+
+        int deltams = 1000 * (nowspec.tv_sec - lastspec.tv_sec);
+        deltams += (nowspec.tv_nsec - lastspec.tv_nsec) / 1000000;
+
+        if (deltams >= 40){
+
+            board_refresh(refboard);
+            lastspec = nowspec;
+        }
     }
 
     return NULL;
@@ -945,6 +962,7 @@ int board_add_led(board_object *b, indicator *out, int pos_w, int pos_h, char *n
     board_object *obja = malloc(sizeof(board_object));
     if (!obja) return -1;
 
+    out->refreshable = 1;
     obja->pos_w  = pos_w;
     obja->pos_h  = pos_h;
     obja->type   = LED;
@@ -1218,6 +1236,8 @@ int board_run(board_object *board){
     refresh_thread_stop();
     clock_thread_stop();
     pthread_mutex_destroy(&transitionmutex);
+
+    pthread_mutex_destroy(&setrefmutex);
 
     endwin();
     return 0;
