@@ -132,6 +132,23 @@ reg_out *reg_out_create(char *name){
 
     clkgen_connect_out(reg->clk, reg->ledclki, (void*)&indicator_in_d0);
 
+    reg->ls76 = ls76_create();
+    reg->led76_0 = indicator_create("");
+    reg->led76_1 = indicator_create("");
+    bitconst_connect_one(reg->ls76,(void*)&ls76_in_1j);
+    bitconst_connect_one(reg->ls76,(void*)&ls76_in_1k);
+    bitconst_connect_one(reg->ls76,(void*)&ls76_in_1pre);
+    bitconst_connect_one(reg->ls76,(void*)&ls76_in_1clr);
+    bitconst_connect_one(reg->ls76,(void*)&ls76_in_2j);
+    bitconst_connect_one(reg->ls76,(void*)&ls76_in_2k);
+    bitconst_connect_one(reg->ls76,(void*)&ls76_in_2pre);
+    bitconst_connect_one(reg->ls76,(void*)&ls76_in_2clr);
+    ls76_connect_1qn(reg->ls76, reg->ls76, (void*)&ls76_in_2clk);
+    ls76_connect_1q(reg->ls76, reg->led76_0, (void*)&indicator_in_d0);
+    ls76_connect_2q(reg->ls76, reg->led76_1, (void*)&indicator_in_d0);
+
+    clkgen_connect_out(reg->clk, reg->ls76, (void*)&ls76_in_1clk);
+
     return reg;
 }
 
@@ -259,6 +276,8 @@ board_object *reg_out_board_create(reg_out *reg, int key, char *name){
     board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
 
     board_add_led(board, reg->ledclki,1,4,"CKi", LED_YELLOW);
+    board_add_led(board, reg->led76_1,5,4,"C1", LED_GREEN);
+    board_add_led(board, reg->led76_0,9,4,"C0", LED_GREEN);
 
     board_add_display_7seg(board, reg->display[0],14,3,"DS0", LED_RED);
     board_add_display_7seg(board, reg->display[1],19,3,"DS1", LED_RED);

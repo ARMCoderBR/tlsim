@@ -37,7 +37,7 @@ void *clkgen_thread(void *args){
         event_insert(&e);
         board_mutex_unlock();
         //board_set_refresh();
-        usleep(100000);
+        usleep(250000);
 
         board_mutex_lock();
         s->value = 0;
@@ -47,7 +47,7 @@ void *clkgen_thread(void *args){
         event_insert(&e);
         board_mutex_unlock();
         //board_set_refresh();
-        usleep(100000);
+        usleep(250000);
     }
 
     return NULL;
