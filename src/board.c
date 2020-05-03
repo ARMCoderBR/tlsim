@@ -988,6 +988,7 @@ int board_add_display_7seg(board_object *b, dis7seg *out, int pos_w, int pos_h, 
     board_object *obja = malloc(sizeof(board_object));
     if (!obja) return -1;
 
+    out->refreshable = 1;
     obja->pos_w  = pos_w;
     obja->pos_h  = pos_h;
     obja->type   = DIS7SEG;

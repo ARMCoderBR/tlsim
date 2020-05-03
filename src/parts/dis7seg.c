@@ -5,11 +5,12 @@
  *      Author: milton
  */
 
-#include "update.h"
-#include "dis7seg.h"
-
 #include <malloc.h>
 #include <string.h>
+
+#include "update.h"
+#include "dis7seg.h"
+#include "board.h"
 
 const int segmasks[] = { MSK_DP, MSK_A, MSK_B, MSK_C, MSK_D, MSK_E, MSK_F, MSK_G };
 
@@ -36,7 +37,7 @@ dis7seg *dis7seg_create(dis7seg_type type, char *name){
         o->segval[i] = 0;
     }
     o->common_rootptr = NULL;
-    o->common_val = 0;
+    o->common_val = o->common_val_old = 0;
 
     return o;
 }
@@ -65,6 +66,12 @@ void dis7seg_up(dis7seg *dest){
                     dest->segmap |= segmasks[i];   //Anodo comum
             }
         }
+    }
+
+    if (dest->segmap_old != dest->segmap){
+        dest->segmap_old = dest->segmap;
+        if (dest->refreshable)
+            board_set_refresh();
     }
 }
 
@@ -136,6 +143,14 @@ void dis7seg_in_common(dis7seg *dest, int *valptr, int timestamp){
 
     if ((dest->type == COMMON_A) && (val == 1))
         dest->common_val = 1;
+
+    if (dest->common_val_old != dest->common_val){
+
+        dest->common_val_old = dest->common_val;
+
+        if (dest->refreshable)
+            board_set_refresh();
+    }
 }
 
 int map7seg(int val){

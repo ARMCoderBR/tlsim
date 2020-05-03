@@ -31,9 +31,10 @@ typedef struct  {
     vallist *seg_rootptr[8];
     int segval[8];
     vallist *common_rootptr;
-    int common_val;
-    int segmap;
+    int common_val, common_val_old;
+    int segmap, segmap_old;
     dis7seg_type type;
+    int refreshable;
 } dis7seg;
 
 dis7seg *dis7seg_create(dis7seg_type type, char *name);
