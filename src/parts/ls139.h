@@ -36,18 +36,20 @@ typedef struct {
 
 ls139 *ls139_create();
 
-void ls139_connect_y1(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
-void ls139_connect_y2(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
-void ls139_connect_y3(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
-void ls139_connect_y4(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ls139_connect_1y0(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ls139_connect_1y1(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ls139_connect_1y2(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ls139_connect_1y3(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ls139_connect_2y0(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ls139_connect_2y1(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ls139_connect_2y2(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ls139_connect_2y3(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 
-void ls139_in_a1(ls139 *dest, int *valptr, int timestamp);
-void ls139_in_b1(ls139 *dest, int *valptr, int timestamp);
-void ls139_in_a2(ls139 *dest, int *valptr, int timestamp);
-void ls139_in_b2(ls139 *dest, int *valptr, int timestamp);
-void ls139_in_a3(ls139 *dest, int *valptr, int timestamp);
-void ls139_in_b3(ls139 *dest, int *valptr, int timestamp);
-void ls139_in_a4(ls139 *dest, int *valptr, int timestamp);
-void ls139_in_b4(ls139 *dest, int *valptr, int timestamp);
+void ls139_in_1a(ls139 *dest, int *valptr, int timestamp);
+void ls139_in_1b(ls139 *dest, int *valptr, int timestamp);
+void ls139_in_1g(ls139 *dest, int *valptr, int timestamp);
+void ls139_in_2a(ls139 *dest, int *valptr, int timestamp);
+void ls139_in_2b(ls139 *dest, int *valptr, int timestamp);
+void ls139_in_2g(ls139 *dest, int *valptr, int timestamp);
 
 #endif /* LS139_H_ */

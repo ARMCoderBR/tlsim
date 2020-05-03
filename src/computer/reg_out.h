@@ -15,6 +15,7 @@
 #include "at28c16.h"
 #include "clkgen.h"
 #include "ls76.h"
+#include "ls139.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -29,6 +30,7 @@ typedef struct {
     indicator *ledclki;
     ls76 *ls76;
     indicator *led76_0, *led76_1;
+    ls139* ls139;
     char name[30];
 
 } reg_out;

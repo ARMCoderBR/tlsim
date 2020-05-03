@@ -616,6 +616,7 @@ void *refresh_thread(void *args){
     struct timeval rtv;
 
     pipe(pipefd);
+    int ref_pending = 0;
 
     struct timespec lastspec, nowspec;
     clock_gettime(CLOCK_REALTIME, &lastspec);
@@ -624,15 +625,25 @@ void *refresh_thread(void *args){
 
         FD_ZERO(&rreadfds);
         FD_SET(pipefd[0],&rreadfds);
-        rtv.tv_sec = 2;
-        rtv.tv_usec = 0;
+
+        if (!ref_pending){
+            rtv.tv_sec = 2;
+            rtv.tv_usec = 0;
+        }
+        else{
+            rtv.tv_sec = 0;
+            rtv.tv_usec = 100000;
+        }
+
         select(1+pipefd[0],&rreadfds,NULL,NULL,&rtv);
 
         if (FD_ISSET(pipefd[0],&rreadfds)){
 
             read(pipefd[0], buf, sizeof(buf));
+            ref_pending = 1;
         }
 
+        if (!ref_pending) continue;
 
         clock_gettime(CLOCK_REALTIME, &nowspec);
 
@@ -643,7 +654,10 @@ void *refresh_thread(void *args){
 
             board_refresh(refboard);
             lastspec = nowspec;
+            ref_pending = 0;
         }
+        else
+            ref_pending = 1;
     }
 
     return NULL;

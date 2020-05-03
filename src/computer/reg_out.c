@@ -79,7 +79,7 @@ reg_out *reg_out_create(char *name){
 
         reg->display[i] = dis7seg_create(COMMON_K,"");
 
-        bitconst_connect_zero(reg->display[i], (void*)&dis7seg_in_common);
+        //bitconst_connect_zero(reg->display[i], (void*)&dis7seg_in_common);
         at28c16_connect_o7(reg->eep1, reg->display[i], (void*)&dis7seg_in_segdp);
         at28c16_connect_o6(reg->eep1, reg->display[i], (void*)&dis7seg_in_sega);
         at28c16_connect_o5(reg->eep1, reg->display[i], (void*)&dis7seg_in_segb);
@@ -90,8 +90,8 @@ reg_out *reg_out_create(char *name){
         at28c16_connect_o0(reg->eep1, reg->display[i], (void*)&dis7seg_in_segg);
     }
 
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a8);
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a9);
+//    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a8);
+//    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a9);
     bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a10);
 
     bitconst_connect_one(reg->eep1, (void*)&at28c16_in_we);
@@ -148,6 +148,20 @@ reg_out *reg_out_create(char *name){
     ls76_connect_2q(reg->ls76, reg->led76_1, (void*)&indicator_in_d0);
 
     clkgen_connect_out(reg->clk, reg->ls76, (void*)&ls76_in_1clk);
+
+    reg->ls139 = ls139_create("");
+    bitconst_connect_zero(reg->ls139,(void*)&ls139_in_1g);
+    ls76_connect_1q(reg->ls76, reg->ls139, (void*)&ls139_in_1a);
+    ls76_connect_2q(reg->ls76, reg->ls139, (void*)&ls139_in_1b);
+
+    ls76_connect_1q(reg->ls76, reg->eep1, (void*)&at28c16_in_a8);
+    ls76_connect_2q(reg->ls76, reg->eep1, (void*)&at28c16_in_a9);
+
+
+    ls139_connect_1y0(reg->ls139,reg->display[3], (void*)&dis7seg_in_common);
+    ls139_connect_1y1(reg->ls139,reg->display[2], (void*)&dis7seg_in_common);
+    ls139_connect_1y2(reg->ls139,reg->display[1], (void*)&dis7seg_in_common);
+    ls139_connect_1y3(reg->ls139,reg->display[0], (void*)&dis7seg_in_common);
 
     return reg;
 }

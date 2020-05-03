@@ -20,7 +20,9 @@ static void ls139_up(ls139 *a, int timestamp, int index){
     if (a->ing[index])
         goto end139;
 
-    int code = 2*a->inb[index] + a->ina[index];
+    int code = (a->inb[index]?2:0) +
+            (a->ina[index]?1:0);
+
     switch(code){
 
     case 0:
@@ -109,7 +111,7 @@ static void ls139_update_pin_inb(ls139 *a, int *valptr, int timestamp, int index
 ////////////////////////////////////////////////////////////////////////////////
 static void ls139_update_pin_ing(ls139 *a, int *valptr, int timestamp, int index){
 
-    int val = update_val_multi(&a->inb_rootptr[index], valptr);
+    int val = update_val_multi(&a->ing_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -191,15 +193,15 @@ void ls139_connect_2y1(ls139 *source, void *dest, void (*dest_event_handler)(voi
 ////////////////////////////////////////////////////////////////////////////////
 void ls139_connect_2y2(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
-    new_ehandler(&source->y2_event_handler_root[2], dest, dest_event_handler);
-    dest_event_handler(dest,&source->y2[2],0);
+    new_ehandler(&source->y2_event_handler_root[1], dest, dest_event_handler);
+    dest_event_handler(dest,&source->y2[1],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void ls139_connect_2y3(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
-    new_ehandler(&source->y3_event_handler_root[3], dest, dest_event_handler);
-    dest_event_handler(dest,&source->y3[3],0);
+    new_ehandler(&source->y3_event_handler_root[1], dest, dest_event_handler);
+    dest_event_handler(dest,&source->y3[1],0);
 }
 
 
