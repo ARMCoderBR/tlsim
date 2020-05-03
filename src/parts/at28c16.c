@@ -13,6 +13,25 @@
 
 // 16K (2Kx8) PARALLEL EEPROMS
 
+// Notes: Does not simulate special 12V operations (Chip Clear / Read ID)
+//        Does not take into account timing constraints (WE pulse width, setup/hold times, etc).
+
+////////////////////////////////////////////////////////////////////////////////
+static void at28c16_wr_cell(at28c16 *a){
+
+    int i;
+    int b = 0;
+    int msk = 1;
+    for (i = 0; i < NUM_BITS_28C16; i++){
+
+        if (a->inpd[i])
+            b |= msk;
+        msk <<= 1;
+        a->outq[i] = 2;
+    }
+    a->eep_byte[a->current_addr] = b;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 static void at28c16_update (at28c16 *a, int timestamp){
 
@@ -23,22 +42,37 @@ static void at28c16_update (at28c16 *a, int timestamp){
         for (i = 0; i < NUM_BITS_28C16; i++)
             a->outq[i] = 2;
 
+        if (!a->in_cs_old){
+
+            if (!a->in_we){ // End of Write, CS Controlled
+
+                if (a->in_oe)
+                    at28c16_wr_cell(a);
+            }
+
+            a->in_cs_old = a->in_cs;
+        }
+
         goto at28c16_end;
     }
 
+    a->in_cs_old = a->in_cs;
+
     ////////////////////////////////
-    if (!a->in_we){ // Write
+    if (!a->in_we){
 
-        int b = 0;
-        int msk = 1;
-        for (i = 0; i < NUM_BITS_28C16; i++){
-
-            if (a->inpd[i])
-                b |= msk;
-            msk <<= 1;
+        for (i = 0; i < NUM_BITS_28C16; i++)
             a->outq[i] = 2;
-        }
-        a->eep_byte[a->current_addr] = b;
+
+        a->in_we_old = a->in_we;
+        goto at28c16_end;
+    }
+    else
+    if (!a->in_we_old){ // Write
+
+        a->in_we_old = a->in_we;
+        if (a->in_oe)
+            at28c16_wr_cell(a);
         goto at28c16_end;
     }
 
@@ -142,7 +176,7 @@ at28c16 *at28c16_create(char *name, unsigned char *template){
     }
 
     b->current_addr = 0x7f;
-    b->in_cs = b->in_we = b->in_oe = 2;
+    b->in_cs = b->in_we = b->in_oe = b->in_we_old = b->in_cs_old = 2;
     b->in_cs_rootptr = b->in_we_rootptr = b->in_oe_rootptr = NULL;
 
     for (i = 0; i < NUM_BITS_28C16; i++){

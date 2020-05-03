@@ -21,6 +21,7 @@ typedef struct {
     int in_addr[11];
     vallist *in_addr_rootptr[11];
     int in_cs, in_we, in_oe;
+    int in_we_old, in_cs_old;
     vallist *in_cs_rootptr, *in_we_rootptr, *in_oe_rootptr;
     int current_addr;
 
