@@ -13,6 +13,7 @@
 #include "ls173.h"
 #include "board.h"
 #include "at28c16.h"
+#include "clkgen.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -23,6 +24,8 @@ typedef struct {
     dis7seg *display[4];
     indicator *led[8];
     indicator *ledclk;
+    clkgen *clk;
+    indicator *ledclki;
     char name[30];
 
 } reg_out;

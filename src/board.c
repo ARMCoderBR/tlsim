@@ -37,6 +37,15 @@ WINDOW *janela3;
 pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
 
 
+void board_mutex_lock(){
+
+    pthread_mutex_lock(&transitionmutex);
+}
+
+void board_mutex_unlock(){
+
+    pthread_mutex_unlock(&transitionmutex);
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void combine_7seg(int segmap, int C[]){
@@ -693,14 +702,14 @@ void *clock_thread(void *args){
 
                     clock_pulse = 0;
 
-                    pthread_mutex_lock(&transitionmutex);
+                    board_mutex_lock();
 
                     if (clock_last_val)
                         clock_set_val(0);
                     else
                         clock_set_val(1);
 
-                    pthread_mutex_unlock(&transitionmutex);
+                    board_mutex_unlock();
 
                     clocked = 1;
                   //  board_set_refresh();
@@ -713,14 +722,14 @@ void *clock_thread(void *args){
             else
                 clock_state_paused = 0;
 
-            pthread_mutex_lock(&transitionmutex);
+            board_mutex_lock();
 
             if (clock_last_val)
                 clock_set_val(0);
             else
                 clock_set_val(1);
 
-            pthread_mutex_unlock(&transitionmutex);
+            board_mutex_unlock();
 
             clocked = 1;
            // board_set_refresh();
@@ -1081,9 +1090,9 @@ int board_run(board_object *board){
 
     while (!stoprun){
 
-        pthread_mutex_lock(&transitionmutex);
+        board_mutex_lock();
         while (event_process());
-        pthread_mutex_unlock(&transitionmutex);
+        board_mutex_unlock();
 
         if (clocked){
 
@@ -1172,10 +1181,10 @@ int board_run(board_object *board){
 
                     if (p->key == key){
 
-                        pthread_mutex_lock(&transitionmutex);
+                        board_mutex_lock();
                         bitswitch *bs = p->objptr;
                         bitswitch_setval(bs, 1 ^ bs->value);
-                        pthread_mutex_unlock(&transitionmutex);
+                        board_mutex_unlock();
 
                         board_set_refresh();
                     }

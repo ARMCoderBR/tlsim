@@ -127,6 +127,11 @@ reg_out *reg_out_create(char *name){
     else
         reg->name[0] = 0;
 
+    reg->clk = clkgen_create("");
+    reg->ledclki = indicator_create("");
+
+    clkgen_connect_out(reg->clk, reg->ledclki, (void*)&indicator_in_d0);
+
     return reg;
 }
 
@@ -252,6 +257,8 @@ board_object *reg_out_board_create(reg_out *reg, int key, char *name){
     }
 
     board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
+
+    board_add_led(board, reg->ledclki,1,4,"CKi", LED_YELLOW);
 
     board_add_display_7seg(board, reg->display[0],14,3,"DS0", LED_RED);
     board_add_display_7seg(board, reg->display[1],19,3,"DS1", LED_RED);

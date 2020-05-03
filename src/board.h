@@ -67,4 +67,8 @@ board_object *mainboard_create(char *name);
 
 void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp));
 
+void board_mutex_lock();
+
+void board_mutex_unlock();
+
 #endif /* BOARD_H_ */
