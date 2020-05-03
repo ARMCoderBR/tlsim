@@ -11,6 +11,9 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "board.h"
 #include "bitswitch.h"
@@ -425,12 +428,14 @@ pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_t refthread;
 int refresh_run = 0;
-int must_refresh = 0;
+int pipefd[2];
 
 ////////////////////////////////////////////////////////////////////////////////
 void board_set_refresh(){
 
-    must_refresh = 1;
+    char buf[] = "1";
+    write(pipefd[1],buf,1);
+    //must_refresh = 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -601,14 +606,29 @@ void *refresh_thread(void *args){
     board_object * refboard = args;
 
     refresh_run = 1;
+    char buf[16];
+
+    fd_set rreadfds;
+    struct timeval rtv;
+
+    pipe(pipefd);
 
     while (refresh_run){
 
-        if (must_refresh)
-            board_refresh(refboard);
+        FD_ZERO(&rreadfds);
+        FD_SET(pipefd[0],&rreadfds);
+        rtv.tv_sec = 0;
+        rtv.tv_usec = 500000;
+        select(1+pipefd[0],&rreadfds,NULL,NULL,&rtv);
 
-        must_refresh = 0;
-        usleep(42000);      //42 ms
+        //if (FD_ISSET(fiford,&rreadfds)){
+
+            read(pipefd[0], buf, sizeof(buf));
+        //}
+
+        board_refresh(refboard);
+
+        //must_refresh = 0;
     }
 
     return NULL;
@@ -619,6 +639,9 @@ void refresh_thread_stop(){
 
     refresh_run = 0;
     pthread_join(refthread,NULL);
+
+    close(pipefd[0]);
+    close(pipefd[1]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
