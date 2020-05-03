@@ -621,14 +621,12 @@ void *refresh_thread(void *args){
         rtv.tv_usec = 500000;
         select(1+pipefd[0],&rreadfds,NULL,NULL,&rtv);
 
-        //if (FD_ISSET(fiford,&rreadfds)){
+        if (FD_ISSET(pipefd[0],&rreadfds)){
 
             read(pipefd[0], buf, sizeof(buf));
-        //}
+        }
 
         board_refresh(refboard);
-
-        //must_refresh = 0;
     }
 
     return NULL;
