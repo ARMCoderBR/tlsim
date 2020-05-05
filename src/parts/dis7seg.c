@@ -7,12 +7,35 @@
 
 #include <malloc.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "update.h"
 #include "dis7seg.h"
 #include "board.h"
 
 const int segmasks[] = { MSK_DP, MSK_A, MSK_B, MSK_C, MSK_D, MSK_E, MSK_F, MSK_G };
+
+////////////////////////////////////////////////////////////////////////////////
+void *persist_function(void *args){
+
+    dis7seg *o = (dis7seg *)args;
+
+    for (;;){
+
+        usleep(20000);
+
+        if (o->count_persist){
+
+            --o->count_persist;
+
+            if (!o->count_persist){
+                board_set_refresh();
+            }
+        }
+    }
+
+    return NULL;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 dis7seg *dis7seg_create(dis7seg_type type, char *name){
@@ -28,7 +51,7 @@ dis7seg *dis7seg_create(dis7seg_type type, char *name){
         o->name[0] = 0;
 
     o->type = type;
-    o->segmap = 0;
+    o->presegmap = o->segmap = 0;
 
     int i;
     for (i = 0; i < 8; i++){
@@ -39,6 +62,7 @@ dis7seg *dis7seg_create(dis7seg_type type, char *name){
     o->common_rootptr = NULL;
     o->common_val = o->common_val_old = 0;
 
+    pthread_create(&o->persist_thread, NULL, persist_function, o);
     return o;
 }
 
@@ -48,25 +72,28 @@ void dis7seg_up(dis7seg *dest){
     int i;
     for (i = 0; i < 8; i++){
         if (dest->segval[i] == 2)
-            dest->segmap &= ~segmasks[i];
+            dest->presegmap &= ~segmasks[i];
         else{
 
             if (dest->segval[i] == 1){
 
                 if (dest->type == COMMON_K)
-                    dest->segmap |= segmasks[i];    //Catodo comum
+                    dest->presegmap |= segmasks[i];    //Catodo comum
                 else
-                    dest->segmap &= ~segmasks[i];   //Anodo comum
+                    dest->presegmap &= ~segmasks[i];   //Anodo comum
             }
             else{   // Valor 0
 
                 if (dest->type == COMMON_K)
-                    dest->segmap &= ~segmasks[i];  //Catodo comum
+                    dest->presegmap &= ~segmasks[i];  //Catodo comum
                 else
-                    dest->segmap |= segmasks[i];   //Anodo comum
+                    dest->presegmap |= segmasks[i];   //Anodo comum
             }
         }
     }
+
+    if (dest->common_val)
+        dest->segmap = dest->presegmap;
 
     if (dest->segmap_old != dest->segmap){
         dest->segmap_old = dest->segmap;
@@ -148,8 +175,14 @@ void dis7seg_in_common(dis7seg *dest, int *valptr, int timestamp){
 
         dest->common_val_old = dest->common_val;
 
-        if (dest->refreshable)
-            board_set_refresh();
+        if (dest->refreshable){
+
+            if (dest->common_val){
+                dest->segmap = dest->presegmap;
+                dest->count_persist = 10;
+                board_set_refresh();
+            }
+        }
     }
 }
 

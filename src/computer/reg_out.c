@@ -289,9 +289,9 @@ board_object *reg_out_board_create(reg_out *reg, int key, char *name){
 
     board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
 
-    board_add_led(board, reg->ledclki,1,4,"CKi", LED_YELLOW);
-    board_add_led(board, reg->led76_1,5,4,"C1", LED_GREEN);
-    board_add_led(board, reg->led76_0,9,4,"C0", LED_GREEN);
+//    board_add_led(board, reg->ledclki,1,4,"CKi", LED_YELLOW);
+//    board_add_led(board, reg->led76_1,5,4,"C1", LED_GREEN);
+//    board_add_led(board, reg->led76_0,9,4,"C0", LED_GREEN);
 
     board_add_display_7seg(board, reg->display[0],14,3,"DS0", LED_RED);
     board_add_display_7seg(board, reg->display[1],19,3,"DS1", LED_RED);

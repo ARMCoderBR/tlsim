@@ -8,6 +8,7 @@
 #ifndef DIS7SEG_H_
 #define DIS7SEG_H_
 
+#include <pthread.h>
 
 #define MSK_DP 0x80
 #define MSK_A  0x40
@@ -33,8 +34,11 @@ typedef struct  {
     vallist *common_rootptr;
     int common_val, common_val_old;
     int segmap, segmap_old;
+    int presegmap;
     dis7seg_type type;
     int refreshable;
+    pthread_t persist_thread;
+    int count_persist;
 } dis7seg;
 
 dis7seg *dis7seg_create(dis7seg_type type, char *name);

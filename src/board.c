@@ -520,7 +520,7 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
         case DIS7SEG:
             {
                 dis7seg *dis = b->objptr;
-                display_7seg(dis->segmap, dis->common_val, new_w + b->pos_w, new_h + b->pos_h);
+                display_7seg(dis->segmap, dis->common_val|(dis->count_persist?1:0), new_w + b->pos_w, new_h + b->pos_h);
             }
             break;
 
