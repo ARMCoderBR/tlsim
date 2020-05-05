@@ -46,7 +46,6 @@ reg_out *reg_out_create(char *name){
         reg->led[i] = indicator_create(lshi);
     }
 
-
     unsigned char bufcreate[2048];
     memset(bufcreate,0xff,sizeof(bufcreate));
 
@@ -92,7 +91,7 @@ reg_out *reg_out_create(char *name){
 
 //    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a8);
 //    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a9);
-    bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a10);
+    //bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_a10);
 
     bitconst_connect_one(reg->eep1, (void*)&at28c16_in_we);
     bitconst_connect_zero(reg->eep1, (void*)&at28c16_in_cs);
@@ -162,6 +161,10 @@ reg_out *reg_out_create(char *name){
     ls139_connect_1y1(reg->ls139,reg->display[2], (void*)&dis7seg_in_common);
     ls139_connect_1y2(reg->ls139,reg->display[1], (void*)&dis7seg_in_common);
     ls139_connect_1y3(reg->ls139,reg->display[0], (void*)&dis7seg_in_common);
+
+    reg->sw_signed = bitswitch_create("Un/Sg");
+
+    bitswitch_connect_out(reg->sw_signed, reg->eep1, (void*)&at28c16_in_a10);
 
     return reg;
 }
@@ -292,6 +295,8 @@ board_object *reg_out_board_create(reg_out *reg, int key, char *name){
 //    board_add_led(board, reg->ledclki,1,4,"CKi", LED_YELLOW);
 //    board_add_led(board, reg->led76_1,5,4,"C1", LED_GREEN);
 //    board_add_led(board, reg->led76_0,9,4,"C0", LED_GREEN);
+
+    board_add_manual_switch(board, reg->sw_signed,3,4,'s', "Un/Sg");
 
     board_add_display_7seg(board, reg->display[0],14,3,"DS0", LED_RED);
     board_add_display_7seg(board, reg->display[1],19,3,"DS1", LED_RED);
