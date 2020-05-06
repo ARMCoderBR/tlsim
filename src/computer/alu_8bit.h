@@ -29,6 +29,8 @@ typedef struct {
 
 alu_8bit *alu_8bit_create(char *name);
 
+void alu_8bit_destroy (alu_8bit **dest);
+
 void alu_8bit_connect_bit_out (alu_8bit *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 
 void alu_8bit_in_dataA_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),

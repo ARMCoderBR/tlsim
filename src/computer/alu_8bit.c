@@ -101,6 +101,27 @@ alu_8bit *alu_8bit_create(char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void alu_8bit_destroy (alu_8bit **dest){
+
+    if (dest == NULL) return;
+    alu_8bit *b = *dest;
+    if (b == NULL) return;
+
+    ls86_destroy (&b->ls86_hi);
+    ls86_destroy(&b->ls86_lo);
+    ls283_destroy(&b->ls283_hi);
+    ls283_destroy(&b->ls283_lo);
+    ls245_destroy(&b->ls245_1);
+
+    int i;
+    for (i = 0; i < 8; i++)
+        indicator_destroy(&b->led[i]);
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void alu_8bit_connect_bit_out (alu_8bit *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
     switch(index){
