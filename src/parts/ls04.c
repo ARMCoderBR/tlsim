@@ -77,6 +77,24 @@ ls04 *ls04_create(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ls04_destroy (ls04 **dest){
+
+	if (dest == NULL) return;
+	ls04 *b = *dest;
+	if (b == NULL) return;
+
+	int i;
+    for (i = 0; i < NUM_ELEM_LS04; i++){
+
+        vallist_destroy(&b->in_rootptr[i]);
+        ehandler_destroy(&b->out_event_handler_root[i]);
+    }
+
+	free(b);
+	*dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ls04_connect_y1(ls04 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
     new_ehandler(&source->out_event_handler_root[0], dest, dest_event_handler);

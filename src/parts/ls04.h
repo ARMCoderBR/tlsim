@@ -23,6 +23,8 @@ typedef struct {
 
 ls04 *ls04_create();
 
+void ls04_destroy (ls04 **dest);
+
 void ls04_connect_y1(ls04 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls04_connect_y2(ls04 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls04_connect_y3(ls04 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
