@@ -338,6 +338,5 @@ void computer_sim(){
 
     board_add_manual_switch(mainboard, sw_oi, 66, 25, 'o', "OI");
 
-
     board_run(mainboard);
 }

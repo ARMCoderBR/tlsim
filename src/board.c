@@ -40,6 +40,9 @@ WINDOW *janela3;
 pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t setrefmutex = PTHREAD_MUTEX_INITIALIZER;
+int reader_ok = 0;
+
+pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
 
 void board_mutex_lock(){
 
@@ -352,7 +355,10 @@ int received_key(void)
 ////////////////////////////////////////////////////////////////////////////////
 int read_key(void)
 {
-    return wgetch(janela1);
+    pthread_mutex_lock(&ncursesmutex);
+    int key = wgetch(janela1);
+    pthread_mutex_unlock(&ncursesmutex);
+    return key;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -425,14 +431,14 @@ void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objd
 
 //#define NOBJ 1000
 
-pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
-
 pthread_t refthread;
 int refresh_run = 0;
 int pipefd[2];
 
 ////////////////////////////////////////////////////////////////////////////////
 void board_set_refresh(){
+
+    if (!reader_ok) return;
 
     pthread_mutex_lock(&setrefmutex);
 
@@ -621,6 +627,8 @@ void *refresh_thread(void *args){
     struct timespec lastspec, nowspec;
     clock_gettime(CLOCK_REALTIME, &lastspec);
 
+    reader_ok = 1;
+
     while (refresh_run){
 
         FD_ZERO(&rreadfds);
@@ -668,6 +676,8 @@ void refresh_thread_stop(){
 
     refresh_run = 0;
     pthread_join(refthread,NULL);
+
+    reader_ok = 0;
 
     close(pipefd[0]);
     close(pipefd[1]);
@@ -1077,7 +1087,6 @@ int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-
 int board_run(board_object *board){
 
     int resize = 0;
@@ -1174,6 +1183,7 @@ int board_run(board_object *board){
 
             pthread_mutex_unlock(&ncursesmutex);
             board_set_refresh();
+            clock_redraw();
         }
 
         restart_handlers();
@@ -1189,6 +1199,7 @@ int board_run(board_object *board){
                 break;
             case 27:
                 stoprun = 1;
+                board_set_refresh();
                 break;
             case KEY_F(2):
                 if (num_focuseable_boards > 1){
