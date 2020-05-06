@@ -25,6 +25,8 @@ typedef struct {
 
 ls86 *ls86_create();
 
+void ls86_destroy (ls86 **dest);
+
 void ls86_connect_y1(ls86 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls86_connect_y2(ls86 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls86_connect_y3(ls86 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

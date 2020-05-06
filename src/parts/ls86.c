@@ -89,6 +89,25 @@ ls86 *ls86_create(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ls86_destroy (ls86 **dest){
+
+    if (dest == NULL) return;
+    ls86 *b = *dest;
+    if (b == NULL) return;
+
+    int i;
+    for (i = 0; i < NUM_ELEM_LS86; i++){
+
+        vallist_destroy(&b->ina_rootptr[i]);
+        vallist_destroy(&b->inb_rootptr[i]);
+        ehandler_destroy(&b->out_event_handler_root[i]);
+    }
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ls86_connect_y1(ls86 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
     new_ehandler(&source->out_event_handler_root[0], dest, dest_event_handler);
