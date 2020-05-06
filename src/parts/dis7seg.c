@@ -22,14 +22,33 @@ void *persist_function(void *args){
 
     for (;;){
 
-        usleep(20000);
+        usleep(5000);
+
+        if (!o->common_val){
+
+        	o->delay_latch_display = 0;
+        }else{
+        	o->count_persist = 20;
+
+			if (o->delay_latch_display < 1)
+				o->delay_latch_display++;
+			else{
+					o->segmap = o->presegmap;
+					if (o->segmap_old != o->segmap){
+					      o->segmap_old = o->segmap;
+					      if (o->refreshable)
+					          board_set_refresh();
+					}
+			}
+        }
 
         if (o->count_persist){
 
             --o->count_persist;
 
             if (!o->count_persist){
-                board_set_refresh();
+            	if (o->refreshable)
+            		board_set_refresh();
             }
         }
     }
@@ -92,14 +111,14 @@ void dis7seg_up(dis7seg *dest){
         }
     }
 
-    if (dest->common_val)
-        dest->segmap = dest->presegmap;
+    //if ((dest->common_val))
+    //    dest->segmap = dest->presegmap;
 
-    if (dest->segmap_old != dest->segmap){
-        dest->segmap_old = dest->segmap;
-        if (dest->refreshable)
-            board_set_refresh();
-    }
+//    if (dest->segmap_old != dest->segmap){
+//        dest->segmap_old = dest->segmap;
+//        if (dest->refreshable)
+//            board_set_refresh();
+//    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,14 +194,14 @@ void dis7seg_in_common(dis7seg *dest, int *valptr, int timestamp){
 
         dest->common_val_old = dest->common_val;
 
-        if (dest->refreshable){
-
-            if (dest->common_val){
-                dest->segmap = dest->presegmap;
-                dest->count_persist = 10;
-                board_set_refresh();
-            }
-        }
+//        if (dest->refreshable){
+//
+//            if (dest->common_val){
+//                //dest->segmap = dest->presegmap;
+//                dest->count_persist = 10;
+//                //board_set_refresh();
+//            }
+//        }
     }
 }
 

@@ -328,9 +328,7 @@ void computer_sim(){
     board_add_manual_switch(mainboard, sw_co, 50, 27, 'n', "CO");
     board_add_manual_switch(mainboard, sw_j, 58, 27, 'm', "J");
 
-
     ////////////////
-
 
     bitswitch_connect_out(sw_oi, ctru->led[OI], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_oi, ctru, (void*)&ctrunit_in_oi);

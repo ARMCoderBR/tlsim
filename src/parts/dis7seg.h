@@ -39,6 +39,7 @@ typedef struct  {
     int refreshable;
     pthread_t persist_thread;
     int count_persist;
+    int delay_latch_display;
 } dis7seg;
 
 dis7seg *dis7seg_create(dis7seg_type type, char *name);
