@@ -29,6 +29,8 @@ typedef struct {
 
 ls157 *ls157_create();
 
+void ls157_destroy(ls157 **dest);
+
 void ls157_connect_y1(ls157 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls157_connect_y2(ls157 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls157_connect_y3(ls157 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

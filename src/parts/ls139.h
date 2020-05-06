@@ -36,6 +36,8 @@ typedef struct {
 
 ls139 *ls139_create();
 
+void ls139_destroy(ls139 **dest);
+
 void ls139_connect_1y0(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls139_connect_1y1(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls139_connect_1y2(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

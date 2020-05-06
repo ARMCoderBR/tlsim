@@ -146,7 +146,28 @@ ls139 *ls139_create(){
     return b;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ls139_destroy (ls139 **dest){
 
+    if (dest == NULL) return;
+    ls139 *b = *dest;
+    if (b == NULL) return;
+
+    int i;
+    for (i = 0; i < NUM_ELEM_LS139; i++){
+
+        vallist_destroy(&b->ina_rootptr[i]);
+        vallist_destroy(&b->inb_rootptr[i]);
+        vallist_destroy(&b->ing_rootptr[i]);
+        ehandler_destroy(&b->y0_event_handler_root[i]);
+        ehandler_destroy(&b->y1_event_handler_root[i]);
+        ehandler_destroy(&b->y2_event_handler_root[i]);
+        ehandler_destroy(&b->y3_event_handler_root[i]);
+    }
+
+    free(b);
+    *dest = NULL;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void ls139_connect_1y0(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
