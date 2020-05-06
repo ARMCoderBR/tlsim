@@ -91,6 +91,25 @@ ls00 *ls00_create(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ls00_destroy (ls00 **dest){
+
+	if (dest == NULL) return;
+	ls00 *b = *dest;
+	if (b == NULL) return;
+
+	int i;
+    for (i = 0; i < NUM_ELEM_LS00; i++){
+
+        vallist_destroy(&b->ina_rootptr[i]);
+        vallist_destroy(&b->inb_rootptr[i]);
+        ehandler_destroy(&b->out_event_handler_root[i]);
+    }
+
+	free(b);
+	*dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ls00_connect_y1(ls00 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
     new_ehandler(&source->out_event_handler_root[0], dest, dest_event_handler);

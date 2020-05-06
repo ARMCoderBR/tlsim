@@ -25,6 +25,8 @@ typedef struct {
 
 ls02 *ls02_create();
 
+void ls02_destroy (ls02 **dest);
+
 void ls02_connect_y1(ls02 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls02_connect_y2(ls02 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls02_connect_y3(ls02 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

@@ -255,3 +255,37 @@ void logger_end(){
 
     if (logfile) fclose(logfile);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void vallist_destroy(vallist **root){
+
+	if (!root) return;
+	vallist *p = *root;
+	vallist *old;
+
+	while (p){
+
+		old = p;
+		free(old);
+		p = p->next;
+	}
+
+	*root = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ehandler_destroy(ehandler **root){
+
+	if (!root) return;
+	ehandler *p = *root;
+	ehandler *old;
+
+	while (p){
+
+		old = p;
+		free(old);
+		p = p->next;
+	}
+
+	*root = NULL;
+}

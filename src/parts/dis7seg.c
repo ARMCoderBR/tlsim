@@ -20,7 +20,9 @@ void *persist_function(void *args){
 
     dis7seg *o = (dis7seg *)args;
 
-    for (;;){
+    o->running = 1;
+
+    for (;o->running;){
 
         usleep(5000);
 
@@ -86,6 +88,28 @@ dis7seg *dis7seg_create(dis7seg_type type, char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void dis7seg_destroy(dis7seg **dest){
+
+	if (dest == NULL) return;
+	dis7seg *b = *dest;
+	if (b == NULL) return;
+
+	b->running = 0;
+	pthread_join(b->persist_thread, NULL);
+
+	int i;
+    for (i = 0; i < 8; i++){
+
+        vallist_destroy(&b->seg_rootptr[i]);
+    }
+
+    vallist_destroy(&b->common_rootptr);
+
+	free(b);
+	*dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void dis7seg_up(dis7seg *dest){
 
     int i;
@@ -110,15 +134,6 @@ void dis7seg_up(dis7seg *dest){
             }
         }
     }
-
-    //if ((dest->common_val))
-    //    dest->segmap = dest->presegmap;
-
-//    if (dest->segmap_old != dest->segmap){
-//        dest->segmap_old = dest->segmap;
-//        if (dest->refreshable)
-//            board_set_refresh();
-//    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

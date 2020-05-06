@@ -37,12 +37,15 @@ typedef struct  {
     int presegmap;
     dis7seg_type type;
     int refreshable;
+    int running;
     pthread_t persist_thread;
     int count_persist;
     int delay_latch_display;
 } dis7seg;
 
 dis7seg *dis7seg_create(dis7seg_type type, char *name);
+
+void dis7seg_destroy(dis7seg **dest);
 
 void dis7seg_in_sega(dis7seg *dest, int *valptr, int timestamp);
 void dis7seg_in_segb(dis7seg *dest, int *valptr, int timestamp);

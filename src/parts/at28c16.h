@@ -33,6 +33,7 @@ typedef struct {
 } at28c16;
 
 at28c16 *at28c16_create(char *name, unsigned char *template);
+void at28c16_destroy(at28c16 **dest);
 
 void at28c16_connect_o0(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void at28c16_connect_o1(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

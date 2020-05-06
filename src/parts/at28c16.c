@@ -201,6 +201,35 @@ at28c16 *at28c16_create(char *name, unsigned char *template){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void at28c16_destroy(at28c16 **dest){
+
+    if (dest == NULL) return;
+    at28c16 *b = *dest;
+    if (b == NULL) return;
+
+    int i;
+
+    for (i = 0; i < 11; i++){
+
+        b->in_addr[i] = 2;
+        vallist_destroy(&b->in_addr_rootptr[i]);
+    }
+
+    vallist_destroy(&b->in_cs_rootptr);
+    vallist_destroy(&b->in_we_rootptr);
+    vallist_destroy(&b->in_oe_rootptr);
+
+    for (i = 0; i < NUM_BITS_28C16; i++){
+
+    	vallist_destroy(&b->inpd_rootptr[i]);
+        ehandler_destroy(&b->outq_event_handler_root[i]);
+    }
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 static void at28c16_connect_q(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp), int index){
 
     new_ehandler(&source->outq_event_handler_root[index], dest, dest_event_handler);

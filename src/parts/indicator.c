@@ -47,6 +47,22 @@ indicator *indicator_create(char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void indicator_destroy(indicator **dest){
+
+	if (dest == NULL) return;
+	indicator *b = *dest;
+	if (b == NULL) return;
+
+    vallist_destroy(&b->ind0_rootptr);
+    vallist_destroy(&b->ind1_rootptr);
+    vallist_destroy(&b->ind2_rootptr);
+    vallist_destroy(&b->ind3_rootptr);
+
+	free(b);
+	*dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void indicator_in_d0(indicator *dest, int *valptr, int timestamp){
 
 #ifdef DEBUG

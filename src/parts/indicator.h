@@ -20,6 +20,8 @@ typedef struct  {
 
 indicator *indicator_create(char *name);
 
+void indicator_destroy(indicator **dest);
+
 void indicator_in_d0(indicator *dest, int *valptr, int timestamp);
 void indicator_in_d1(indicator *dest, int *valptr, int timestamp);
 void indicator_in_d2(indicator *dest, int *valptr, int timestamp);

@@ -53,4 +53,8 @@ void logger_init();
 void logger(const char *fmt, ...);
 void logger_end();
 
+void vallist_destroy(vallist **root);
+
+void ehandler_destroy(ehandler **root);
+
 #endif /* UPDATE_H_ */
