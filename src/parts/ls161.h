@@ -29,6 +29,8 @@ typedef struct {
 
 ls161 *ls161_create();
 
+void ls161_destroy(ls161 **dest);
+
 void ls161_connect_qa(ls161 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls161_connect_qb(ls161 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls161_connect_qc(ls161 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

@@ -170,6 +170,33 @@ ls161 *ls161_create(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ls161_destroy (ls161 **dest){
+
+    if (dest == NULL) return;
+    ls161 *b = *dest;
+    if (b == NULL) return;
+
+    vallist_destroy(&b->da_rootptr);
+    vallist_destroy(&b->db_rootptr);
+    vallist_destroy(&b->dc_rootptr);
+    vallist_destroy(&b->dd_rootptr);
+    vallist_destroy(&b->load_rootptr);
+    vallist_destroy(&b->enp_rootptr);
+    vallist_destroy(&b->ent_rootptr);
+    vallist_destroy(&b->clk_rootptr);
+    vallist_destroy(&b->clear_rootptr);
+
+    ehandler_destroy(&b->qa_event_handler_root);
+    ehandler_destroy(&b->qb_event_handler_root);
+    ehandler_destroy(&b->qc_event_handler_root);
+    ehandler_destroy(&b->qd_event_handler_root);
+    ehandler_destroy(&b->ripclk_event_handler_root);
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ls161_connect_qa(ls161 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
     new_ehandler(&source->qa_event_handler_root, dest, dest_event_handler);

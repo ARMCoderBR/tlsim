@@ -33,6 +33,8 @@ typedef struct {
 
 ls189 *ls189_create(char *name);
 
+void ls189_destroy (ls189 **dest);
+
 void ls189_connect_1q(ls189 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls189_connect_2q(ls189 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls189_connect_3q(ls189 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

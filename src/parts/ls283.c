@@ -159,6 +159,28 @@ ls283 *ls283_create(char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ls283_destroy (ls283 **dest){
+
+    if (dest == NULL) return;
+    ls283 *b = *dest;
+    if (b == NULL) return;
+
+    int i;
+    for (i = 0; i < LS283_NBITS; i++){
+
+        vallist_destroy(&b->ina_rootptr[i]);
+        vallist_destroy(&b->inb_rootptr[i]);
+        ehandler_destroy(&b->y_event_handler_root[i]);
+    }
+
+    vallist_destroy(&b->cin_rootptr);
+    ehandler_destroy(&b->cout_event_handler_root);
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ls283_connect_y1(ls283 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
     new_ehandler(&source->y_event_handler_root[0], dest, dest_event_handler);

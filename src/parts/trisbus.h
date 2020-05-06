@@ -29,5 +29,6 @@ typedef struct {
 
 trisbus *trisbus_create(int nlines);
 
+void trisbus_destrou(trisnode_s **dest);
 
 #endif /* TRISBUS_H_ */

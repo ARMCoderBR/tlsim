@@ -25,6 +25,8 @@ typedef struct {
 
 ls283 *ls283_create(char *name);
 
+void ls283_destroy(ls283 **dest);
+
 void ls283_connect_y1(ls283 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls283_connect_y2(ls283 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls283_connect_y3(ls283 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

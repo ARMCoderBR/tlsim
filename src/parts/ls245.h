@@ -31,6 +31,8 @@ typedef struct {
 
 ls245 *ls245_create();
 
+void ls245_destroy(ls245 **dest);
+
 void ls245_connect_a1(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls245_connect_a2(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls245_connect_a3(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

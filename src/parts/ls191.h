@@ -30,6 +30,8 @@ typedef struct {
 
 ls191 *ls191_create();
 
+void ls191_destroy (ls191 **dest);
+
 void ls191_connect_qa(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls191_connect_qb(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls191_connect_qc(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

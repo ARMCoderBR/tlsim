@@ -23,6 +23,8 @@ typedef struct {
 
 ls374 *ls374_create();
 
+void ls374_destroy (ls374 **dest);
+
 void ls374_connect_1q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
 void ls374_connect_2q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));
 void ls374_connect_3q(ls374 *source, void *dest, void (*dest_event_handler)(void *dest, int val, int timestamp));

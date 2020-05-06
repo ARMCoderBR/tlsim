@@ -133,6 +133,32 @@ ls189 *ls189_create(char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ls189_destroy (ls189 **dest){
+
+    if (dest == NULL) return;
+    ls189 *b = *dest;
+    if (b == NULL) return;
+
+    vallist_destroy(&b->in_addr_rootptr[3]);
+    vallist_destroy(&b->in_addr_rootptr[2]);
+    vallist_destroy(&b->in_addr_rootptr[1]);
+    vallist_destroy(&b->in_addr_rootptr[0]);
+    vallist_destroy(&b->in_cs_rootptr);
+    vallist_destroy(&b->in_we_rootptr);
+
+    int i;
+    for (i = 0; i < NUM_BITS_LS189; i++){
+
+        vallist_destroy(&b->inpd_rootptr[i]);
+        ehandler_destroy(&b->outq_event_handler_root[i]);
+    }
+
+    free(b);
+    *dest = NULL;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 static void ls189_connect_q(ls189 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp), int index){
 
     new_ehandler(&source->outq_event_handler_root[index], dest, dest_event_handler);

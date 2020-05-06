@@ -27,6 +27,8 @@ typedef struct {
 
 ls76 *ls76_create();
 
+void ls76_destroy(ls76 **dest);
+
 void ls76_connect_1q(ls76 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 
 void ls76_connect_1qn(ls76 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));

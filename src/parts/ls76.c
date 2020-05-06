@@ -122,6 +122,29 @@ ls76 *ls76_create(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ls76_destroy (ls76 **dest){
+
+    if (dest == NULL) return;
+    ls76 *b = *dest;
+    if (b == NULL) return;
+
+    int i;
+    for (i = 0; i < NUM_BITS_LS76; i++){
+
+        vallist_destroy(&b->pre_rootptr[i]);
+        vallist_destroy(&b->clr_rootptr[i]);
+        vallist_destroy(&b->clk_rootptr[i]);
+        vallist_destroy(&b->j_rootptr[i]);
+        vallist_destroy(&b->k_rootptr[i]);
+        ehandler_destroy(&b->q_event_handler_root[i]);
+        ehandler_destroy(&b->qn_event_handler_root[i]);
+    }
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ls76_connect_q(ls76 *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
     new_ehandler(&source->q_event_handler_root[index], dest, dest_event_handler);

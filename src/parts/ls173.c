@@ -116,6 +116,31 @@ ls173 *ls173_create(char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ls173_destroy (ls173 **dest){
+
+    if (dest == NULL) return;
+    ls173 *b = *dest;
+    if (b == NULL) return;
+
+    vallist_destroy(&b->in_clr_rootptr);
+    vallist_destroy(&b->in_m_rootptr);
+    vallist_destroy(&b->in_n_rootptr);
+    vallist_destroy(&b->in_g1_rootptr);
+    vallist_destroy(&b->in_g2_rootptr);
+    vallist_destroy(&b->clk_rootptr);
+
+    int i;
+    for (i = 0; i < NUM_ELEM_LS173; i++){
+
+        vallist_destroy(&b->inpd_rootptr[i]);
+        ehandler_destroy(&b->outq_event_handler_root[i]);
+    }
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 static void ls173_connect_q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp), int index){
 
     new_ehandler(&source->outq_event_handler_root[index], dest, dest_event_handler);

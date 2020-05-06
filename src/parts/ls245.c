@@ -98,9 +98,9 @@ ls245 *ls245_create(){
         return NULL;
 
     b->in_dir = b->in_oe = 2;
+    b->in_dir_rootptr = b->in_oe_rootptr = NULL;
 
     int i;
-
     for (i = 0; i < NUM_ELEM_LS245; i++){
 
         b->inpa[i] = b->inpb[i] = 2;
@@ -113,6 +113,29 @@ ls245 *ls245_create(){
     }
 
     return b;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ls245_destroy (ls245 **dest){
+
+    if (dest == NULL) return;
+    ls245 *b = *dest;
+    if (b == NULL) return;
+
+    vallist_destroy(&b->in_dir_rootptr);
+    vallist_destroy(&b->in_oe_rootptr);
+
+    int i;
+    for (i = 0; i < NUM_ELEM_LS245; i++){
+
+        vallist_destroy(&b->inpa_rootptr[i]);
+        vallist_destroy(&b->inpb_rootptr[i]);
+        ehandler_destroy(&b->outq_event_handler_root[i]);
+        ehandler_destroy(&b->outq_event_handler_root[NUM_ELEM_LS245+i]);
+    }
+
+    free(b);
+    *dest = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

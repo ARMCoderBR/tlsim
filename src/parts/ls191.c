@@ -182,6 +182,33 @@ ls191 *ls191_create(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ls191_destroy (ls191 **dest){
+
+    if (dest == NULL) return;
+    ls191 *b = *dest;
+    if (b == NULL) return;
+
+    vallist_destroy(&b->da_rootptr);
+    vallist_destroy(&b->db_rootptr);
+    vallist_destroy(&b->dc_rootptr);
+    vallist_destroy(&b->dd_rootptr);
+    vallist_destroy(&b->load_rootptr);
+    vallist_destroy(&b->enable_rootptr);
+    vallist_destroy(&b->downup_rootptr);
+    vallist_destroy(&b->clk_rootptr);
+
+    ehandler_destroy(&b->qa_event_handler_root);
+    ehandler_destroy(&b->qb_event_handler_root);
+    ehandler_destroy(&b->qc_event_handler_root);
+    ehandler_destroy(&b->qd_event_handler_root);
+    ehandler_destroy(&b->maxmin_event_handler_root);
+    ehandler_destroy(&b->ripclk_event_handler_root);
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ls191_connect_qa(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
     new_ehandler(&source->qa_event_handler_root, dest, dest_event_handler);

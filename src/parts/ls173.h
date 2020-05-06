@@ -33,6 +33,8 @@ typedef struct {
 
 ls173 *ls173_create(char *name);
 
+void ls173_destroy(ls173 **dest);
+
 void ls173_connect_1q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls173_connect_2q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 void ls173_connect_3q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
