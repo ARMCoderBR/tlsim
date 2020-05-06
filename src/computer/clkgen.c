@@ -19,9 +19,11 @@ void *clkgen_thread(void *args){
 
     clkgen *s = (clkgen*)args;
 
+    s->running = 1;
+
     event e;
 
-    for (;;){
+    for (;s->running;){
 
         if (s->out_event_handler_root == NULL){
 
@@ -36,7 +38,6 @@ void *clkgen_thread(void *args){
         e.timestamp = 0;
         event_insert(&e);
         board_mutex_unlock();
-        //board_set_refresh();
         usleep(10000);
 
         board_mutex_lock();
@@ -46,7 +47,6 @@ void *clkgen_thread(void *args){
         e.timestamp = 0;
         event_insert(&e);
         board_mutex_unlock();
-        //board_set_refresh();
         usleep(10000);
     }
 
@@ -71,6 +71,22 @@ clkgen *clkgen_create(char *name){
     pthread_create(&b->clkthread, NULL, clkgen_thread, b);
 
     return b;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void clkgen_destroy (clkgen **dest){
+
+    if (dest == NULL) return;
+    clkgen *b = *dest;
+    if (b == NULL) return;
+
+    b->running = 0;
+    pthread_join(b->clkthread, NULL);
+
+    ehandler_destroy(&b->out_event_handler_root);
+
+    free(b);
+    *dest = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

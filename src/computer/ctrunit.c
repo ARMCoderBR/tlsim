@@ -37,6 +37,30 @@ ctrunit *ctrunit_create(char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ctrunit_destroy (ctrunit **dest){
+
+    if (dest == NULL) return;
+    ctrunit *b = *dest;
+    if (b == NULL) return;
+
+    ls00_destroy(&b->ls00);
+    ls04_destroy(&b->ls04_1);
+    ls04_destroy(&b->ls04_2);
+    bitswitch_destroy(&b->reset_sw);
+
+    int i;
+    for (i = 0; i < NSIGNALS_CTRU; i++){
+
+        indicator_destroy(&b->led[i]);
+        vallist_destroy(&b->in_rootptr[i]);
+        ehandler_destroy(&b->out_event_handler_root[i]);
+    }
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ctrunit_in(ctrunit *dest, int index, int *valptr, int timestamp){
 
     indicator_in_d0(dest->led[index], valptr, timestamp);

@@ -107,7 +107,7 @@ void alu_8bit_destroy (alu_8bit **dest){
     alu_8bit *b = *dest;
     if (b == NULL) return;
 
-    ls86_destroy (&b->ls86_hi);
+    ls86_destroy(&b->ls86_hi);
     ls86_destroy(&b->ls86_lo);
     ls283_destroy(&b->ls283_hi);
     ls283_destroy(&b->ls283_lo);

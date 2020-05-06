@@ -51,6 +51,8 @@ typedef struct {
 
 ctrunit *ctrunit_create(char *name);
 
+void ctrunit_destroy (ctrunit **dest);
+
 board_object *ctrunit_board_create(ctrunit *reg, int key, char *name); // Requer NCURSES
 
 void ctrunit_in_hlt(ctrunit *dest, int *valptr, int timestamp);
