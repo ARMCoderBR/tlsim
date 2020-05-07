@@ -16,11 +16,8 @@
 #include "bitconst.h"
 #include "ctrunit.h"
 #include "reg_out.h"
-
 #include "computer.h"
-
 #include "board.h"
-
 #include "indicator.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -369,6 +366,5 @@ void computer_sim(){
     DESTROY(sw_j);
     DESTROY(sw_oi);
 
-    board_destroy(&mainboard);
-
+    DESTROY(mainboard);
 }

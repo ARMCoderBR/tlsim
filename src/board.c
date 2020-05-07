@@ -307,8 +307,6 @@ void display_7seg(int segmap, int common, int pos_w, int pos_h){
     wattroff(janela1,COLOR_PAIR(LED_WHITE));
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
 void desenha_janelas(void)
 {
@@ -401,7 +399,7 @@ void clock_set_val(int val){
 //    }
 }
 
-
+////////////////////////////////////////////////////////////////////////////////
 void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp)){
 
     ehandler *newe = malloc(sizeof(ehandler));
@@ -588,7 +586,6 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
             if (num_focuseable_boards < MAX_FOCUSEABLES_BOARDS)
                 board_on_focus[num_focuseable_boards++] = thisboard;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 void board_refresh(board_object *b){
@@ -903,6 +900,7 @@ board_object *board_create(int width, int height, int key, char *name){
     b->objptr_next = NULL;
     //b->board_on_focus = b;  // Focada nela própria no início.
 
+    b->destroy = (void*)board_destroy;
     return b;
 }
 
@@ -948,6 +946,7 @@ void board_destroy_a(board_object *dest){
     b->objptr_root = NULL;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 void board_destroy(board_object **dest){
 
 	//printf("============================================\n");
@@ -1328,6 +1327,7 @@ typedef struct {
     void (*destroy)(void **dest);
 } part_descriptor;
 
+////////////////////////////////////////////////////////////////////////////////
 void part_destroy(void **part){
 
     if (part == NULL) return;

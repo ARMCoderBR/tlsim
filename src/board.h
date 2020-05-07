@@ -35,6 +35,7 @@ typedef enum {
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     int pos_w;
     int pos_h;
     control_type type;
