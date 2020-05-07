@@ -63,6 +63,8 @@ int board_run(board_object *board);
 
 board_object *board_create(int width, int height, int key, char *name);
 
+void board_destroy(board_object **dest);
+
 board_object *mainboard_create(char *name);
 
 void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp));

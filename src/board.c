@@ -907,6 +907,30 @@ board_object *board_create(int width, int height, int key, char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void board_destroy(board_object **dest){
+
+    if (dest == NULL) return;
+    board_object *b = *dest;
+    if (b == NULL) return;
+
+    if (b->type != BOARD) return;   // Erro interno - nunca deve acontecer.
+
+    b = b->objptr_root;
+    while (b){
+
+        if (b->type == BOARD)
+            board_destroy(&b);
+
+        board_object *tofree = b;
+        b = b->objptr_next;
+        free(tofree);
+    }
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 board_object *mainboard_create(char *name){
 
     return board_create(0, 0, 0, name);
