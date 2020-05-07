@@ -166,6 +166,8 @@ reg_out *reg_out_create(char *name){
 
     bitswitch_connect_out(reg->sw_signed, reg->eep1, (void*)&at28c16_in_a10);
 
+    reg->destroy = (void*)reg_out_destroy;
+
     return reg;
 }
 

@@ -338,15 +338,24 @@ void computer_sim(){
 
     board_run(mainboard);
 
-    reg_8bit_destroy(&regA);
-    reg_8bit_destroy(&regB);
-    reg_8bit_destroy(&regIN);
+    DESTROY(regA);
+    DESTROY(regB);
+    DESTROY(regIN);
 
-    bitswitch_destroy(&sw_su);
+    for (i = 0; i < 8; i++){
 
-    //progctr_destroy(&pctr);
-    part_destroy(&pctr);
+        DESTROY(ledbus[i]);
+        DESTROY(swbus[i]);
+    }
 
+    DESTROY(alu);
+    DESTROY(sw_su);
+
+    DESTROY(ram);
+
+    DESTROY(pctr);
+
+    DESTROY(regout);
 
     //board_destroy(&mainboard);
 

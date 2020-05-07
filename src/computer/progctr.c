@@ -71,19 +71,17 @@ progctr *progctr_create(char *name){
 ////////////////////////////////////////////////////////////////////////////////
 void progctr_destroy(progctr **dest){
 
-    printf("progctr_destroy()\n");
-
     if (dest == NULL) return;
     progctr *b = *dest;
     if (b == NULL) return;
 
-    part_destroy(&b->ls161);
-    part_destroy(&b->ls245_1);
-    part_destroy(&b->ledclk);
+    part_destroy((void**)&b->ls161);
+    part_destroy((void**)&b->ls245_1);
+    part_destroy((void**)&b->ledclk);
 
     int i;
     for (i = 0; i < 4; i++)
-        part_destroy(&b->led[i]);
+        part_destroy((void**)&b->led[i]);
 
     free(b);
     *dest = NULL;

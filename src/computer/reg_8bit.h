@@ -25,6 +25,7 @@ typedef enum{
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     ls173 *ls173_hi, *ls173_lo;
     ls245 *ls245_1;
     indicator *led[8];

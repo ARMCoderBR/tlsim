@@ -83,6 +83,8 @@ reg_8bit *reg_8bit_create(reg8bit_type_t type, char *name){
     else
         reg->name[0] = 0;
 
+    reg->destroy = (void*)reg_8bit_destroy;
+
     return reg;
 }
 

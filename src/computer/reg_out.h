@@ -22,6 +22,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     ls173 *ls173_hi, *ls173_lo;
     at28c16 *eep1;
     dis7seg *display[4];

@@ -77,4 +77,6 @@ void board_set_refresh();
 
 void part_destroy(void **part);
 
+#define DESTROY(X) part_destroy((void**)&X)
+
 #endif /* BOARD_H_ */

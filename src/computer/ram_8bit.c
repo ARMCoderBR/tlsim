@@ -190,6 +190,9 @@ ram_8bit *ram_8bit_create(char *name){
     ram->clk = 2;
     ram->oldclk = 1;
     ram->clk_rootptr = NULL;
+
+    ram->destroy = (void*)ram_8bit_destroy;
+
     return ram;
 }
 
@@ -200,31 +203,31 @@ void ram_8bit_destroy (ram_8bit **dest){
     ram_8bit *b = *dest;
     if (b == NULL) return;
 
-    ls189_destroy(&b->ls189_hi);
-    ls189_destroy(&b->ls189_lo);
-    ls245_destroy(&b->ls245_1);
-    ls04_destroy(&b->ls04_hi);
-    ls04_destroy(&b->ls04_lo);
+    DESTROY(b->ls189_hi);
+    DESTROY(b->ls189_lo);
+    DESTROY(b->ls245_1);
+    DESTROY(b->ls04_hi);
+    DESTROY(b->ls04_lo);
 
     int i;
 
     for (i = 0; i < 4; i++)
-        indicator_destroy(&b->ledaddr[i]);
+        DESTROY(b->ledaddr[i]);
 
-    bitswitch_destroy(&b->prog_run);
+    DESTROY(b->prog_run);
 
     for (i = 0; i < 4; i++)
-        bitswitch_destroy(&b->progaddr[i]);
+        DESTROY(b->progaddr[i]);
 
     for (i = 0; i < 8; i++)
-        bitswitch_destroy(&b->progdata[i]);
+        DESTROY(b->progdata[i]);
 
-    bitswitch_destroy(&b->progwrite);
+    DESTROY(b->progwrite);
 
-    indicator_destroy(&b->ledprog);
-    indicator_destroy(&b->ledrun);
+    DESTROY(b->ledprog);
+    DESTROY(b->ledrun);
 
-    vallist_destroy(&b->clk_rootptr);
+    DESTROY(b->clk_rootptr);
 
     free(b);
     *dest = NULL;
