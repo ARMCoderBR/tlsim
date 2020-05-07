@@ -194,6 +194,43 @@ ram_8bit *ram_8bit_create(char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ram_8bit_destroy (ram_8bit **dest){
+
+    if (dest == NULL) return;
+    ram_8bit *b = *dest;
+    if (b == NULL) return;
+
+    ls189_destroy(&b->ls189_hi);
+    ls189_destroy(&b->ls189_lo);
+    ls245_destroy(&b->ls245_1);
+    ls04_destroy(&b->ls04_hi);
+    ls04_destroy(&b->ls04_lo);
+
+    int i;
+
+    for (i = 0; i < 4; i++)
+        indicator_destroy(&b->ledaddr[i]);
+
+    bitswitch_destroy(&b->prog_run);
+
+    for (i = 0; i < 4; i++)
+        bitswitch_destroy(&b->progaddr[i]);
+
+    for (i = 0; i < 8; i++)
+        bitswitch_destroy(&b->progdata[i]);
+
+    bitswitch_destroy(&b->progwrite);
+
+    indicator_destroy(&b->ledprog);
+    indicator_destroy(&b->ledrun);
+
+    vallist_destroy(&b->clk_rootptr);
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ram_8bit_connect_bit_out (ram_8bit *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
     switch(index){

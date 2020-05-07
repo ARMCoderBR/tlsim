@@ -39,6 +39,8 @@ typedef struct {
 
 reg_out *reg_out_create(char *name);
 
+void reg_out_destroy (reg_out **dest);
+
 void reg_out_in_data_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
                         void *from,reg_out *dest,int index);
 

@@ -170,6 +170,41 @@ reg_out *reg_out_create(char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void reg_out_destroy (reg_out **dest){
+
+    if (dest == NULL) return;
+    reg_out *b = *dest;
+    if (b == NULL) return;
+
+    ls173_destroy(&b->ls173_hi);
+    ls173_destroy(&b->ls173_lo);
+    indicator_destroy(&b->ledclk);
+
+    int i;
+    for (i = 0; i < 8; i++)
+        indicator_destroy(&b->led[i]);
+
+    at28c16_destroy(&b->eep1);
+
+    for (i = 0; i < 4; i++)
+        dis7seg_destroy(&b->display[i]);
+
+    clkgen_destroy(&b->clk);
+    indicator_destroy(&b->ledclki);
+
+    ls76_destroy(&b->ls76);
+    indicator_destroy(&b->led76_0);
+    indicator_destroy(&b->led76_1);
+
+    ls139_destroy(&b->ls139);
+    bitswitch_destroy(&b->sw_signed);
+
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void reg_out_in_data_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
                         void *from, reg_out *dest, int index){
 

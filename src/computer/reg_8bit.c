@@ -87,6 +87,26 @@ reg_8bit *reg_8bit_create(reg8bit_type_t type, char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void reg_8bit_destroy (reg_8bit **dest){
+
+    if (dest == NULL) return;
+    reg_8bit *b = *dest;
+    if (b == NULL) return;
+
+    ls173_destroy(&b->ls173_hi);
+    ls173_destroy(&b->ls173_lo);
+    ls245_destroy(&b->ls245_1);
+    indicator_destroy(&b->ledclk);
+
+    int i;
+    for (i = 0; i < 8; i++)
+        indicator_destroy(&b->led[i]);
+
+    free(b);
+    *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void reg_8bit_connect_bit_out (reg_8bit *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
     switch(index){

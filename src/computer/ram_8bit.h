@@ -50,6 +50,8 @@ typedef struct {
 
 ram_8bit *ram_8bit_create(char *name);
 
+void ram_8bit_destroy(ram_8bit **dest);
+
 void ram_8bit_connect_bit_out (ram_8bit *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 
 void ram_8bit_in_data_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),

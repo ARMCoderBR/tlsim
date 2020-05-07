@@ -36,6 +36,8 @@ typedef struct {
 
 reg_8bit *reg_8bit_create(reg8bit_type_t type, char *name);
 
+void reg_8bit_destroy(reg_8bit **dest);
+
 void reg_8bit_connect_bit_out (reg_8bit *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 
 void reg_8bit_in_data_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
