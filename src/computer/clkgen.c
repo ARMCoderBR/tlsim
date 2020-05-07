@@ -36,7 +36,7 @@ void *clkgen_thread(void *args){
         e.event_handler_root = s->out_event_handler_root;
         e.valueptr = &s->value;
         e.timestamp = 0;
-        event_insert(&e);
+        event_insert_async(&e);
         board_mutex_unlock();
         usleep(10000);
 
@@ -45,7 +45,7 @@ void *clkgen_thread(void *args){
         e.event_handler_root = s->out_event_handler_root;
         e.valueptr = &s->value;
         e.timestamp = 0;
-        event_insert(&e);
+        event_insert_async(&e);
         board_mutex_unlock();
         usleep(10000);
     }

@@ -66,6 +66,6 @@ void bitswitch_setval(bitswitch *s, int val){
         e.event_handler_root = s->out_event_handler_root;
         e.valueptr = &s->value;
         e.timestamp = 0;
-        event_insert(&e);
+        event_insert_async(&e);
     }
 }

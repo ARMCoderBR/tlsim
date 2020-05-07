@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <pthread.h>
 
 #include "update.h"
 
@@ -19,6 +20,8 @@
 //int evinq = 0;
 //int evins = 0;
 //int evget = 0;
+
+pthread_mutex_t insertionmutex = PTHREAD_MUTEX_INITIALIZER;
 
 void event_insert(event *e);
 
@@ -132,6 +135,16 @@ void event_insert(event *e){
 #ifdef DEBUG
     printf("event_insert END evins:%d evget:%d\n",evins,evget);
 #endif
+
+    event_insert_notify();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void event_insert_async(event *e){
+
+    pthread_mutex_lock(&insertionmutex);
+    event_insert(e);
+    pthread_mutex_unlock(&insertionmutex);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -80,4 +80,6 @@ void part_destroy(void **part);
 
 #define DESTROY(X) part_destroy((void**)&X)
 
+void event_insert_notify();
+
 #endif /* BOARD_H_ */

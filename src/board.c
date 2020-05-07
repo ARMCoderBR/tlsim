@@ -330,18 +330,27 @@ void desenha_janelas(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+int pipeevents[2];
+
 void restart_handlers(void)
 {
     struct timeval tv;
 
     FD_ZERO (&readfds);
     FD_SET(0,&readfds);
-    //FD_SET(tc_ipccom_ctx.piperx,&readfds);
+    FD_SET(pipeevents[0],&readfds);
+
+    char buf[16];
 
     tv.tv_sec = 0;
-    tv.tv_usec = 1000;    // 1 ms
+    tv.tv_usec = 100;    // 100 us
 
-    select (1/*+tc_ipccom_ctx.piperx*/,&readfds,NULL,NULL,&tv);
+    select (1+pipeevents[0],&readfds,NULL,NULL,&tv);
+
+    if (FD_ISSET(pipeevents[0],&readfds)){
+
+        read(pipeevents[0], buf, sizeof(buf));
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -388,7 +397,7 @@ void clock_set_val(int val){
     e.valueptr = &clock_last_val;
     e.timestamp = 0;
     e.done = 0;
-    event_insert(&e);
+    event_insert_async(&e);
 
 //    ehandler *e = clock_event_handler_root;
 //
@@ -433,7 +442,7 @@ void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objd
 
 pthread_t refthread;
 int refresh_run = 0;
-int pipefd[2];
+int piperefresh[2];
 
 ////////////////////////////////////////////////////////////////////////////////
 void board_set_refresh(){
@@ -443,7 +452,7 @@ void board_set_refresh(){
     pthread_mutex_lock(&setrefmutex);
 
     char buf[] = "1";
-    write(pipefd[1],buf,1);
+    write(piperefresh[1],buf,1);
 
     pthread_mutex_unlock(&setrefmutex);
 }
@@ -620,7 +629,7 @@ void *refresh_thread(void *args){
     fd_set rreadfds;
     struct timeval rtv;
 
-    pipe(pipefd);
+    pipe(piperefresh);
     int ref_pending = 0;
 
     struct timespec lastspec, nowspec;
@@ -631,7 +640,7 @@ void *refresh_thread(void *args){
     while (refresh_run){
 
         FD_ZERO(&rreadfds);
-        FD_SET(pipefd[0],&rreadfds);
+        FD_SET(piperefresh[0],&rreadfds);
 
         if (!ref_pending){
             rtv.tv_sec = 2;
@@ -642,11 +651,11 @@ void *refresh_thread(void *args){
             rtv.tv_usec = 100000;
         }
 
-        select(1+pipefd[0],&rreadfds,NULL,NULL,&rtv);
+        select(1+piperefresh[0],&rreadfds,NULL,NULL,&rtv);
 
-        if (FD_ISSET(pipefd[0],&rreadfds)){
+        if (FD_ISSET(piperefresh[0],&rreadfds)){
 
-            read(pipefd[0], buf, sizeof(buf));
+            read(piperefresh[0], buf, sizeof(buf));
             ref_pending = 1;
         }
 
@@ -678,8 +687,8 @@ void refresh_thread_stop(){
 
     reader_ok = 0;
 
-    close(pipefd[0]);
-    close(pipefd[1]);
+    close(piperefresh[0]);
+    close(piperefresh[1]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1168,6 +1177,7 @@ int board_run(board_object *board){
     TERM_LINES = LINES;
     TERM_COLS = COLS;
 
+    pipe(pipeevents);
 
     start_color();
     init_pair(1, 8|COLOR_RED, 16|COLOR_BLACK);
@@ -1320,6 +1330,10 @@ int board_run(board_object *board){
     pthread_mutex_destroy(&setrefmutex);
 
     endwin();
+
+    close(pipeevents[0]);
+    close(pipeevents[1]);
+
     return 0;
 }
 
@@ -1341,3 +1355,14 @@ void part_destroy(void **part){
     *part = NULL;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+pthread_mutex_t notifymutex = PTHREAD_MUTEX_INITIALIZER;
+void event_insert_notify(){
+
+    pthread_mutex_lock(&notifymutex);
+
+    char buf[] = "2";
+    write(pipeevents[1],buf,1);
+
+    pthread_mutex_unlock(&notifymutex);
+}
