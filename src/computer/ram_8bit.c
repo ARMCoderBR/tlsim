@@ -227,7 +227,7 @@ void ram_8bit_destroy (ram_8bit **dest){
     DESTROY(b->ledprog);
     DESTROY(b->ledrun);
 
-    DESTROY(b->clk_rootptr);
+    vallist_destroy((void*)&b->clk_rootptr);
 
     free(b);
     *dest = NULL;

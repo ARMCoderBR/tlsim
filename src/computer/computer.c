@@ -349,14 +349,26 @@ void computer_sim(){
     }
 
     DESTROY(alu);
-    DESTROY(sw_su);
-
     DESTROY(ram);
-
     DESTROY(pctr);
-
     DESTROY(regout);
 
-    //board_destroy(&mainboard);
+    DESTROY(sw_clr);
+    DESTROY(sw_ai);
+    DESTROY(sw_bi);
+    DESTROY(sw_ii);
+    DESTROY(sw_ao);
+    DESTROY(sw_io);
+    DESTROY(sw_su);
+    DESTROY(sw_so);
+    DESTROY(sw_ro);
+    DESTROY(sw_mi);
+    DESTROY(sw_ri);
+    DESTROY(sw_ce);
+    DESTROY(sw_co);
+    DESTROY(sw_j);
+    DESTROY(sw_oi);
+
+    board_destroy(&mainboard);
 
 }
