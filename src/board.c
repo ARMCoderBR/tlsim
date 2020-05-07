@@ -907,26 +907,55 @@ board_object *board_create(int width, int height, int key, char *name){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void board_destroy(board_object **dest){
 
+//char stypes[5][20]= {
+//
+//    "MANUAL_SWITCH",
+//    "LED",
+//    "XDIGIT",
+//    "BOARD",
+//    "DIS7SEG"
+//};
+
+void board_destroy_a(board_object *dest){
+
+//	printf("board_destroy()\n");
     if (dest == NULL) return;
-    board_object *b = *dest;
+    board_object *b = dest;
     if (b == NULL) return;
 
     if (b->type != BOARD) return;   // Erro interno - nunca deve acontecer.
 
-    b = b->objptr_root;
-    while (b){
+    board_object *bo = b->objptr_root;
+    while (bo){
 
-        if (b->type == BOARD)
-            board_destroy(&b);
+        if (bo->type == BOARD){
 
-        board_object *tofree = b;
-        b = b->objptr_next;
+        	//printf("will board_destroy()\n");
+
+            board_destroy_a(bo);
+        }else{
+
+        	//printf("will object_destroy()\n");
+
+        }
+
+        board_object *tofree = bo;
+        bo = bo->objptr_next;
+        //printf("freeing TYPE:%p %s\n",tofree,stypes[tofree->type]);
         free(tofree);
     }
+    b->objptr_root = NULL;
+}
 
-    free(b);
+void board_destroy(board_object **dest){
+
+	//printf("============================================\n");
+	//printf("============================================\n");
+
+	board_destroy_a(*dest);
+    //printf("freeing board:%p\n",*dest);
+    free(*dest);
     *dest = NULL;
 }
 
@@ -1309,7 +1338,4 @@ void part_destroy(void **part){
 
     *part = NULL;
 }
-
-
-
 
