@@ -113,6 +113,7 @@ static void ls161_up(ls161 *a, int timestamp){
         e.event_handler_root = a->qa_event_handler_root;
         e.valueptr = &a->qa;
         event_insert(&e);
+        event_process();
     }
 
     if (mask & 0x02){
@@ -120,6 +121,7 @@ static void ls161_up(ls161 *a, int timestamp){
         e.event_handler_root = a->qb_event_handler_root;
         e.valueptr = &a->qb;
         event_insert(&e);
+        event_process();
     }
 
     if (mask & 0x04){
@@ -127,6 +129,7 @@ static void ls161_up(ls161 *a, int timestamp){
         e.event_handler_root = a->qc_event_handler_root;
         e.valueptr = &a->qc;
         event_insert(&e);
+        event_process();
     }
 
     if (mask & 0x08){
@@ -134,6 +137,7 @@ static void ls161_up(ls161 *a, int timestamp){
         e.event_handler_root = a->qd_event_handler_root;
         e.valueptr = &a->qd;
         event_insert(&e);
+        event_process();
     }
 
     if (mask & 0x10){
@@ -141,6 +145,7 @@ static void ls161_up(ls161 *a, int timestamp){
         e.event_handler_root = a->ripclk_event_handler_root;
         e.valueptr = &a->ripclk;
         event_insert(&e);
+        event_process();
     }
 }
 

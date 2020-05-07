@@ -420,6 +420,8 @@ void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objd
     }
     else
         clock_event_handler_root = newe;
+
+    objdest_event_handler(objdest,&clock_last_val,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
