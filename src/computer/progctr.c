@@ -71,6 +71,8 @@ progctr *progctr_create(char *name){
 ////////////////////////////////////////////////////////////////////////////////
 void progctr_destroy(progctr **dest){
 
+    printf("progctr_destroy()\n");
+
     if (dest == NULL) return;
     progctr *b = *dest;
     if (b == NULL) return;

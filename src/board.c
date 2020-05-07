@@ -1305,7 +1305,7 @@ void part_destroy(void **part){
     part_descriptor *p = *part;
     if (p == NULL) return;
 
-    p->destroy((void*)p);
+    p->destroy((void*)&p);
 
     *part = NULL;
 }
