@@ -338,7 +338,11 @@ void computer_sim(){
 
     board_run(mainboard);
 
+    reg_8bit_destroy(&regA);
+    //reg_8bit_destroy(&regB);
+    //reg_8bit_destroy(&regIN);
 
+    //bitswitch_destroy(&sw_su);
     //part_destroy(&pctr);
 
 

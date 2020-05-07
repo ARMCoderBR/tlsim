@@ -266,8 +266,8 @@ void vallist_destroy(vallist **root){
 	while (p){
 
 		old = p;
-		free(old);
 		p = p->next;
+        free(old);
 	}
 
 	*root = NULL;
@@ -283,8 +283,8 @@ void ehandler_destroy(ehandler **root){
 	while (p){
 
 		old = p;
-		free(old);
 		p = p->next;
+        free(old);
 	}
 
 	*root = NULL;
