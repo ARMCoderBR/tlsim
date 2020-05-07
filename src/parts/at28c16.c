@@ -197,6 +197,8 @@ at28c16 *at28c16_create(char *name, unsigned char *template){
     else
         memcpy(b->eep_byte,template,NUM_WORDS_28C16);
 
+    b->destroy = (void*)at28c16_destroy;
+
     return b;
 }
 

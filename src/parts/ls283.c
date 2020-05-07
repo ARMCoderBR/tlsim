@@ -155,6 +155,8 @@ ls283 *ls283_create(char *name){
     else
         b->name[0] = 0;
 
+    b->destroy = (void*)ls283_destroy;
+
     return b;
 }
 

@@ -63,7 +63,28 @@ progctr *progctr_create(char *name){
     else
         reg->name[0] = 0;
 
+    reg->destroy = (void*)progctr_destroy;
+
     return reg;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void progctr_destroy(progctr **dest){
+
+    if (dest == NULL) return;
+    progctr *b = *dest;
+    if (b == NULL) return;
+
+    part_destroy(&b->ls161);
+    part_destroy(&b->ls245_1);
+    part_destroy(&b->ledclk);
+
+    int i;
+    for (i = 0; i < 4; i++)
+        part_destroy(&b->led[i]);
+
+    free(b);
+    *dest = NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

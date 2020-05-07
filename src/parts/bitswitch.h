@@ -12,6 +12,7 @@
 
 typedef struct{
 
+    void (*destroy)(void **dest);
     int oldvalue;
     int value;
     ehandler *out_event_handler_root;

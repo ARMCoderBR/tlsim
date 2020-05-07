@@ -28,6 +28,7 @@ typedef enum{
 
 typedef struct  {
 
+    void (*destroy)(void **dest);
     char name[30];
     vallist *seg_rootptr[8];
     int segval[8];

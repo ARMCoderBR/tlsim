@@ -17,6 +17,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     ls161 *ls161;
     ls245 *ls245_1;
     indicator *led[4];
@@ -26,6 +27,8 @@ typedef struct {
 } progctr;
 
 progctr *progctr_create(char *name);
+
+void progctr_destroy(progctr **dest);
 
 void progctr_connect_bit_out (progctr *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 

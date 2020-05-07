@@ -70,6 +70,8 @@ clkgen *clkgen_create(char *name){
 
     pthread_create(&b->clkthread, NULL, clkgen_thread, b);
 
+    b->destroy = (void*)clkgen_destroy;
+
     return b;
 }
 

@@ -166,6 +166,8 @@ ls161 *ls161_create(){
     b->qd_event_handler_root =
     b->ripclk_event_handler_root = NULL;
 
+    b->destroy = (void*)ls161_destroy;
+
     return b;
 }
 

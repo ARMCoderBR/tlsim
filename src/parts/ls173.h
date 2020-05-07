@@ -14,6 +14,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     int inpd[NUM_ELEM_LS173];
 	vallist *inpd_rootptr[NUM_ELEM_LS173];
     int in_clr;

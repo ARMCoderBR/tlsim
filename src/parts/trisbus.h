@@ -14,6 +14,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     int in[TRISBUS_BRANCHES];
     int inqty;
     int oldvalue;

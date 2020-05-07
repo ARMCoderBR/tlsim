@@ -112,6 +112,8 @@ ls173 *ls173_create(char *name){
     else
         b->name[0] = 0;
 
+    b->destroy = (void*)ls173_destroy;
+
     return b;
 }
 

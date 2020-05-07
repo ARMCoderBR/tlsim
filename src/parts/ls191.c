@@ -178,6 +178,8 @@ ls191 *ls191_create(){
     b->maxmin_event_handler_root =
     b->ripclk_event_handler_root = NULL;
 
+    b->destroy = (void*)ls191_destroy;
+
     return b;
 }
 

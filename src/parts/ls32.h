@@ -14,6 +14,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     int ina[NUM_ELEM_LS32];
     vallist *ina_rootptr[NUM_ELEM_LS32];
     int inb[NUM_ELEM_LS32];

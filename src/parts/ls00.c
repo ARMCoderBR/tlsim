@@ -87,6 +87,8 @@ ls00 *ls00_create(){
         b->out_event_handler_root[i] = NULL;
     }
 
+    b->destroy = (void*)ls00_destroy;
+
     return b;
 }
 

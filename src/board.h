@@ -75,4 +75,6 @@ void board_mutex_unlock();
 
 void board_set_refresh();
 
+void part_destroy(void **part);
+
 #endif /* BOARD_H_ */

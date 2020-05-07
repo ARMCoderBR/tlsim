@@ -11,6 +11,7 @@
 
 typedef struct  {
 
+    void (*destroy)(void **dest);
     char name[30];
     vallist *ind0_rootptr, *ind1_rootptr, *ind2_rootptr, *ind3_rootptr;
     int value;

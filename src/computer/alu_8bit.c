@@ -97,6 +97,8 @@ alu_8bit *alu_8bit_create(char *name){
     else
         alu->name[0] = 0;
 
+    alu->destroy = (void*)alu_8bit_destroy;
+
     return alu;
 }
 

@@ -12,6 +12,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     int inpd[8];
     int latd[8];
     int in_ocon;

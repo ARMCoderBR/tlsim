@@ -85,6 +85,8 @@ ls32 *ls32_create(){
         b->out_event_handler_root[i] = NULL;
     }
 
+    b->destroy = (void*)ls32_destroy;
+
     return b;
 }
 

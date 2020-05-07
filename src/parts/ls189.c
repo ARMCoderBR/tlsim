@@ -129,6 +129,8 @@ ls189 *ls189_create(char *name){
     else
         b->name[0] = 0;
 
+    b->destroy = (void*)ls189_destroy;
+
     return b;
 }
 

@@ -85,6 +85,8 @@ ls86 *ls86_create(){
         b->out_event_handler_root[i] = NULL;
     }
 
+    b->destroy = (void*)ls86_destroy;
+
     return b;
 }
 

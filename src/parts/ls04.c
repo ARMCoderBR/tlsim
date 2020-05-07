@@ -73,6 +73,8 @@ ls04 *ls04_create(){
         b->out_event_handler_root[i] = NULL;
     }
 
+    b->destroy = (void*)ls04_destroy;
+
     return b;
 }
 

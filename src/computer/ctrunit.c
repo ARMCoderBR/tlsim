@@ -33,6 +33,8 @@ ctrunit *ctrunit_create(char *name){
         ctru->in_rootptr[i] = NULL; ctru->out_event_handler_root[i] = NULL;
     }
 
+    ctru->destroy = (void*)ctrunit_destroy;
+
     return ctru;
 }
 

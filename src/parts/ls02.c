@@ -85,6 +85,8 @@ ls02 *ls02_create(){
         b->out_event_handler_root[i] = NULL;
     }
 
+    b->destroy = (void*)ls02_destroy;
+
     return b;
 }
 

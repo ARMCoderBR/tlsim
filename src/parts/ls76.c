@@ -118,6 +118,8 @@ ls76 *ls76_create(){
         b->q_event_handler_root[i] = b->qn_event_handler_root[i] = NULL;
     }
 
+    b->destroy = (void*)ls76_destroy;
+
     return b;
 }
 

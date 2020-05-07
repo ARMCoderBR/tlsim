@@ -12,6 +12,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     //Entradas
     int da, db, dc, dd, load, enable, downup, clk;
 	vallist *da_rootptr, *db_rootptr, *dc_rootptr, *dd_rootptr, *load_rootptr, *enable_rootptr, *downup_rootptr, *clk_rootptr;

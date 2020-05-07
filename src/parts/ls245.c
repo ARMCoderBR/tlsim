@@ -112,6 +112,8 @@ ls245 *ls245_create(){
         b->outq_event_handler_root[NUM_ELEM_LS245+i] = NULL;
     }
 
+    b->destroy = (void*)ls245_destroy;
+
     return b;
 }
 

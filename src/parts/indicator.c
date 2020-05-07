@@ -43,6 +43,8 @@ indicator *indicator_create(char *name){
     o->oldvalue = 0;
     o->refreshable = 0;
 
+    o->destroy = (void*)indicator_destroy;
+
     return o;
 }
 

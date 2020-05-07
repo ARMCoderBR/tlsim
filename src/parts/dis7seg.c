@@ -84,6 +84,9 @@ dis7seg *dis7seg_create(dis7seg_type type, char *name){
     o->common_val = o->common_val_old = 0;
 
     pthread_create(&o->persist_thread, NULL, persist_function, o);
+
+    o->destroy = (void*)dis7seg_destroy;
+
     return o;
 }
 

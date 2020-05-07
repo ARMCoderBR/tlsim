@@ -143,6 +143,8 @@ ls139 *ls139_create(){
         b->y0_event_handler_root[i] = b->y1_event_handler_root[i] = b->y2_event_handler_root[i] = b->y3_event_handler_root[i] = NULL;
     }
 
+    b->destroy = (void*)ls139_destroy;
+
     return b;
 }
 

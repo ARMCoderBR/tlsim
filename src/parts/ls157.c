@@ -100,6 +100,8 @@ ls157 *ls157_create(){
     b->in_sel = b->in_g = 1;
     b->in_sel_rootptr = b->in_g_rootptr = NULL;
 
+    b->destroy = (void*)ls157_destroy;
+
     return b;
 }
 

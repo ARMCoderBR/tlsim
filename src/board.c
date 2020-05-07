@@ -1292,3 +1292,24 @@ int board_run(board_object *board){
     endwin();
     return 0;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+typedef struct {
+
+    void (*destroy)(void **dest);
+} part_descriptor;
+
+void part_destroy(void **part){
+
+    if (part == NULL) return;
+    part_descriptor *p = *part;
+    if (p == NULL) return;
+
+    p->destroy((void*)p);
+
+    *part = NULL;
+}
+
+
+
+

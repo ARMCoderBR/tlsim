@@ -14,6 +14,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     int ina[LS283_NBITS], inb[LS283_NBITS], cin;
     vallist *ina_rootptr[LS283_NBITS], *inb_rootptr[LS283_NBITS], *cin_rootptr;
     int oldy[LS283_NBITS], oldcout;

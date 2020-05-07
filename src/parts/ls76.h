@@ -14,6 +14,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     //Entradas
     int pre[NUM_BITS_LS76], clr[NUM_BITS_LS76], clk[NUM_BITS_LS76], j[NUM_BITS_LS76], k[NUM_BITS_LS76];
 	vallist *pre_rootptr[NUM_BITS_LS76], *clr_rootptr[NUM_BITS_LS76], *clk_rootptr[NUM_BITS_LS76], *j_rootptr[NUM_BITS_LS76], *k_rootptr[NUM_BITS_LS76];

@@ -27,6 +27,8 @@ bitswitch *bitswitch_create(char *name){
     else
         b->name[0] = 0;
 
+    b->destroy = (void*)bitswitch_destroy;
+
     return b;
 }
 

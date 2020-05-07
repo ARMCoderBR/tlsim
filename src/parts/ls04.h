@@ -14,6 +14,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     int in[NUM_ELEM_LS04];
     vallist *in_rootptr[NUM_ELEM_LS04];
     int oldvalue[NUM_ELEM_LS04];

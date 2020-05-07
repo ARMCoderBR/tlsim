@@ -37,6 +37,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     ls00 *ls00;
     ls04 *ls04_1, *ls04_2;
     bitswitch *reset_sw;

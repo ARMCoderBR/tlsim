@@ -14,6 +14,7 @@
 
 typedef struct {
 
+    void (*destroy)(void **dest);
     int inpa[NUM_ELEM_LS245];
     vallist *inpa_rootptr[NUM_ELEM_LS245];
     int inpb[NUM_ELEM_LS245];
