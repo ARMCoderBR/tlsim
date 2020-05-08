@@ -129,7 +129,7 @@ reg_out *reg_out_create(char *name){
     reg->clk = clkgen_create("");
     reg->ledclki = indicator_create("");
 
-    clkgen_connect_out(reg->clk, reg->ledclki, (void*)&indicator_in_d0);
+    ////clkgen_connect_out(reg->clk, reg->ledclki, (void*)&indicator_in_d0);
 
     reg->ls76 = ls76_create();
     reg->led76_0 = indicator_create("");
@@ -146,7 +146,7 @@ reg_out *reg_out_create(char *name){
     ls76_connect_1q(reg->ls76, reg->led76_0, (void*)&indicator_in_d0);
     ls76_connect_2q(reg->ls76, reg->led76_1, (void*)&indicator_in_d0);
 
-    clkgen_connect_out(reg->clk, reg->ls76, (void*)&ls76_in_1clk);
+    ////clkgen_connect_out(reg->clk, reg->ls76, (void*)&ls76_in_1clk);
 
     reg->ls139 = ls139_create("");
     bitconst_connect_zero(reg->ls139,(void*)&ls139_in_1g);

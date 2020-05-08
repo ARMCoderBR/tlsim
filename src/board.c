@@ -330,27 +330,17 @@ void desenha_janelas(void)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int pipeevents[2];
-
 void restart_handlers(void)
 {
     struct timeval tv;
 
     FD_ZERO (&readfds);
     FD_SET(0,&readfds);
-    FD_SET(pipeevents[0],&readfds);
-
-    char buf[16];
 
     tv.tv_sec = 0;
     tv.tv_usec = 100;    // 100 us
 
-    select (1+pipeevents[0],&readfds,NULL,NULL,&tv);
-
-    if (FD_ISSET(pipeevents[0],&readfds)){
-
-        read(pipeevents[0], buf, sizeof(buf));
-    }
+    select (1,&readfds,NULL,NULL,&tv);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -437,8 +427,6 @@ void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objd
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
-//#define NOBJ 1000
 
 pthread_t refthread;
 int refresh_run = 0;
@@ -607,11 +595,6 @@ void board_refresh(board_object *b){
 
     focustable_done = 1;
 
-//    int i;
-//    for (i = 0; i <= 9; i++){
-//        display_7seg(map7seg(i), 4+6*i, 38);
-//    }
-
     wrefresh(janela1);
     wrefresh(janela0);
 
@@ -714,10 +697,10 @@ int CLKS_PERIOD_US[NCLKS] = {
                              250000,     //250ms
                              100000,     //100ms
                              50000,      //50ms
+                             25000,      //25ms
                              10000,      //10ms
-                             1000,       //1ms
-                             100,        //100us
-                             10,         //10us
+                             5000,       //5ms
+                             2000,       //2ms
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1177,8 +1160,6 @@ int board_run(board_object *board){
     TERM_LINES = LINES;
     TERM_COLS = COLS;
 
-    pipe(pipeevents);
-
     start_color();
     init_pair(1, 8|COLOR_RED, 16|COLOR_BLACK);
     init_pair(2, 8|COLOR_GREEN, 16|COLOR_BLACK);
@@ -1331,9 +1312,6 @@ int board_run(board_object *board){
 
     endwin();
 
-    close(pipeevents[0]);
-    close(pipeevents[1]);
-
     return 0;
 }
 
@@ -1353,16 +1331,4 @@ void part_destroy(void **part){
     p->destroy((void*)&p);
 
     *part = NULL;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-pthread_mutex_t notifymutex = PTHREAD_MUTEX_INITIALIZER;
-void event_insert_notify(){
-
-    pthread_mutex_lock(&notifymutex);
-
-    char buf[] = "2";
-    write(pipeevents[1],buf,1);
-
-    pthread_mutex_unlock(&notifymutex);
 }

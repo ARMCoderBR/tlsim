@@ -135,8 +135,6 @@ void event_insert(event *e){
 #ifdef DEBUG
     printf("event_insert END evins:%d evget:%d\n",evins,evget);
 #endif
-
-    event_insert_notify();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
