@@ -175,7 +175,7 @@ at28c16 *at28c16_create(char *name, unsigned char *template){
         b->in_addr_rootptr[i] = NULL;
     }
 
-    b->current_addr = 0x7f;
+    b->current_addr = 0x7ff;
     b->in_cs = b->in_we = b->in_oe = b->in_we_old = b->in_cs_old = 2;
     b->in_cs_rootptr = b->in_we_rootptr = b->in_oe_rootptr = NULL;
 

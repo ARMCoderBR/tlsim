@@ -37,7 +37,6 @@ typedef struct {
 } event;
 
 void event_insert(event *e);
-void event_insert_async(event *e);
 
 void update_register (void *o, int type);
 

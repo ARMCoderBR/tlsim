@@ -387,7 +387,7 @@ void clock_set_val(int val){
     e.valueptr = &clock_last_val;
     e.timestamp = 0;
     e.done = 0;
-    event_insert_async(&e);
+    event_insert(&e);
 
 //    ehandler *e = clock_event_handler_root;
 //
