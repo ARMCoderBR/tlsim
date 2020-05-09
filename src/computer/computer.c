@@ -222,6 +222,8 @@ void computer_sim(){
 
     bitswitch *sw_oi = bitswitch_create("OI");
 
+    board_clock_connect(ctru, (void*)&ctrunit_in_clk);
+
 
     reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regA);
     reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regB);

@@ -12,6 +12,7 @@
 #include <string.h>
 
 #include "ctrunit.h"
+#include "bitconst.h"
 
 char labels[16][4] = {"", "J", "CO", "CE", "OI", "BI", "SU", "SO", "AO", "AI", "II", "IO", "RO", "RI", "MI", "HLT" };
 
@@ -37,6 +38,42 @@ ctrunit *ctrunit_create(char *name){
         ctru->led[i] = indicator_create(labels[i]);
         ctru->in_rootptr[i] = NULL; ctru->out_event_handler_root[i] = NULL;
     }
+
+    //// LS161
+    ctru->ls161 = ls161_create();
+    ctru->ct[0] = indicator_create("C0");
+    ctru->ct[1] = indicator_create("C1");
+    ctru->ct[2] = indicator_create("C2");
+    ls161_connect_qa(ctru->ls161, ctru->ct[0], (void*)&indicator_in_d0);
+    ls161_connect_qb(ctru->ls161, ctru->ct[1], (void*)&indicator_in_d0);
+    ls161_connect_qc(ctru->ls161, ctru->ct[2], (void*)&indicator_in_d0);
+
+    bitconst_connect_one(ctru->ls161, (void*)&ls161_in_enp);
+    bitconst_connect_one(ctru->ls161, (void*)&ls161_in_ent);
+    bitconst_connect_one(ctru->ls161, (void*)&ls161_in_load);
+    ls00_connect_y1(ctru->ls00, ctru->ls161, (void*)&ls161_in_clear);
+
+    //// LS138
+    ctru->ls138 = ls138_create();
+    ctru->t[0]  = indicator_create("T0");
+    ctru->t[1]  = indicator_create("T1");
+    ctru->t[2]  = indicator_create("T2");
+    ctru->t[3]  = indicator_create("T3");
+    ctru->t[4]  = indicator_create("T4");
+    ctru->t[5]  = indicator_create("T5");
+    bitconst_connect_zero(ctru->ls138, (void*)&ls138_ing2a);
+    bitconst_connect_zero(ctru->ls138, (void*)&ls138_ing2b);
+    bitconst_connect_one(ctru->ls138, (void*)&ls138_ing1);
+    ls138_connect_y0(ctru->ls138, ctru->t[0], (void*)&indicator_in_d0);
+    ls138_connect_y1(ctru->ls138, ctru->t[1], (void*)&indicator_in_d0);
+    ls138_connect_y2(ctru->ls138, ctru->t[2], (void*)&indicator_in_d0);
+    ls138_connect_y3(ctru->ls138, ctru->t[3], (void*)&indicator_in_d0);
+    ls138_connect_y4(ctru->ls138, ctru->t[4], (void*)&indicator_in_d0);
+    ls138_connect_y5(ctru->ls138, ctru->t[5], (void*)&indicator_in_d0);
+
+    ls161_connect_qa(ctru->ls161, ctru->ls138, (void*)&ls138_ina);
+    ls161_connect_qb(ctru->ls161, ctru->ls138, (void*)&ls138_inb);
+    ls161_connect_qc(ctru->ls161, ctru->ls138, (void*)&ls138_inc);
 
     ctru->destroy = (void*)ctrunit_destroy;
 
@@ -116,7 +153,16 @@ board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
 
     board_add_manual_switch(board, reg->reset_sw, 1, 4, 'r', "RST");
 
-    //board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
+    board_add_led(board, reg->ct[2],9,4,"C2", LED_RED);
+    board_add_led(board, reg->ct[1],13,4,"C1", LED_RED);
+    board_add_led(board, reg->ct[0],17,4,"C0", LED_RED);
+
+    board_add_led(board, reg->t[0],25,4,"T0", LED_GREEN);
+    board_add_led(board, reg->t[1],29,4,"T1", LED_GREEN);
+    board_add_led(board, reg->t[2],33,4,"T2", LED_GREEN);
+    board_add_led(board, reg->t[3],37,4,"T3", LED_GREEN);
+    board_add_led(board, reg->t[4],41,4,"T4", LED_GREEN);
+    board_add_led(board, reg->t[5],45,4,"T5", LED_GREEN);
 
     return board;
 }
@@ -314,6 +360,12 @@ void ctrunit_in_j(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a6(dest->ls04_1, valptr, timestamp);
     //ctrunit_in(dest, J, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_clk(ctrunit *dest, int *valptr, int timestamp){
+
+    ls161_in_clk(dest->ls161, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

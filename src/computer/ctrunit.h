@@ -15,6 +15,8 @@
 #include "indicator.h"
 #include "bitswitch.h"
 #include "board.h"
+#include "ls161.h"
+#include "ls138.h"
 
 #define NSIGNALS_CTRU 16
 
@@ -47,7 +49,11 @@ typedef struct {
     int val[NSIGNALS_CTRU];
     int o_val[NSIGNALS_CTRU];
     char name[30];
-
+    /////////////////////////
+    ls161 *ls161;
+    ls138 *ls138;
+    indicator *ct[3];
+    indicator *t[6];
 } ctrunit;
 
 ctrunit *ctrunit_create(char *name);
@@ -100,6 +106,8 @@ void ctrunit_connect_out_co(ctrunit *source, void *dest, void (*dest_event_handl
 
 void ctrunit_in_j(ctrunit *dest, int *valptr, int timestamp);
 void ctrunit_connect_out_j(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
+void ctrunit_in_clk(ctrunit *dest, int *valptr, int timestamp);
 
 void ctrunit_connect_out_reset(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 

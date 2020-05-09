@@ -147,7 +147,7 @@ void ls138_connect_y7(ls138 *source, void *dest, void (*dest_event_handler)(void
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_update_pin_ina(ls138 *a, int *valptr, int timestamp){
+void ls138_ina(ls138 *a, int *valptr, int timestamp){
 
     int val = update_val_multi(&a->ina_rootptr, valptr);
 
@@ -160,7 +160,7 @@ void ls138_update_pin_ina(ls138 *a, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_update_pin_inb(ls138 *a, int *valptr, int timestamp){
+void ls138_inb(ls138 *a, int *valptr, int timestamp){
 
     int val = update_val_multi(&a->inb_rootptr, valptr);
 
@@ -173,7 +173,7 @@ void ls138_update_pin_inb(ls138 *a, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_update_pin_inc(ls138 *a, int *valptr, int timestamp){
+void ls138_inc(ls138 *a, int *valptr, int timestamp){
 
     int val = update_val_multi(&a->inc_rootptr, valptr);
 
@@ -186,7 +186,7 @@ void ls138_update_pin_inc(ls138 *a, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_update_pin_ing2a(ls138 *a, int *valptr, int timestamp){
+void ls138_ing2a(ls138 *a, int *valptr, int timestamp){
 
     int val = update_val_multi(&a->ing2a_rootptr, valptr);
 
@@ -199,7 +199,7 @@ void ls138_update_pin_ing2a(ls138 *a, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_update_pin_ing2b(ls138 *a, int *valptr, int timestamp){
+void ls138_ing2b(ls138 *a, int *valptr, int timestamp){
 
     int val = update_val_multi(&a->ing2b_rootptr, valptr);
 
@@ -212,7 +212,7 @@ void ls138_update_pin_ing2b(ls138 *a, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_update_pin_ing1(ls138 *a, int *valptr, int timestamp){
+void ls138_ing1(ls138 *a, int *valptr, int timestamp){
 
     int val = update_val_multi(&a->ing1_rootptr, valptr);
 
