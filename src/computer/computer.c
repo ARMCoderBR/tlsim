@@ -236,15 +236,12 @@ void computer_sim(){
 
     ////////////////
 
-    bitswitch_connect_out(sw_ai, ctru->led[AI], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_ai, ctru, (void*)&ctrunit_in_ai);
     reg_8bit_in_load_from((void*)&ctrunit_connect_out_ai,ctru,regA);
 
-    bitswitch_connect_out(sw_bi, ctru->led[BI], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_bi, ctru, (void*)&ctrunit_in_bi);
     reg_8bit_in_load_from((void*)&ctrunit_connect_out_bi,ctru,regB);
 
-    bitswitch_connect_out(sw_ii, ctru->led[II], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_ii, ctru, (void*)&ctrunit_in_ii);
     reg_8bit_in_load_from((void*)&ctrunit_connect_out_ii,ctru,regIN);
 
@@ -256,14 +253,12 @@ void computer_sim(){
     ////////////////
 
 
-    bitswitch_connect_out(sw_ao, ctru->led[AO], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_ao, ctru, (void*)&ctrunit_in_ao);
     reg_8bit_in_enable_from((void*)&ctrunit_connect_out_ao,ctru,regA);
 
     //Não usa BO
     bitconst_connect_one(regB,(void*)&reg_8bit_in_enable);
 
-    bitswitch_connect_out(sw_io, ctru->led[IO], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_io, ctru, (void*)&ctrunit_in_io);
     reg_8bit_in_enable_from((void*)&ctrunit_connect_out_io,ctru,regIN);
 
@@ -275,11 +270,9 @@ void computer_sim(){
     ////////////////
 
 
-    bitswitch_connect_out(sw_su, ctru->led[SU], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_su, ctru, (void*)&ctrunit_in_su);
     alu_8bit_in_sub_from((void*)&ctrunit_connect_out_su, ctru, alu);
 
-    bitswitch_connect_out(sw_so, ctru->led[SO], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_so, ctru, (void*)&ctrunit_in_so);
     alu_8bit_in_enable_from((void*)&ctrunit_connect_out_so, ctru, alu);
 
@@ -290,15 +283,12 @@ void computer_sim(){
     ////////////////
 
 
-    bitswitch_connect_out(sw_ro, ctru->led[RO], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_ro, ctru, (void*)&ctrunit_in_ro);
     ctrunit_connect_out_ro(ctru, ram, (void*)&ram_8bit_in_oe);
 
-    bitswitch_connect_out(sw_mi, ctru->led[MI], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_mi, ctru, (void*)&ctrunit_in_mi);
     ctrunit_connect_out_mi(ctru, ram, (void*)&ram_8bit_in_waddr);
 
-    bitswitch_connect_out(sw_ri, ctru->led[RI], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_ri, ctru, (void*)&ctrunit_in_ri);
     ctrunit_connect_out_ri(ctru, ram, (void*)&ram_8bit_in_wdata);
 
@@ -310,15 +300,12 @@ void computer_sim(){
     ////////////////
 
 
-    bitswitch_connect_out(sw_ce, ctru->led[CE], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_ce, ctru, (void*)&ctrunit_in_ce);
     ctrunit_connect_out_ce(ctru, pctr, (void*)&progctr_in_ct_enable);
 
-    bitswitch_connect_out(sw_co, ctru->led[CO], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_co, ctru, (void*)&ctrunit_in_co);
     ctrunit_connect_out_co(ctru, pctr, (void*)&progctr_in_oenable);
 
-    bitswitch_connect_out(sw_j, ctru->led[J], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_j, ctru, (void*)&ctrunit_in_j);
     ctrunit_connect_out_j(ctru, pctr, (void*)&progctr_in_load);
 
@@ -330,7 +317,6 @@ void computer_sim(){
 
     ////////////////
 
-    bitswitch_connect_out(sw_oi, ctru->led[OI], (void*)&indicator_in_d0);
     bitswitch_connect_out(sw_oi, ctru, (void*)&ctrunit_in_oi);
     reg_out_in_load_from((void*)&ctrunit_connect_out_oi,ctru,regout);
 

@@ -77,6 +77,15 @@ ctrunit *ctrunit_create(char *name){
 
     ctru->ledclk  = indicator_create("CLK");
 
+    //// EEPROMs
+    ctru->eep_hi = at28c16_create("UC-HI",NULL);
+    ctru->eep_lo = at28c16_create("UC-LO",NULL);
+
+
+
+
+
+
     ctru->destroy = (void*)ctrunit_destroy;
 
     return ctru;
@@ -188,6 +197,7 @@ board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
 void ctrunit_in_hlt(ctrunit *dest, int *valptr, int timestamp){
 
     ctrunit_in(dest, HLT, valptr, timestamp);
+    indicator_in_d0(dest->led[HLT], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -200,7 +210,7 @@ void ctrunit_connect_out_hlt(ctrunit *source, void *dest, void (*dest_event_hand
 void ctrunit_in_mi(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a4(dest->ls04_2, valptr, timestamp);
-    //ctrunit_in(dest, MI, valptr, timestamp);
+    indicator_in_d0(dest->led[MI], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -214,6 +224,7 @@ void ctrunit_connect_out_mi(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_ri(ctrunit *dest, int *valptr, int timestamp){
 
     ctrunit_in(dest, RI, valptr, timestamp);
+    indicator_in_d0(dest->led[RI], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -226,7 +237,7 @@ void ctrunit_connect_out_ri(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_ro(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a1(dest->ls04_1, valptr, timestamp);
-    //ctrunit_in(dest, RO, valptr, timestamp);
+    indicator_in_d0(dest->led[RO], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -240,7 +251,7 @@ void ctrunit_connect_out_ro(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_io(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a2(dest->ls04_1, valptr, timestamp);
-    //ctrunit_in(dest, IO, valptr, timestamp);
+    indicator_in_d0(dest->led[IO], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -254,7 +265,7 @@ void ctrunit_connect_out_io(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_ii(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a3(dest->ls04_2, valptr, timestamp);
-    //ctrunit_in(dest, II, valptr, timestamp);
+    indicator_in_d0(dest->led[II], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -268,7 +279,7 @@ void ctrunit_connect_out_ii(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_ai(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a1(dest->ls04_2, valptr, timestamp);
-    //ctrunit_in(dest, AI, valptr, timestamp);
+    indicator_in_d0(dest->led[AI], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -282,7 +293,7 @@ void ctrunit_connect_out_ai(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_ao(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a3(dest->ls04_1, valptr, timestamp);
-    //ctrunit_in(dest, AO, valptr, timestamp);
+    indicator_in_d0(dest->led[AO], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -296,7 +307,7 @@ void ctrunit_connect_out_ao(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_so(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a4(dest->ls04_1, valptr, timestamp);
-    //ctrunit_in(dest, SO, valptr, timestamp);
+    indicator_in_d0(dest->led[SO], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -310,6 +321,7 @@ void ctrunit_connect_out_so(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_su(ctrunit *dest, int *valptr, int timestamp){
 
     ctrunit_in(dest, SU, valptr, timestamp);
+    indicator_in_d0(dest->led[SU], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -322,7 +334,7 @@ void ctrunit_connect_out_su(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_bi(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a2(dest->ls04_2, valptr, timestamp);
-    //ctrunit_in(dest, BI, valptr, timestamp);
+    indicator_in_d0(dest->led[BI], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -336,7 +348,7 @@ void ctrunit_connect_out_bi(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_oi(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a5(dest->ls04_2, valptr, timestamp);
-    //ctrunit_in(dest, OI, valptr, timestamp);
+    indicator_in_d0(dest->led[OI], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -350,6 +362,7 @@ void ctrunit_connect_out_oi(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_ce(ctrunit *dest, int *valptr, int timestamp){
 
     ctrunit_in(dest, CE, valptr, timestamp);
+    indicator_in_d0(dest->led[CE], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -362,7 +375,7 @@ void ctrunit_connect_out_ce(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_co(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a5(dest->ls04_1, valptr, timestamp);
-    //ctrunit_in(dest, CO, valptr, timestamp);
+    indicator_in_d0(dest->led[CO], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -376,7 +389,7 @@ void ctrunit_connect_out_co(ctrunit *source, void *dest, void (*dest_event_handl
 void ctrunit_in_j(ctrunit *dest, int *valptr, int timestamp){
 
     ls04_in_a6(dest->ls04_1, valptr, timestamp);
-    //ctrunit_in(dest, J, valptr, timestamp);
+    indicator_in_d0(dest->led[J], valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

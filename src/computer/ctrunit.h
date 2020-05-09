@@ -17,6 +17,7 @@
 #include "board.h"
 #include "ls161.h"
 #include "ls138.h"
+#include "at28c16.h"
 
 #define NSIGNALS_CTRU 16
 
@@ -55,6 +56,7 @@ typedef struct {
     indicator *ct[3];
     indicator *t[6];
     indicator *ledclk;
+    at28c16 *eep_hi, *eep_lo;
 } ctrunit;
 
 ctrunit *ctrunit_create(char *name);
