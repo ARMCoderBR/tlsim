@@ -50,9 +50,6 @@ void *difpulse_function(void *args){
             o->reqpulse = 0;
             o->valpulse = 0;
             ls00_in_b1(o->ls00_clk, &o->valpulse, 0);
-            //board_mutex_lock();
-            //event_process();
-            //board_mutex_unlock();
         }
     }
 
@@ -271,7 +268,6 @@ void ram_8bit_destroy (ram_8bit **dest){
     DESTROY(b->ls04_lo);
 
     int i;
-
     for (i = 0; i < 4; i++)
         DESTROY(b->ledaddr[i]);
 
