@@ -75,6 +75,8 @@ ctrunit *ctrunit_create(char *name){
     ls161_connect_qb(ctru->ls161, ctru->ls138, (void*)&ls138_inb);
     ls161_connect_qc(ctru->ls161, ctru->ls138, (void*)&ls138_inc);
 
+    ctru->ledclk  = indicator_create("CLK");
+
     ctru->destroy = (void*)ctrunit_destroy;
 
     return ctru;
@@ -87,15 +89,28 @@ void ctrunit_destroy (ctrunit **dest){
     ctrunit *b = *dest;
     if (b == NULL) return;
 
-    ls00_destroy(&b->ls00);
-    ls04_destroy(&b->ls04_1);
-    ls04_destroy(&b->ls04_2);
-    bitswitch_destroy(&b->reset_sw);
+    DESTROY(b->ls00);
+    DESTROY(b->ls04_1);
+    DESTROY(b->ls04_2);
+    DESTROY(b->reset_sw);
+
+    DESTROY(b->ls161);
+    DESTROY(b->ct[0]);
+    DESTROY(b->ct[1]);
+    DESTROY(b->ct[2]);
+
+    DESTROY(b->ls138);
+    DESTROY(b->t[0]);
+    DESTROY(b->t[1]);
+    DESTROY(b->t[2]);
+    DESTROY(b->t[3]);
+    DESTROY(b->t[4]);
+    DESTROY(b->t[5]);
 
     int i;
     for (i = 0; i < NSIGNALS_CTRU; i++){
 
-        indicator_destroy(&b->led[i]);
+        DESTROY(b->led[i]);
         vallist_destroy(&b->in_rootptr[i]);
         ehandler_destroy(&b->out_event_handler_root[i]);
     }
@@ -163,6 +178,8 @@ board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
     board_add_led(board, reg->t[3],37,4,"T3", LED_GREEN);
     board_add_led(board, reg->t[4],41,4,"T4", LED_GREEN);
     board_add_led(board, reg->t[5],45,4,"T5", LED_GREEN);
+
+    board_add_led(board, reg->ledclk,57,4,"CLK", LED_BLUE);
 
     return board;
 }
@@ -366,6 +383,7 @@ void ctrunit_in_j(ctrunit *dest, int *valptr, int timestamp){
 void ctrunit_in_clk(ctrunit *dest, int *valptr, int timestamp){
 
     ls161_in_clk(dest->ls161, valptr, timestamp);
+    indicator_in_d0(dest->ledclk, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

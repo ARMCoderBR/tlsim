@@ -373,12 +373,15 @@ void sigterm_handler(int sig){
 ehandler *clock_event_handler_root = NULL;
 int clock_last_val = 0;
 
+ehandler *nclock_event_handler_root = NULL;
+int nclock_last_val = 0;
+
 void clock_set_val(int val){
 
     if (val)
-        clock_last_val = 1;
+        { clock_last_val = 1; nclock_last_val = 0; }
     else
-        clock_last_val = 0;
+        { clock_last_val = 0; nclock_last_val = 1; }
 
     logger("\n==>clock_set_val:%d ptr:%p",clock_last_val, &clock_last_val);
 
@@ -389,13 +392,11 @@ void clock_set_val(int val){
     e.done = 0;
     event_insert(&e);
 
-//    ehandler *e = clock_event_handler_root;
-//
-//    while (e){
-//
-//        e->objdest_event_handler(e->objdest, &val, 0);
-//        e = e->next;
-//    }
+    e.event_handler_root = nclock_event_handler_root;
+    e.valueptr = &nclock_last_val;
+    e.timestamp = 0;
+    e.done = 0;
+    event_insert(&e);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -421,6 +422,31 @@ void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objd
         clock_event_handler_root = newe;
 
     objdest_event_handler(objdest,&clock_last_val,0);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void board_nclock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp)){
+
+    ehandler *newe = malloc(sizeof(ehandler));
+    if (!newe)
+        return;
+
+    newe->objdest_event_handler = objdest_event_handler;
+    newe->objdest = objdest;
+    newe->next = NULL;
+
+    ehandler *e = nclock_event_handler_root;
+    if (e){
+
+        while (e->next)
+            e = e->next;
+
+        e->next = newe;
+    }
+    else
+        nclock_event_handler_root = newe;
+
+    objdest_event_handler(objdest,&nclock_last_val,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

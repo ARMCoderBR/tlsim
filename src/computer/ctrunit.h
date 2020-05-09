@@ -54,6 +54,7 @@ typedef struct {
     ls138 *ls138;
     indicator *ct[3];
     indicator *t[6];
+    indicator *ledclk;
 } ctrunit;
 
 ctrunit *ctrunit_create(char *name);
