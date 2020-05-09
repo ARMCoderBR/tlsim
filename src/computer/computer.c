@@ -56,15 +56,6 @@ void computer_sim(){
     board_add_board(mainboard,regB_board,1,9);
     board_add_board(mainboard,regIN_board,1,13);
 
-    bitswitch *sw_clr = bitswitch_create("CLR");
-    bitswitch_setval(sw_clr, 0);
-
-    reg_8bit_in_clear_from((void*)&bitswitch_connect_out,sw_clr,regA);
-    reg_8bit_in_clear_from((void*)&bitswitch_connect_out,sw_clr,regB);
-    reg_8bit_in_clear_from((void*)&bitswitch_connect_out,sw_clr,regIN);
-
-    board_add_manual_switch(mainboard, sw_clr, 2, 17, 'c', "Clr");
-
 
     //////// ALU ///////////////////////////////////////////////////////////////
 
@@ -231,6 +222,13 @@ void computer_sim(){
 
     bitswitch *sw_oi = bitswitch_create("OI");
 
+
+    reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regA);
+    reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regB);
+    reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regIN);
+    ctrunit_connect_out_reset(ctru, ram, (void*)&ram_8bit_in_rst);
+
+
     ////////////////
 
     bitswitch_connect_out(sw_ai, ctru->led[AI], (void*)&indicator_in_d0);
@@ -350,7 +348,6 @@ void computer_sim(){
     DESTROY(pctr);
     DESTROY(regout);
 
-    DESTROY(sw_clr);
     DESTROY(sw_ai);
     DESTROY(sw_bi);
     DESTROY(sw_ii);

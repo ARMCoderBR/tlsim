@@ -95,7 +95,7 @@ void ctrunit_connect_out(ctrunit *source, int index, void *dest, void (*dest_eve
 ////////////////////////////////////////////////////////////////////////////////
 board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
 
-    board_object *board = board_create(62, 4, key, name);
+    board_object *board = board_create(62, 7, key, name);
 
     if (!board) return board;
 
@@ -109,14 +109,12 @@ board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
         board_add_led(board, reg->led[i],1+4*(j-1),1,s, LED_BLUE);
     }
 
+    board_add_manual_switch(board, reg->reset_sw, 1, 4, 'r', "RST");
+
     //board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
 
     return board;
 }
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_in_hlt(ctrunit *dest, int *valptr, int timestamp){
@@ -320,3 +318,8 @@ void ctrunit_connect_out_j(ctrunit *source, void *dest, void (*dest_event_handle
     //ctrunit_connect_out(source, J, dest, dest_event_handler);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_reset(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    bitswitch_connect_out(source->reset_sw, dest, dest_event_handler);
+}

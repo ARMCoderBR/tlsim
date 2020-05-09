@@ -94,6 +94,8 @@ void ram_8bit_in_oe(ram_8bit *dest, int *valptr, int timestamp);
 
 void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp);
 
+void ram_8bit_in_rst(ram_8bit *dest, int *valptr, int timestamp);
+
 board_object *ram_8bit_board_create(ram_8bit *reg, int key, char *name); // Requer NCURSES
 
 #endif /* RAM_8BIT_H_ */

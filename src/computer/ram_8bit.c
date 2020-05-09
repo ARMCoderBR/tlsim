@@ -50,6 +50,10 @@ void *difpulse_function(void *args){
             o->reqpulse = 0;
             o->valpulse = 0;
             ls00_in_b1(o->ls00_clk, &o->valpulse, 0);
+            usleep(100);
+            board_mutex_lock();
+            event_process();
+            board_mutex_unlock();
         }
     }
 
@@ -227,7 +231,7 @@ ram_8bit *ram_8bit_create(char *name){
     bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_m);
     bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_n);
     bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_g1);
-    bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_clr);
+    //bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_clr);
 
     ram->ledprog = indicator_create("Ledprog");
     ram->ledrun = indicator_create("Ledrun");
@@ -259,6 +263,7 @@ void ram_8bit_destroy (ram_8bit **dest){
     if (b == NULL) return;
 
     b->running = 0;
+    ram_8bit_reqpulse(b);
     pthread_join(b->difpulse_thread, NULL);
 
     DESTROY(b->ls189_hi);
@@ -422,6 +427,12 @@ void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp){
 #else
 	ls00_in_b1(dest->ls00_clk, valptr, timestamp);
 #endif
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ram_8bit_in_rst(ram_8bit *dest, int *valptr, int timestamp){
+
+    ls173_in_clr(dest->ls173_addreg, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
