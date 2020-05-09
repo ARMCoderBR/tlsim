@@ -10,7 +10,7 @@
 #include "update.h"
 #include "ls139.h"
 
-// DUAL 2=LINE TO 4-LINE DECODERS/DEMULTIPLEXERS
+// DUAL 2-LINE TO 4-LINE DECODERS/DEMULTIPLEXERS
 
 ////////////////////////////////////////////////////////////////////////////////
 static void ls139_up(ls139 *a, int timestamp, int index){
