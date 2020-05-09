@@ -19,6 +19,8 @@
 #include "ls138.h"
 #include "at28c16.h"
 
+#define DISABLE_CTRUNIT_OUTS 0
+
 #define NSIGNALS_CTRU 16
 
 #define HLT 15

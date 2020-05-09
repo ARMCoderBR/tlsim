@@ -104,6 +104,27 @@ ctrunit *ctrunit_create(char *name){
     bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a9);
     bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a10);
 
+#if !DISABLE_CTRUNIT_OUTS
+
+    at28c16_connect_o7(ctru->eep_hi, ctru, (void*)&ctrunit_in_hlt);
+    at28c16_connect_o6(ctru->eep_hi, ctru, (void*)&ctrunit_in_mi);
+    at28c16_connect_o5(ctru->eep_hi, ctru, (void*)&ctrunit_in_ri);
+    at28c16_connect_o4(ctru->eep_hi, ctru, (void*)&ctrunit_in_ro);
+    at28c16_connect_o3(ctru->eep_hi, ctru, (void*)&ctrunit_in_io);
+    at28c16_connect_o2(ctru->eep_hi, ctru, (void*)&ctrunit_in_ii);
+    at28c16_connect_o1(ctru->eep_hi, ctru, (void*)&ctrunit_in_ai);
+    at28c16_connect_o0(ctru->eep_hi, ctru, (void*)&ctrunit_in_ao);
+
+    at28c16_connect_o7(ctru->eep_lo, ctru, (void*)&ctrunit_in_so);
+    at28c16_connect_o6(ctru->eep_lo, ctru, (void*)&ctrunit_in_su);
+    at28c16_connect_o5(ctru->eep_lo, ctru, (void*)&ctrunit_in_bi);
+    at28c16_connect_o4(ctru->eep_lo, ctru, (void*)&ctrunit_in_oi);
+    at28c16_connect_o3(ctru->eep_lo, ctru, (void*)&ctrunit_in_ce);
+    at28c16_connect_o2(ctru->eep_lo, ctru, (void*)&ctrunit_in_co);
+    at28c16_connect_o1(ctru->eep_lo, ctru, (void*)&ctrunit_in_j);
+
+#endif
+
     ctru->destroy = (void*)ctrunit_destroy;
 
     return ctru;

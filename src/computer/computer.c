@@ -235,6 +235,8 @@ void computer_sim(){
 
     ////////////////
 
+#if DISABLE_CTRUNIT_OUTS
+
     bitswitch *sw_ai = bitswitch_create("AI");
     bitswitch *sw_bi = bitswitch_create("BI");
     bitswitch *sw_ii = bitswitch_create("II");
@@ -306,6 +308,7 @@ void computer_sim(){
     bitswitch_connect_out(sw_oi, ctru, (void*)&ctrunit_in_oi);
 
     board_add_manual_switch(mainboard, sw_oi, 66, 25, 'o', "OI");
+#endif
 
     ////////////////
 
@@ -328,6 +331,7 @@ void computer_sim(){
     DESTROY(pctr);
     DESTROY(regout);
 
+#if DISABLE_CTRUNIT_OUTS
     DESTROY(sw_ai);
     DESTROY(sw_bi);
     DESTROY(sw_ii);
@@ -342,6 +346,7 @@ void computer_sim(){
     DESTROY(sw_co);
     DESTROY(sw_j);
     DESTROY(sw_oi);
+#endif
 
     DESTROY(mainboard);
 }
