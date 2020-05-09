@@ -10,9 +10,38 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #include "ram_8bit.h"
 #include "bitconst.h"
+
+////////////////////////////////////////////////////////////////////////////////
+void *difpulse_function(void *args){
+
+    ram_8bit *o = (ram_8bit *)args;
+
+    o->running = 1;
+
+    for (;o->running;){
+
+        usleep(1000);
+
+        if (o->reqpulse){
+
+            board_mutex_lock();
+            event_process();
+            board_mutex_unlock();
+            o->reqpulse = 0;
+            o->valpulse = 0;
+            ls00_in_b1(o->ls00_clk, &o->valpulse, 0);
+            //board_mutex_lock();
+            //event_process();
+            //board_mutex_unlock();
+        }
+    }
+
+    return NULL;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 ram_8bit *ram_8bit_create(char *name){
@@ -191,6 +220,8 @@ ram_8bit *ram_8bit_create(char *name){
     ram->oldclk = 1;
     ram->clk_rootptr = NULL;
 
+    pthread_create(&ram->difpulse_thread, NULL, difpulse_function, ram);
+
     ram->destroy = (void*)ram_8bit_destroy;
 
     return ram;
@@ -202,6 +233,9 @@ void ram_8bit_destroy (ram_8bit **dest){
     if (dest == NULL) return;
     ram_8bit *b = *dest;
     if (b == NULL) return;
+
+    b->running = 0;
+    pthread_join(b->difpulse_thread, NULL);
 
     DESTROY(b->ls189_hi);
     DESTROY(b->ls189_lo);
@@ -342,10 +376,13 @@ void ram_8bit_in_oe(ram_8bit *dest, int *valptr, int timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp){
 
+    ls173_in_clk(dest->ls173_addreg, valptr, timestamp);
+
 #define DIFPULSE 1
 
 #if DIFPULSE
-	int val = update_val_multi(&dest->clk_rootptr, valptr);
+
+    int val = update_val_multi(&dest->clk_rootptr, valptr);
     if (val > 1) val = 1;
 
     if (val == dest->oldclk) return;
@@ -354,16 +391,11 @@ void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp){
 
     if (val){
 
-    	dest->valfwd = 1;
-    	ls173_in_clk(dest->ls173_addreg, &dest->valfwd, timestamp+1);
-    	ls00_in_b1(dest->ls00_clk, &dest->valfwd, timestamp+1);
-    	event_process();
-    	dest->valfwd = 0;
-    	ls173_in_clk(dest->ls173_addreg, &dest->valfwd, timestamp+100);
-    	ls00_in_b1(dest->ls00_clk, &dest->valfwd, timestamp+100);
+    	dest->valpulse = 1;
+    	ls00_in_b1(dest->ls00_clk, &dest->valpulse, timestamp+10);
+        dest->reqpulse = 1;
     }
 #else
-	ls173_in_clk(dest->ls173_addreg, valptr, timestamp);
 	ls00_in_b1(dest->ls00_clk, valptr, timestamp);
 #endif
 }

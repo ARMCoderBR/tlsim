@@ -44,9 +44,11 @@ typedef struct {
     int oldclk;
     int clk;
     vallist *clk_rootptr;
-    int valfwd;
+    pthread_t difpulse_thread;
+    int reqpulse;
+    int valpulse;
+    int running;
     char name[30];
-
 } ram_8bit;
 
 ram_8bit *ram_8bit_create(char *name);
