@@ -21,13 +21,21 @@ void *clkgen_thread(void *args){
 
     s->running = 1;
 
+    int sleep_us = s->period_us / 2;
+
     event e;
 
     for (;s->running;){
 
         if (s->out_event_handler_root == NULL){
 
-            usleep(20000);
+            usleep(200000);
+            continue;
+        }
+
+        if (s->halt){
+
+            usleep(sleep_us);
             continue;
         }
 
@@ -38,7 +46,7 @@ void *clkgen_thread(void *args){
         e.timestamp = 0;
         event_insert(&e);
         board_mutex_unlock();
-        usleep(10000);
+        usleep(sleep_us);
 
         board_mutex_lock();
         s->value = 0;
@@ -47,19 +55,22 @@ void *clkgen_thread(void *args){
         e.timestamp = 0;
         event_insert(&e);
         board_mutex_unlock();
-        usleep(10000);
+        usleep(sleep_us);
     }
 
     return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-clkgen *clkgen_create(char *name){
+clkgen *clkgen_create(char *name, int period_us){
 
     clkgen *b = malloc(sizeof(clkgen));
 
     if (b == NULL)
         return NULL;
+
+    b->halt = 1;
+    b->halt_rootptr = NULL;
 
     b->out_event_handler_root = NULL;
 
@@ -67,6 +78,8 @@ clkgen *clkgen_create(char *name){
         strncpy(b->name,name,sizeof(b->name));
     else
         b->name[0] = 0;
+
+    b->period_us = period_us;
 
     pthread_create(&b->clkthread, NULL, clkgen_thread, b);
 
@@ -86,9 +99,20 @@ void clkgen_destroy (clkgen **dest){
     pthread_join(b->clkthread, NULL);
 
     ehandler_destroy(&b->out_event_handler_root);
+    vallist_destroy(&b->halt_rootptr);
 
     free(b);
     *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void clkgen_in_halt(clkgen *dest, int *valptr, int timestamp){
+
+    int val = update_val_multi(&dest->halt_rootptr, valptr);
+
+    if (val > 1) val = 1;
+
+    dest->halt = val;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

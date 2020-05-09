@@ -126,7 +126,9 @@ reg_out *reg_out_create(char *name){
     else
         reg->name[0] = 0;
 
-    reg->clk = clkgen_create("");
+    reg->clk = clkgen_create("",20000);
+    bitconst_connect_zero(reg->clk, (void*)&clkgen_in_halt);
+
     reg->ledclki = indicator_create("");
 
     clkgen_connect_out(reg->clk, reg->ledclki, (void*)&indicator_in_d0);
