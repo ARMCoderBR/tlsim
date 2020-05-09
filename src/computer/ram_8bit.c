@@ -18,13 +18,29 @@
 ////////////////////////////////////////////////////////////////////////////////
 void *difpulse_function(void *args){
 
+    fd_set readfds;
+    struct timeval tv;
+    char buf[16];
+
     ram_8bit *o = (ram_8bit *)args;
+
+    pipe(o->pipefd);
 
     o->running = 1;
 
     for (;o->running;){
 
-        usleep(1000);
+        tv.tv_sec = 10;
+        tv.tv_usec = 0;
+        FD_ZERO(&readfds);
+        FD_SET(o->pipefd[0],&readfds);
+
+        select(1+o->pipefd[0],&readfds,NULL,NULL,&tv);
+
+        if (FD_ISSET(o->pipefd[0],&readfds)){
+
+            read(o->pipefd[0],buf,1);
+        }
 
         if (o->reqpulse){
 
@@ -40,7 +56,18 @@ void *difpulse_function(void *args){
         }
     }
 
+    close(o->pipefd[0]);
+    close(o->pipefd[1]);
+
     return NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ram_8bit_reqpulse(ram_8bit *dest){
+
+    char buf = '1';
+
+    write(dest->pipefd[1],&buf,1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -394,6 +421,7 @@ void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp){
     	dest->valpulse = 1;
     	ls00_in_b1(dest->ls00_clk, &dest->valpulse, timestamp+10);
         dest->reqpulse = 1;
+        ram_8bit_reqpulse(dest);
     }
 #else
 	ls00_in_b1(dest->ls00_clk, valptr, timestamp);

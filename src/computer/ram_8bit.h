@@ -44,7 +44,9 @@ typedef struct {
     int oldclk;
     int clk;
     vallist *clk_rootptr;
+    ///////////////////////////
     pthread_t difpulse_thread;
+    int pipefd[2];
     int reqpulse;
     int valpulse;
     int running;
