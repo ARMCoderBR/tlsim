@@ -230,6 +230,8 @@ void computer_sim(){
 
     ctrunit_connect_out_nreset(ctru, pctr, (void*)&progctr_in_clear);
 
+    reg_out_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regout);
+
     ////////////////
 
     bitswitch_connect_out(sw_ai, ctru->led[AI], (void*)&indicator_in_d0);
