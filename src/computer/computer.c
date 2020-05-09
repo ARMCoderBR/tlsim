@@ -228,6 +228,7 @@ void computer_sim(){
     reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regIN);
     ctrunit_connect_out_reset(ctru, ram, (void*)&ram_8bit_in_rst);
 
+    ctrunit_connect_out_nreset(ctru, pctr, (void*)&progctr_in_clear);
 
     ////////////////
 
@@ -317,7 +318,7 @@ void computer_sim(){
     bitswitch_connect_out(sw_j, ctru, (void*)&ctrunit_in_j);
     ctrunit_connect_out_j(ctru, pctr, (void*)&progctr_in_load);
 
-    bitconst_connect_one(pctr,(void*)&progctr_in_clear);
+    //bitconst_connect_one(pctr,(void*)&progctr_in_clear);
 
     board_add_manual_switch(mainboard, sw_ce, 42, 27, 'b', "CE");
     board_add_manual_switch(mainboard, sw_co, 50, 27, 'n', "CO");

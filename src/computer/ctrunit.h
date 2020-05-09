@@ -103,4 +103,6 @@ void ctrunit_connect_out_j(ctrunit *source, void *dest, void (*dest_event_handle
 
 void ctrunit_connect_out_reset(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 
+void ctrunit_connect_out_nreset(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+
 #endif /* REG_8BIT_H_ */

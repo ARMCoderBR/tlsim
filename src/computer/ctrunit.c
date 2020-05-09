@@ -26,6 +26,11 @@ ctrunit *ctrunit_create(char *name){
     ctru->ls04_2 = ls04_create();
     ctru->reset_sw = bitswitch_create("Reset");
 
+    bitswitch_connect_out(ctru->reset_sw, ctru->ls00, (void*)&ls00_in_a1);
+    bitswitch_connect_out(ctru->reset_sw, ctru->ls00, (void*)&ls00_in_b1);
+    ls00_connect_y1(ctru->ls00, ctru->ls00, (void*)&ls00_in_a2);
+    ls00_connect_y1(ctru->ls00, ctru->ls00, (void*)&ls00_in_b2);
+
     int i;
     for (i = 0; i < NSIGNALS_CTRU; i++){
 
@@ -321,5 +326,11 @@ void ctrunit_connect_out_j(ctrunit *source, void *dest, void (*dest_event_handle
 ////////////////////////////////////////////////////////////////////////////////
 void ctrunit_connect_out_reset(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
 
-    bitswitch_connect_out(source->reset_sw, dest, dest_event_handler);
+    ls00_connect_y2(source->ls00, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_connect_out_nreset(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+
+    ls00_connect_y1(source->ls00, dest, dest_event_handler);
 }

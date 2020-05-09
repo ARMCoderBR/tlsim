@@ -162,7 +162,6 @@ void progctr_in_data3(progctr *dest, int *valptr, int timestamp){
     ls161_in_dd(dest->ls161, valptr, timestamp);
 }
 
-
 void (*progctr_in_dataN[])(void *dest, int *valptr, int timestamp) = {
 
         (void*)progctr_in_data0,
