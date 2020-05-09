@@ -116,4 +116,12 @@ void ctrunit_connect_out_reset(ctrunit *source, void *dest, void (*dest_event_ha
 
 void ctrunit_connect_out_nreset(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
 
+void ctrunit_in_instr0(ctrunit *dest, int *valptr, int timestamp);
+
+void ctrunit_in_instr1(ctrunit *dest, int *valptr, int timestamp);
+
+void ctrunit_in_instr2(ctrunit *dest, int *valptr, int timestamp);
+
+void ctrunit_in_instr3(ctrunit *dest, int *valptr, int timestamp);
+
 #endif /* REG_8BIT_H_ */

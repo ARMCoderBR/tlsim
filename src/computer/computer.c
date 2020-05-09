@@ -201,115 +201,99 @@ void computer_sim(){
     board_object *ctru_board = ctrunit_board_create(ctru, '*', "CONTROL UNIT");
     board_add_board(mainboard,ctru_board,1,32);
 
-    bitswitch *sw_ai = bitswitch_create("AI");
-    bitswitch *sw_bi = bitswitch_create("BI");
-    bitswitch *sw_ii = bitswitch_create("II");
-
-    bitswitch *sw_ao = bitswitch_create("AO");
-    //bitswitch *sw_enable2 = bitswitch_create("ENB");
-    bitswitch *sw_io = bitswitch_create("IO");
-
-    bitswitch *sw_su = bitswitch_create("SU");
-    bitswitch *sw_so = bitswitch_create("SO");
-
-    bitswitch *sw_ro = bitswitch_create("RO");
-    bitswitch *sw_mi = bitswitch_create("MI");
-    bitswitch *sw_ri = bitswitch_create("RI");
-
-    bitswitch *sw_ce = bitswitch_create("CE");
-    bitswitch *sw_co = bitswitch_create("CO");
-    bitswitch *sw_j = bitswitch_create("J");
-
-    bitswitch *sw_oi = bitswitch_create("OI");
-
     board_nclock_connect(ctru, (void*)&ctrunit_in_clk);
 
-
+    //// Reset controls
     reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regA);
     reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regB);
     reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regIN);
     ctrunit_connect_out_reset(ctru, ram, (void*)&ram_8bit_in_rst);
-
     ctrunit_connect_out_nreset(ctru, pctr, (void*)&progctr_in_clear);
-
     reg_out_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regout);
+
+    //// Instruction Register Bits -> Control Unit
+    reg_8bit_connect_bit_out (regIN, 4, ctru, (void*)&ctrunit_in_instr0);
+    reg_8bit_connect_bit_out (regIN, 5, ctru, (void*)&ctrunit_in_instr1);
+    reg_8bit_connect_bit_out (regIN, 6, ctru, (void*)&ctrunit_in_instr2);
+    reg_8bit_connect_bit_out (regIN, 7, ctru, (void*)&ctrunit_in_instr3);
+
+    //// Controls to the registers
+    ctrunit_connect_out_mi(ctru, ram, (void*)&ram_8bit_in_waddr);
+    ctrunit_connect_out_ri(ctru, ram, (void*)&ram_8bit_in_wdata);
+    ctrunit_connect_out_ro(ctru, ram, (void*)&ram_8bit_in_oe);
+    reg_8bit_in_enable_from((void*)&ctrunit_connect_out_io,ctru,regIN);
+    reg_8bit_in_load_from((void*)&ctrunit_connect_out_ii,ctru,regIN);
+    reg_8bit_in_load_from((void*)&ctrunit_connect_out_ai,ctru,regA);
+    reg_8bit_in_enable_from((void*)&ctrunit_connect_out_ao,ctru,regA);
+    alu_8bit_in_enable_from((void*)&ctrunit_connect_out_so, ctru, alu);
+    alu_8bit_in_sub_from((void*)&ctrunit_connect_out_su, ctru, alu);
+    reg_8bit_in_load_from((void*)&ctrunit_connect_out_bi,ctru,regB);
+    reg_out_in_load_from((void*)&ctrunit_connect_out_oi,ctru,regout);
+    ctrunit_connect_out_ce(ctru, pctr, (void*)&progctr_in_ct_enable);
+    ctrunit_connect_out_co(ctru, pctr, (void*)&progctr_in_oenable);
+    ctrunit_connect_out_j(ctru, pctr, (void*)&progctr_in_load);
 
     ////////////////
 
+    bitswitch *sw_ai = bitswitch_create("AI");
+    bitswitch *sw_bi = bitswitch_create("BI");
+    bitswitch *sw_ii = bitswitch_create("II");
+
     bitswitch_connect_out(sw_ai, ctru, (void*)&ctrunit_in_ai);
-    reg_8bit_in_load_from((void*)&ctrunit_connect_out_ai,ctru,regA);
-
     bitswitch_connect_out(sw_bi, ctru, (void*)&ctrunit_in_bi);
-    reg_8bit_in_load_from((void*)&ctrunit_connect_out_bi,ctru,regB);
-
     bitswitch_connect_out(sw_ii, ctru, (void*)&ctrunit_in_ii);
-    reg_8bit_in_load_from((void*)&ctrunit_connect_out_ii,ctru,regIN);
 
     board_add_manual_switch(mainboard, sw_ai, 42, 2, 'q', "AI");
     board_add_manual_switch(mainboard, sw_bi, 42, 4+6, 'a', "BI");
     board_add_manual_switch(mainboard, sw_ii, 42, 4+10, 'z', "II");
 
-
     ////////////////
 
+    bitswitch *sw_ao = bitswitch_create("AO");
+    //bitswitch *sw_enable2 = bitswitch_create("ENB");
+    bitswitch *sw_io = bitswitch_create("IO");
 
-    bitswitch_connect_out(sw_ao, ctru, (void*)&ctrunit_in_ao);
-    reg_8bit_in_enable_from((void*)&ctrunit_connect_out_ao,ctru,regA);
-
-    //Não usa BO
     bitconst_connect_one(regB,(void*)&reg_8bit_in_enable);
-
+    bitswitch_connect_out(sw_ao, ctru, (void*)&ctrunit_in_ao);
     bitswitch_connect_out(sw_io, ctru, (void*)&ctrunit_in_io);
-    reg_8bit_in_enable_from((void*)&ctrunit_connect_out_io,ctru,regIN);
 
     board_add_manual_switch(mainboard, sw_ao, 53, 2, 'w', "AO");
-    //board_add_manual_switch(mainboard, sw_enable2, 53, 4+6, 's', "EN2");
     board_add_manual_switch(mainboard, sw_io, 53, 4+10, 'x', "IO");
-
 
     ////////////////
 
+    bitswitch *sw_su = bitswitch_create("SU");
+    bitswitch *sw_so = bitswitch_create("SO");
 
     bitswitch_connect_out(sw_su, ctru, (void*)&ctrunit_in_su);
-    alu_8bit_in_sub_from((void*)&ctrunit_connect_out_su, ctru, alu);
-
     bitswitch_connect_out(sw_so, ctru, (void*)&ctrunit_in_so);
-    alu_8bit_in_enable_from((void*)&ctrunit_connect_out_so, ctru, alu);
 
     board_add_manual_switch(mainboard, sw_su, 42, 6, 'S', "SU");
     board_add_manual_switch(mainboard, sw_so, 53, 6, 'O', "SO");
 
-
     ////////////////
 
+    bitswitch *sw_ro = bitswitch_create("RO");
+    bitswitch *sw_mi = bitswitch_create("MI");
+    bitswitch *sw_ri = bitswitch_create("RI");
 
     bitswitch_connect_out(sw_ro, ctru, (void*)&ctrunit_in_ro);
-    ctrunit_connect_out_ro(ctru, ram, (void*)&ram_8bit_in_oe);
-
     bitswitch_connect_out(sw_mi, ctru, (void*)&ctrunit_in_mi);
-    ctrunit_connect_out_mi(ctru, ram, (void*)&ram_8bit_in_waddr);
-
     bitswitch_connect_out(sw_ri, ctru, (void*)&ctrunit_in_ri);
-    ctrunit_connect_out_ri(ctru, ram, (void*)&ram_8bit_in_wdata);
 
     board_add_manual_switch(mainboard, sw_ro, 66, 14, 'j', "RO");
     board_add_manual_switch(mainboard, sw_mi, 74, 14, 'k', "MI");
     board_add_manual_switch(mainboard, sw_ri, 82, 14, 'l', "RI");
 
-
     ////////////////
 
+    bitswitch *sw_ce = bitswitch_create("CE");
+    bitswitch *sw_co = bitswitch_create("CO");
+    bitswitch *sw_j = bitswitch_create("J");
 
     bitswitch_connect_out(sw_ce, ctru, (void*)&ctrunit_in_ce);
-    ctrunit_connect_out_ce(ctru, pctr, (void*)&progctr_in_ct_enable);
-
     bitswitch_connect_out(sw_co, ctru, (void*)&ctrunit_in_co);
-    ctrunit_connect_out_co(ctru, pctr, (void*)&progctr_in_oenable);
-
     bitswitch_connect_out(sw_j, ctru, (void*)&ctrunit_in_j);
-    ctrunit_connect_out_j(ctru, pctr, (void*)&progctr_in_load);
-
-    //bitconst_connect_one(pctr,(void*)&progctr_in_clear);
 
     board_add_manual_switch(mainboard, sw_ce, 42, 27, 'b', "CE");
     board_add_manual_switch(mainboard, sw_co, 50, 27, 'n', "CO");
@@ -317,12 +301,17 @@ void computer_sim(){
 
     ////////////////
 
+    bitswitch *sw_oi = bitswitch_create("OI");
+
     bitswitch_connect_out(sw_oi, ctru, (void*)&ctrunit_in_oi);
-    reg_out_in_load_from((void*)&ctrunit_connect_out_oi,ctru,regout);
 
     board_add_manual_switch(mainboard, sw_oi, 66, 25, 'o', "OI");
 
+    ////////////////
+
     board_run(mainboard);
+
+    ////////////////
 
     DESTROY(regA);
     DESTROY(regB);

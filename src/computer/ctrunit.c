@@ -81,10 +81,28 @@ ctrunit *ctrunit_create(char *name){
     ctru->eep_hi = at28c16_create("UC-HI",NULL);
     ctru->eep_lo = at28c16_create("UC-LO",NULL);
 
+    ls161_connect_qa(ctru->ls161, ctru->eep_hi, (void*)&at28c16_in_a0);
+    ls161_connect_qb(ctru->ls161, ctru->eep_hi, (void*)&at28c16_in_a1);
+    ls161_connect_qc(ctru->ls161, ctru->eep_hi, (void*)&at28c16_in_a2);
+    ls161_connect_qa(ctru->ls161, ctru->eep_lo, (void*)&at28c16_in_a0);
+    ls161_connect_qb(ctru->ls161, ctru->eep_lo, (void*)&at28c16_in_a1);
+    ls161_connect_qc(ctru->ls161, ctru->eep_lo, (void*)&at28c16_in_a2);
 
+    bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_cs);
+    bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_oe);
+    bitconst_connect_one(ctru->eep_hi, (void*)&at28c16_in_we);
+    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_cs);
+    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_oe);
+    bitconst_connect_one(ctru->eep_lo, (void*)&at28c16_in_we);
 
-
-
+    bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a7);
+    bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a8);
+    bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a9);
+    bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a10);
+    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a7);
+    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a8);
+    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a9);
+    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a10);
 
     ctru->destroy = (void*)ctrunit_destroy;
 
@@ -123,6 +141,21 @@ void ctrunit_destroy (ctrunit **dest){
         vallist_destroy(&b->in_rootptr[i]);
         ehandler_destroy(&b->out_event_handler_root[i]);
     }
+
+    DESTROY(b->ls161);
+    DESTROY(b->ls138);
+    DESTROY(b->ct[0]);
+    DESTROY(b->ct[1]);
+    DESTROY(b->ct[2]);
+    DESTROY(b->t[0]);
+    DESTROY(b->t[1]);
+    DESTROY(b->t[2]);
+    DESTROY(b->t[3]);
+    DESTROY(b->t[4]);
+    DESTROY(b->t[5]);
+    DESTROY(b->ledclk);
+    DESTROY(b->eep_hi);
+    DESTROY(b->eep_lo);
 
     free(b);
     *dest = NULL;
@@ -417,3 +450,32 @@ void ctrunit_connect_out_nreset(ctrunit *source, void *dest, void (*dest_event_h
 
     ls00_connect_y1(source->ls00, dest, dest_event_handler);
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_instr0(ctrunit *dest, int *valptr, int timestamp){
+
+    at28c16_in_a3(dest->eep_hi, valptr, timestamp);
+    at28c16_in_a3(dest->eep_lo, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_instr1(ctrunit *dest, int *valptr, int timestamp){
+
+    at28c16_in_a4(dest->eep_hi, valptr, timestamp);
+    at28c16_in_a4(dest->eep_lo, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_instr2(ctrunit *dest, int *valptr, int timestamp){
+
+    at28c16_in_a5(dest->eep_hi, valptr, timestamp);
+    at28c16_in_a5(dest->eep_lo, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_instr3(ctrunit *dest, int *valptr, int timestamp){
+
+    at28c16_in_a6(dest->eep_hi, valptr, timestamp);
+    at28c16_in_a6(dest->eep_lo, valptr, timestamp);
+}
+
