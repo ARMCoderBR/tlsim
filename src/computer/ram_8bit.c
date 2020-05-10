@@ -84,7 +84,7 @@ ram_8bit *ram_8bit_create(char *name){
     if (name){
 
         strncpy(lshi,name,sizeof(lshi));
-        strncpy(lslo,name,sizeof(lslo));
+        strncpy(lslo,name,sizeof(lslo));    // Inicializar com 1E 2F E0 00 00 00 00 00 00 00 00 00 00 00 0E 1C
     }
 
     strncat(lshi,"-hiWord",sizeof(lshi)/2);

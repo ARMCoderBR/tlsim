@@ -78,8 +78,65 @@ ctrunit *ctrunit_create(char *name){
     ctru->ledclk  = indicator_create("CLK");
 
     //// EEPROMs
-    ctru->eep_hi = at28c16_create("UC-HI",NULL);
-    ctru->eep_lo = at28c16_create("UC-LO",NULL);
+
+    unsigned char buf[2048];
+    int ofs;
+
+    memset(buf,0xff,sizeof(buf));
+    // Dados da EEP HIGH
+    //  HL MI RI RO IO II AI AO
+    //  7  6  5  4  3  2  1  0
+    for (i = 0; i < 16; i++){
+
+        ofs = 8*i;
+        memset(buf+ofs,0,8);
+        //FETCH
+        buf[0+ofs] = 0x40;
+        buf[1+ofs] = 0x14;
+
+        switch(i){
+
+        case 0x01:  //LDA
+            buf[2+ofs] = 0x48;
+            buf[3+ofs] = 0x12;
+            break;
+        case 0x02:  //ADD
+            buf[2+ofs] = 0x48;
+            buf[3+ofs] = 0x10;
+            buf[4+ofs] = 0x02;
+            break;
+        case 0x0e:  //OUT
+            buf[2+ofs] = 0x01;
+            break;
+        }
+    }
+    ctru->eep_hi = at28c16_create("UC-HI",buf);
+
+    memset(buf,0xff,sizeof(buf));
+    // Dados da EEP LOW
+    //  SO SU BI OI CE CO J  --
+    //  7  6  5  4  3  2  1  0
+    for (i = 0; i < 16; i++){
+        ofs = 8*i;
+        memset(buf+ofs,0,8);
+        //FETCH
+        buf[0+ofs] = 0x04;
+        buf[1+ofs] = 0x08;
+
+        switch(i){
+        case 0x01:  //LDA
+            break;
+        case 0x02:  //ADD
+            buf[3+ofs] = 0x20;
+            buf[4+ofs] = 0x80;
+            break;
+        case 0x0e:  //OUT
+            buf[2+ofs] = 0x10;
+            break;
+        }
+    }
+
+    ctru->eep_lo = at28c16_create("UC-LO",buf);
 
     ls161_connect_qa(ctru->ls161, ctru->eep_hi, (void*)&at28c16_in_a0);
     ls161_connect_qb(ctru->ls161, ctru->eep_hi, (void*)&at28c16_in_a1);

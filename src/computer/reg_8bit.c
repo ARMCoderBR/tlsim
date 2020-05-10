@@ -116,10 +116,30 @@ void reg_8bit_connect_bit_out (reg_8bit *source, int index, void *dest, void (*d
         case 1:    ls245_connect_b2(source->ls245_1,dest,dest_event_handler); break;
         case 2:    ls245_connect_b3(source->ls245_1,dest,dest_event_handler); break;
         case 3:    ls245_connect_b4(source->ls245_1,dest,dest_event_handler); break;
-        case 4:    ls245_connect_b5(source->ls245_1,dest,dest_event_handler); break;
-        case 5:    ls245_connect_b6(source->ls245_1,dest,dest_event_handler); break;
-        case 6:    ls245_connect_b7(source->ls245_1,dest,dest_event_handler); break;
-        case 7:    ls245_connect_b8(source->ls245_1,dest,dest_event_handler); break;
+        case 4:
+            if (source->type == REG8BIT_NORMAL)
+                ls245_connect_b5(source->ls245_1,dest,dest_event_handler);
+            else
+                ls173_connect_1q(source->ls173_hi, dest,dest_event_handler);
+        break;
+        case 5:
+            if (source->type == REG8BIT_NORMAL)
+                ls245_connect_b6(source->ls245_1,dest,dest_event_handler);
+            else
+                ls173_connect_2q(source->ls173_hi, dest,dest_event_handler);
+        break;
+        case 6:
+            if (source->type == REG8BIT_NORMAL)
+                ls245_connect_b7(source->ls245_1,dest,dest_event_handler);
+            else
+                ls173_connect_3q(source->ls173_hi, dest,dest_event_handler);
+        break;
+        case 7:
+            if (source->type == REG8BIT_NORMAL)
+                ls245_connect_b8(source->ls245_1,dest,dest_event_handler);
+            else
+                ls173_connect_4q(source->ls173_hi, dest,dest_event_handler);
+        break;
     }
 }
 
