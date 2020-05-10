@@ -1,9 +1,11 @@
-/*
- * ls191.h
- *
- *  Created on: 18 de jul de 2019
- *      Author: milton
- */
+////////////////////////////////////////////////////////////////////////////////
+// TLSIM
+// A TINY LOGIC CIRCUIT SIMULATOR
+// (C) 2019, 2020 BY ARMCODER - milton@armcoder.com.br
+//
+// THIS PROGRAM IS FREE SOFTWARE
+// SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef LS191_H_
 #define LS191_H_

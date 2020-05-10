@@ -1,9 +1,11 @@
-/*
- * at28c16.h
- *
- *  Created on: 02 de mai de 2020
- *      Author: milton
- */
+////////////////////////////////////////////////////////////////////////////////
+// TLSIM
+// A TINY LOGIC CIRCUIT SIMULATOR
+// (C) 2019, 2020 BY ARMCODER - milton@armcoder.com.br
+//
+// THIS PROGRAM IS FREE SOFTWARE
+// SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef AT28C16_H_
 #define AT28C16_H_

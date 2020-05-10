@@ -1,14 +1,16 @@
-/*
- * reg_8bit.h
- *
- *  Created on: 6 de abr de 2020
- *      Author: milton
- */
+////////////////////////////////////////////////////////////////////////////////
+// TLSIM
+// A TINY LOGIC CIRCUIT SIMULATOR
+// (C) 2019, 2020 BY ARMCODER - milton@armcoder.com.br
+//
+// THIS PROGRAM IS FREE SOFTWARE
+// SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef REG_8BIT_H_
 #define REG_8BIT_H_
 
-// Baseado no projeto do Ben Eater (https://www.youtube.com/watch?v=CiMaWbz_6E8)
+// Based on Ben Eater's project (https://www.youtube.com/watch?v=CiMaWbz_6E8)
 
 #include "ls173.h"
 #include "ls245.h"

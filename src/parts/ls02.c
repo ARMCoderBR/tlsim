@@ -1,9 +1,11 @@
-/*
- * ls02.c
- *
- *  Created on: 29 de mar de 2020
- *      Author: milton
- */
+////////////////////////////////////////////////////////////////////////////////
+// TLSIM
+// A TINY LOGIC CIRCUIT SIMULATOR
+// (C) 2019, 2020 BY ARMCODER - milton@armcoder.com.br
+//
+// THIS PROGRAM IS FREE SOFTWARE
+// SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+////////////////////////////////////////////////////////////////////////////////
 
 #include <malloc.h>
 #include "ls02.h"

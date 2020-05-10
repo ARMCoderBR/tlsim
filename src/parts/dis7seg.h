@@ -1,9 +1,11 @@
-/*
- * dis7seg.h
- *
- *  Created on: 02 de mai de 2020
- *      Author: milton
- */
+////////////////////////////////////////////////////////////////////////////////
+// TLSIM
+// A TINY LOGIC CIRCUIT SIMULATOR
+// (C) 2019, 2020 BY ARMCODER - milton@armcoder.com.br
+//
+// THIS PROGRAM IS FREE SOFTWARE
+// SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef DIS7SEG_H_
 #define DIS7SEG_H_

@@ -1,14 +1,16 @@
-/*
- * alu_8bit.h
- *
- *  Created on: 18 de abr de 2020
- *      Author: milton
- */
+////////////////////////////////////////////////////////////////////////////////
+// TLSIM
+// A TINY LOGIC CIRCUIT SIMULATOR
+// (C) 2019, 2020 BY ARMCODER - milton@armcoder.com.br
+//
+// THIS PROGRAM IS FREE SOFTWARE
+// SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef ALU_8BIT_H_
 #define ALU_8BIT_H_
 
-// Baseado no projeto do Ben Eater (https://www.youtube.com/watch?v=S-3fXU3FZQc)
+// Based on Ben Eater's project (https://www.youtube.com/watch?v=S-3fXU3FZQc)
 
 #include "ls86.h"
 #include "ls283.h"

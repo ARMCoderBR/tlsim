@@ -1,14 +1,16 @@
-/*
- * ctrunit.h
- *
- *  Created on: 01 de mai de 2020
- *      Author: milton
- */
+////////////////////////////////////////////////////////////////////////////////
+// TLSIM
+// A TINY LOGIC CIRCUIT SIMULATOR
+// (C) 2019, 2020 BY ARMCODER - milton@armcoder.com.br
+//
+// THIS PROGRAM IS FREE SOFTWARE
+// SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef CTRUNIT_H_
 #define CTRUNIT_H_
 
-// Baseado no projeto do Ben Eater (https://www.youtube.com/watch?v=tNwU7pK_3tk)
+// Based on Ben Eater's project (https://www.youtube.com/watch?v=tNwU7pK_3tk)
 
 #include "ls00.h"
 #include "ls04.h"
