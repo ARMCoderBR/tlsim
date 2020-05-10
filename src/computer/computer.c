@@ -106,7 +106,7 @@ void computer_sim(){
     board_object *pctr_board = progctr_board_create(pctr, KEY_F(6), "PC");
     board_add_board(mainboard,pctr_board,1,26);
     //board_clock_connect(pctr, (void*)&progctr_in_clock);
-    clkgen_connect_out(mainclk, ram, (void*)&ram_8bit_in_clk);
+    clkgen_connect_out(mainclk, pctr, (void*)&progctr_in_clock);
 
     //////// REG OUT ///////////////////////////////////////////////////////////
 

@@ -380,85 +380,6 @@ void board_set_clk(clkgen *clk){
     boardclk = clk;
 }
 
-//ehandler *clock_event_handler_root = NULL;
-//bitvalue_t clock_last_val = 0;
-//
-//ehandler *nclock_event_handler_root = NULL;
-//bitvalue_t nclock_last_val = 0;
-//
-//void clock_set_val(int val){
-//
-//    if (val)
-//        { clock_last_val = 1; nclock_last_val = 0; }
-//    else
-//        { clock_last_val = 0; nclock_last_val = 1; }
-//
-//    logger("\n==>clock_set_val:%d ptr:%p",clock_last_val, &clock_last_val);
-//
-//    event e;
-//    e.event_handler_root = clock_event_handler_root;
-//    e.valueptr = &clock_last_val;
-//    e.timestamp = 0;
-//    e.done = 0;
-//    event_insert(&e);
-//
-//    e.event_handler_root = nclock_event_handler_root;
-//    e.valueptr = &nclock_last_val;
-//    e.timestamp = 0;
-//    e.done = 0;
-//    event_insert(&e);
-//}
-//
-//////////////////////////////////////////////////////////////////////////////////
-//void board_clock_connect(void *objdest, event_function_t objdest_event_handler){
-//
-//    ehandler *newe = malloc(sizeof(ehandler));
-//    if (!newe)
-//        return;
-//
-//    newe->objdest_event_handler = objdest_event_handler;
-//    newe->objdest = objdest;
-//    newe->next = NULL;
-//
-//    ehandler *e = clock_event_handler_root;
-//    if (e){
-//
-//        while (e->next)
-//            e = e->next;
-//
-//        e->next = newe;
-//    }
-//    else
-//        clock_event_handler_root = newe;
-//
-//    objdest_event_handler(objdest,&clock_last_val,0);
-//}
-//
-//////////////////////////////////////////////////////////////////////////////////
-//void board_nclock_connect(void *objdest, event_function_t objdest_event_handler){
-//
-//    ehandler *newe = malloc(sizeof(ehandler));
-//    if (!newe)
-//        return;
-//
-//    newe->objdest_event_handler = objdest_event_handler;
-//    newe->objdest = objdest;
-//    newe->next = NULL;
-//
-//    ehandler *e = nclock_event_handler_root;
-//    if (e){
-//
-//        while (e->next)
-//            e = e->next;
-//
-//        e->next = newe;
-//    }
-//    else
-//        nclock_event_handler_root = newe;
-//
-//    objdest_event_handler(objdest,&nclock_last_val,0);
-//}
-
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -715,13 +636,7 @@ void refresh_thread_stop(){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-
-//pthread_t clkthread;
-
-//bool_t clock_run = 0;
 bool_t clock_pausing = 0;
-//int clock_state_paused = 0;
-int clock_period_us = 500000;
 int iclk = 0;
 
 #define NCLKS 10
@@ -769,72 +684,11 @@ void clock_redraw(){
     pthread_mutex_unlock(&ncursesmutex);
 }
 
-//bool_t clock_pulse = 0;
-//bool_t clocked = 0;
-//////////////////////////////////////////////////////////////////////////////////
-//void *clock_thread(void *args){
-//
-//    clock_period_us = CLKS_PERIOD_US[iclk];
-//    clock_run = 1;
-//
-//    clock_redraw();
-//
-//    while (clock_run){
-//
-//        if (clock_event_handler_root){
-//
-//            if (clock_pausing){
-//
-//                clock_state_paused = 1;
-//
-//                if (clock_pulse){
-//
-//                    clock_pulse = 0;
-//
-//                    board_mutex_lock();
-//
-//                    if (clock_last_val)
-//                        clock_set_val(0);
-//                    else
-//                        clock_set_val(1);
-//
-//                    board_mutex_unlock();
-//
-//                    clocked = 1;
-//                  //  board_set_refresh();
-//                    usleep(10000);
-//                }
-//                else
-//                    usleep(100000);
-//                continue;
-//            }
-//            else
-//                clock_state_paused = 0;
-//
-//            board_mutex_lock();
-//
-//            if (clock_last_val)
-//                clock_set_val(0);
-//            else
-//                clock_set_val(1);
-//
-//            board_mutex_unlock();
-//
-//            clocked = 1;
-//           // board_set_refresh();
-//            usleep(clock_period_us/2);
-//        }
-//        else
-//            usleep(100000);
-//    }
-//
-//    return NULL;
-//}
 
 ////////////////////////////////////////////////////////////////////////////////
 void clock_reinit(){
 
-    clock_period_us = CLKS_PERIOD_US[iclk];
+    int clock_period_us = CLKS_PERIOD_US[iclk];
     clkgen_set_us(boardclk, clock_period_us);
     clock_redraw();
 }
@@ -853,7 +707,7 @@ void clock_faster(){
     if (iclk < (NCLKS-1)){
 
         iclk++;
-        clock_period_us = CLKS_PERIOD_US[iclk];
+        int clock_period_us = CLKS_PERIOD_US[iclk];
         clkgen_set_us(boardclk, clock_period_us);
         clock_redraw();
     }
@@ -873,7 +727,7 @@ void clock_slower(){
     if (iclk > 0){
 
         iclk--;
-        clock_period_us = CLKS_PERIOD_US[iclk];
+        int clock_period_us = CLKS_PERIOD_US[iclk];
         clkgen_set_us(boardclk, clock_period_us);
         clock_redraw();
     }
@@ -886,29 +740,17 @@ void clock_pause(){
 
         clock_pausing = 1;
         clkgen_pause(boardclk, clock_pausing);
-//
-//        while (!clock_state_paused)
-//            usleep(100000);
-
         clock_redraw();
         return;
     }
     else{
 
         clkgen_step(boardclk);
-//        clock_pulse = 1;
         usleep(10000);
     }
 
     clock_redraw();
 }
-
-//////////////////////////////////////////////////////////////////////////////////
-//void clock_thread_stop(){
-//
-//    clock_run = 0;
-//    pthread_join(clkthread,NULL);
-//}
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -1332,7 +1174,7 @@ int board_run(board_object *board){
     }
 
     refresh_thread_stop();
-    //clock_thread_stop();
+
     pthread_mutex_destroy(&transitionmutex);
 
     pthread_mutex_destroy(&setrefmutex);
@@ -1342,20 +1184,3 @@ int board_run(board_object *board){
     return 0;
 }
 
-//////////////////////////////////////////////////////////////////////////////////
-//typedef struct {
-//
-//    void (*destroy)(void **dest);
-//} part_descriptor;
-//
-//////////////////////////////////////////////////////////////////////////////////
-//void part_destroy(void **part){
-//
-//    if (part == NULL) return;
-//    part_descriptor *p = *part;
-//    if (p == NULL) return;
-//
-//    p->destroy((void*)&p);
-//
-//    *part = NULL;
-//}
