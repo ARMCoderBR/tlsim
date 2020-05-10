@@ -86,7 +86,7 @@ ctrunit *ctrunit_create(char *name){
     // Dados da EEP HIGH
     //  HL MI RI RO IO II AI AO
     //  7  6  5  4  3  2  1  0
-    for (i = 0; i < 16; i++){
+    for (i = 0; i < 16; i++){   // Dados do microcódigo: https://www.youtube.com/watch?v=dHWFpkGsxOs
 
         ofs = 8*i;
         memset(buf+ofs,0,8);
