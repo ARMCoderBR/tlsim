@@ -17,7 +17,7 @@ typedef struct{
     ehandler *out_event_handler_root;
     pthread_t clkthread;
     bool_t running;
-    bitvalue_t period_us;
+    uint32_t period_us;
     bitvalue_t halt;
     vallist *halt_rootptr;
     char name[30];
