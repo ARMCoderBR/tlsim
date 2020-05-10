@@ -12,6 +12,7 @@
 #include "bitswitch.h"
 #include "indicator.h"
 #include "dis7seg.h"
+#include "clkgen.h"
 
 typedef enum {
 
@@ -69,9 +70,11 @@ void board_destroy(board_object **dest);
 
 board_object *mainboard_create(char *name);
 
-void board_clock_connect(void *objdest, event_function_t objdest_event_handler);
+//void board_clock_connect(void *objdest, event_function_t objdest_event_handler);
+//
+//void board_nclock_connect(void *objdest, event_function_t objdest_event_handler);
 
-void board_nclock_connect(void *objdest, event_function_t objdest_event_handler);
+void board_set_clk(clkgen *clk);
 
 void board_mutex_lock();
 

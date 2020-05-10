@@ -19,12 +19,18 @@
 #include "computer.h"
 #include "board.h"
 #include "indicator.h"
+#include "clkgen.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 void computer_sim(){
 
     board_object *mainboard = board_create(0,0,0,"BEN EATER'S 8-BIT COMPUTER");
 
+    clkgen *mainclk = clkgen_create("",1000000);
+
+    bitconst_connect_zero(mainclk, (void*)&clkgen_in_halt);
+
+    board_set_clk(mainclk);
 
     //////// REGS //////////////////////////////////////////////////////////////
 
@@ -48,9 +54,13 @@ void computer_sim(){
         exit(0);
     }
 
-    board_clock_connect(regA, (void*)&reg_8bit_in_clock);
-    board_clock_connect(regB, (void*)&reg_8bit_in_clock);
-    board_clock_connect(regIN, (void*)&reg_8bit_in_clock);
+//    board_clock_connect(regA, (void*)&reg_8bit_in_clock);
+//    board_clock_connect(regB, (void*)&reg_8bit_in_clock);
+//    board_clock_connect(regIN, (void*)&reg_8bit_in_clock);
+
+    clkgen_connect_out(mainclk, regA, (void*)&reg_8bit_in_clock);
+    clkgen_connect_out(mainclk, regB, (void*)&reg_8bit_in_clock);
+    clkgen_connect_out(mainclk, regIN, (void*)&reg_8bit_in_clock);
 
     board_add_board(mainboard,regA_board,1,1);
     board_add_board(mainboard,regB_board,1,9);
@@ -87,24 +97,24 @@ void computer_sim(){
     ram_8bit *ram = ram_8bit_create("RAM");
     board_object *ram_board = ram_8bit_board_create(ram, KEY_F(5), "RAM"); // Requer NCURSES
     board_add_board(mainboard,ram_board,66,1);
-    board_clock_connect(ram, (void*)&ram_8bit_in_clk);
-
+    //board_clock_connect(ram, (void*)&ram_8bit_in_clk);
+    clkgen_connect_out(mainclk, ram, (void*)&ram_8bit_in_clk);
 
     //////// PROGRAM COUNTER ///////////////////////////////////////////////////
 
     progctr *pctr = progctr_create("PC");
     board_object *pctr_board = progctr_board_create(pctr, KEY_F(6), "PC");
     board_add_board(mainboard,pctr_board,1,26);
-    board_clock_connect(pctr, (void*)&progctr_in_clock);
-
+    //board_clock_connect(pctr, (void*)&progctr_in_clock);
+    clkgen_connect_out(mainclk, ram, (void*)&ram_8bit_in_clk);
 
     //////// REG OUT ///////////////////////////////////////////////////////////
 
     reg_out *regout = reg_out_create("RO");
     board_object *regout_board = reg_out_board_create(regout, KEY_F(6), "RO");
     board_add_board(mainboard,regout_board,66,18);
-    board_clock_connect(regout, (void*)&reg_out_in_clock);
-
+    //board_clock_connect(regout, (void*)&reg_out_in_clock);
+    clkgen_connect_out(mainclk, regout, (void*)&reg_out_in_clock);
 
     //////// BUS ///////////////////////////////////////////////////////////////
 
@@ -215,7 +225,8 @@ void computer_sim(){
     board_object *ctru_board = ctrunit_board_create(ctru, '*', "CONTROL UNIT");
     board_add_board(mainboard,ctru_board,1,32);
 
-    board_nclock_connect(ctru, (void*)&ctrunit_in_clk);
+    //board_nclock_connect(ctru, (void*)&ctrunit_in_clk);
+    clkgen_connect_outn(mainclk, ctru, (void*)&ctrunit_in_clk);
 
     //// Reset controls
     reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regA);
