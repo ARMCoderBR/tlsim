@@ -23,7 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 typedef struct {
 
-    void (*destroy)(void **dest);
+    part_destroy_function_t destroy;
     ls189 *ls189_hi, *ls189_lo;
     ls04 *ls04_hi, *ls04_lo;
     ls245 *ls245_1;
@@ -41,15 +41,15 @@ typedef struct {
     bitswitch *progaddr[4];
     bitswitch *progdata[8];
     bitswitch *progwrite;
-    int oldclk;
-    int clk;
+    bitvalue_t oldclk;
+    bitvalue_t clk;
     vallist *clk_rootptr;
     ///////////////////////////
     pthread_t difpulse_thread;
     int pipefd[2];
-    int reqpulse;
-    int valpulse;
-    int running;
+    bool_t reqpulse;
+    bitvalue_t valpulse;
+    bool_t running;
     char name[30];
 } ram_8bit;
 
@@ -57,44 +57,44 @@ ram_8bit *ram_8bit_create(char *name);
 
 void ram_8bit_destroy(ram_8bit **dest);
 
-void ram_8bit_connect_bit_out (ram_8bit *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ram_8bit_connect_bit_out (ram_8bit *source, int index, void *dest, event_function_t dest_event_handler);
 
-void ram_8bit_in_data_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void ram_8bit_in_data_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from,ram_8bit *dest,int index);
 
-void ram_8bit_in_addr_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void ram_8bit_in_addr_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from,ram_8bit *dest,int index);
 
-void ram_8bit_in_we_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void ram_8bit_in_we_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from,ram_8bit *dest);
 
-void ram_8bit_in_oe_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void ram_8bit_in_oe_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from, ram_8bit *dest);
 
 
 
 ///////////////////////////////
 
-extern void (*ram_8bit_in_dataN[])(void *dest, int *valptr, int timestamp);
+extern event_function_t ram_8bit_in_dataN[];
 
-void ram_8bit_in_data0(ram_8bit *dest, int *valptr, int timestamp);
-void ram_8bit_in_data1(ram_8bit *dest, int *valptr, int timestamp);
-void ram_8bit_in_data2(ram_8bit *dest, int *valptr, int timestamp);
-void ram_8bit_in_data3(ram_8bit *dest, int *valptr, int timestamp);
-void ram_8bit_in_data4(ram_8bit *dest, int *valptr, int timestamp);
-void ram_8bit_in_data5(ram_8bit *dest, int *valptr, int timestamp);
-void ram_8bit_in_data6(ram_8bit *dest, int *valptr, int timestamp);
-void ram_8bit_in_data7(ram_8bit *dest, int *valptr, int timestamp);
+void ram_8bit_in_data0(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ram_8bit_in_data1(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ram_8bit_in_data2(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ram_8bit_in_data3(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ram_8bit_in_data4(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ram_8bit_in_data5(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ram_8bit_in_data6(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ram_8bit_in_data7(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void ram_8bit_in_wdata(ram_8bit *dest, int *valptr, int timestamp);
+void ram_8bit_in_wdata(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void ram_8bit_in_waddr(ram_8bit *dest, int *valptr, int timestamp);
+void ram_8bit_in_waddr(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void ram_8bit_in_oe(ram_8bit *dest, int *valptr, int timestamp);
+void ram_8bit_in_oe(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp);
+void ram_8bit_in_clk(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void ram_8bit_in_rst(ram_8bit *dest, int *valptr, int timestamp);
+void ram_8bit_in_rst(ram_8bit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
 board_object *ram_8bit_board_create(ram_8bit *reg, int key, char *name); // Requer NCURSES
 

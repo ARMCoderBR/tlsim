@@ -17,7 +17,7 @@
 
 typedef struct {
 
-    void (*destroy)(void **dest);
+    part_destroy_function_t destroy;
     ls161 *ls161;
     ls245 *ls245_1;
     indicator *led[4];
@@ -30,28 +30,28 @@ progctr *progctr_create(char *name);
 
 void progctr_destroy(progctr **dest);
 
-void progctr_connect_bit_out (progctr *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void progctr_connect_bit_out (progctr *source, int index, void *dest, event_function_t dest_event_handler);
 
-void progctr_in_data_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void progctr_in_data_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from,progctr *dest,int index);
 
 ///////////////////////////////
-void progctr_in_clock(progctr *dest, int *valptr, int timestamp);
+void progctr_in_clock(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void progctr_in_load(progctr *dest, int *valptr, int timestamp);
+void progctr_in_load(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void progctr_in_clear(progctr *dest, int *valptr, int timestamp);
+void progctr_in_clear(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void progctr_in_ct_enable(progctr *dest, int *valptr, int timestamp);
+void progctr_in_ct_enable(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void progctr_in_oenable(progctr *dest, int *valptr, int timestamp);
+void progctr_in_oenable(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void progctr_in_data0(progctr *dest, int *valptr, int timestamp);
-void progctr_in_data1(progctr *dest, int *valptr, int timestamp);
-void progctr_in_data2(progctr *dest, int *valptr, int timestamp);
-void progctr_in_data3(progctr *dest, int *valptr, int timestamp);
+void progctr_in_data0(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void progctr_in_data1(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void progctr_in_data2(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void progctr_in_data3(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-extern void (*progctr_in_dataN[])(void *dest, int *valptr, int timestamp);
+extern void (*progctr_in_dataN[])(void *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
 board_object *progctr_board_create(progctr *reg, int key, char *name); // Requer NCURSES
 

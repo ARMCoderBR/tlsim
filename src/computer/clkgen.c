@@ -106,9 +106,9 @@ void clkgen_destroy (clkgen **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void clkgen_in_halt(clkgen *dest, int *valptr, int timestamp){
+void clkgen_in_halt(clkgen *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->halt_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->halt_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -116,7 +116,7 @@ void clkgen_in_halt(clkgen *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void clkgen_connect_out(clkgen *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void clkgen_connect_out(clkgen *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->value,0);

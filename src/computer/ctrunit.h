@@ -42,15 +42,15 @@
 
 typedef struct {
 
-    void (*destroy)(void **dest);
+    part_destroy_function_t destroy;
     ls00 *ls00;
     ls04 *ls04_1, *ls04_2;
     bitswitch *reset_sw;
     indicator *led[NSIGNALS_CTRU];
     vallist *in_rootptr[NSIGNALS_CTRU];
     ehandler *out_event_handler_root[NSIGNALS_CTRU];
-    int val[NSIGNALS_CTRU];
-    int o_val[NSIGNALS_CTRU];
+    bitvalue_t val[NSIGNALS_CTRU];
+    bitvalue_t o_val[NSIGNALS_CTRU];
     char name[30];
     /////////////////////////
     ls161 *ls161;
@@ -67,63 +67,63 @@ void ctrunit_destroy (ctrunit **dest);
 
 board_object *ctrunit_board_create(ctrunit *reg, int key, char *name); // Requer NCURSES
 
-void ctrunit_in_hlt(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_hlt(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_hlt(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_hlt(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_mi(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_mi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_mi(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_mi(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_ri(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_ri(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_ri(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_ri(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_ro(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_ro(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_ro(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_ro(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_io(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_io(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_io(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_io(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_ii(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_ii(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_ii(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_ii(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_ai(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_ai(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_ai(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_ai(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_ao(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_ao(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_ao(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_ao(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_so(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_so(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_so(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_so(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_su(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_su(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_su(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_su(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_bi(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_bi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_bi(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_bi(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_oi(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_oi(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_oi(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_oi(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_ce(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_ce(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_ce(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_ce(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_co(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_co(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_co(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_co(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_j(ctrunit *dest, int *valptr, int timestamp);
-void ctrunit_connect_out_j(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_in_j(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_connect_out_j(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_clk(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_in_clk(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void ctrunit_connect_out_reset(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_connect_out_reset(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_connect_out_nreset(ctrunit *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void ctrunit_connect_out_nreset(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
-void ctrunit_in_instr0(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_in_instr0(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void ctrunit_in_instr1(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_in_instr1(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void ctrunit_in_instr2(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_in_instr2(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-void ctrunit_in_instr3(ctrunit *dest, int *valptr, int timestamp);
+void ctrunit_in_instr3(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
-#endif /* REG_8BIT_H_ */
+#endif /* CTRUNIT_H_ */

@@ -209,7 +209,7 @@ void reg_out_destroy (reg_out **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_out_in_data_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void reg_out_in_data_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from, reg_out *dest, int index){
 
     switch(index){
@@ -225,7 +225,7 @@ void reg_out_in_data_from(void (*connect_fn)(void *source, void *dest, void (*de
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_out_in_load_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void reg_out_in_load_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from, reg_out *dest){
 
     connect_fn(from,dest->ls173_lo,(void*)&ls173_in_g1);
@@ -235,7 +235,7 @@ void reg_out_in_load_from(void (*connect_fn)(void *source, void *dest, void (*de
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_out_in_clear_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void reg_out_in_clear_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from, reg_out *dest){
 
     connect_fn(from,dest->ls173_lo,(void*)&ls173_in_clr);
@@ -243,7 +243,7 @@ void reg_out_in_clear_from(void (*connect_fn)(void *source, void *dest, void (*d
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_out_in_clock_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void reg_out_in_clock_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from, reg_out *dest){
 
     connect_fn(from,dest->ls173_lo,(void*)&ls173_in_clk);
@@ -252,55 +252,55 @@ void reg_out_in_clock_from(void (*connect_fn)(void *source, void *dest, void (*d
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void reg_out_in_clock(reg_out *dest, int *valptr, int timestamp){
+void reg_out_in_clock(reg_out *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_in_clk(dest->ls173_lo, valptr, timestamp);
     ls173_in_clk(dest->ls173_hi, valptr, timestamp);
     indicator_in_d0(dest->ledclk, valptr, timestamp);
 }
 
-void reg_out_in_data0(reg_out *dest, int *valptr, int timestamp){
+void reg_out_in_data0(reg_out *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_in_1d(dest->ls173_lo, valptr, timestamp);
 }
 
-void reg_out_in_data1(reg_out *dest, int *valptr, int timestamp){
+void reg_out_in_data1(reg_out *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_in_2d(dest->ls173_lo, valptr, timestamp);
 }
 
-void reg_out_in_data2(reg_out *dest, int *valptr, int timestamp){
+void reg_out_in_data2(reg_out *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_in_3d(dest->ls173_lo, valptr, timestamp);
 }
 
-void reg_out_in_data3(reg_out *dest, int *valptr, int timestamp){
+void reg_out_in_data3(reg_out *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_in_4d(dest->ls173_lo, valptr, timestamp);
 }
 
-void reg_out_in_data4(reg_out *dest, int *valptr, int timestamp){
+void reg_out_in_data4(reg_out *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_in_1d(dest->ls173_hi, valptr, timestamp);
 }
 
-void reg_out_in_data5(reg_out *dest, int *valptr, int timestamp){
+void reg_out_in_data5(reg_out *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_in_2d(dest->ls173_hi, valptr, timestamp);
 }
 
-void reg_out_in_data6(reg_out *dest, int *valptr, int timestamp){
+void reg_out_in_data6(reg_out *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_in_3d(dest->ls173_hi, valptr, timestamp);
 }
 
-void reg_out_in_data7(reg_out *dest, int *valptr, int timestamp){
+void reg_out_in_data7(reg_out *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_in_4d(dest->ls173_hi, valptr, timestamp);
 }
 
 
-void (*reg_out_in_dataN[])(void *dest, int *valptr, int timestamp) = {
+event_function_t reg_out_in_dataN[] = {
 
         (void*)reg_out_in_data0,
         (void*)reg_out_in_data1,

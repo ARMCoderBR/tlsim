@@ -88,7 +88,7 @@ void progctr_destroy(progctr **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void progctr_connect_bit_out (progctr *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void progctr_connect_bit_out (progctr *source, int index, void *dest, event_function_t dest_event_handler){
 
     switch(index){
         case 0:    ls245_connect_b1(source->ls245_1,dest,dest_event_handler); break;
@@ -99,7 +99,7 @@ void progctr_connect_bit_out (progctr *source, int index, void *dest, void (*des
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void progctr_in_data_from(void (*connect_fn)(void *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)),
+void progctr_in_data_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from, progctr *dest, int index){
 
     switch(index){
@@ -111,58 +111,58 @@ void progctr_in_data_from(void (*connect_fn)(void *source, void *dest, void (*de
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void progctr_in_clock(progctr *dest, int *valptr, int timestamp){
+void progctr_in_clock(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls161_in_clk(dest->ls161, valptr, timestamp);
     indicator_in_d0(dest->ledclk, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void progctr_in_load(progctr *dest, int *valptr, int timestamp){
+void progctr_in_load(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls161_in_load(dest->ls161, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void progctr_in_clear(progctr *dest, int *valptr, int timestamp){
+void progctr_in_clear(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls161_in_clear(dest->ls161, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void progctr_in_ct_enable(progctr *dest, int *valptr, int timestamp){
+void progctr_in_ct_enable(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls161_in_enp(dest->ls161, valptr, timestamp);
     ls161_in_ent(dest->ls161, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void progctr_in_oenable(progctr *dest, int *valptr, int timestamp){
+void progctr_in_oenable(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_in_oe(dest->ls245_1, valptr, timestamp);
 }
 
-void progctr_in_data0(progctr *dest, int *valptr, int timestamp){
+void progctr_in_data0(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls161_in_da(dest->ls161, valptr, timestamp);
 }
 
-void progctr_in_data1(progctr *dest, int *valptr, int timestamp){
+void progctr_in_data1(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls161_in_db(dest->ls161, valptr, timestamp);
 }
 
-void progctr_in_data2(progctr *dest, int *valptr, int timestamp){
+void progctr_in_data2(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls161_in_dc(dest->ls161, valptr, timestamp);
 }
 
-void progctr_in_data3(progctr *dest, int *valptr, int timestamp){
+void progctr_in_data3(progctr *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls161_in_dd(dest->ls161, valptr, timestamp);
 }
 
-void (*progctr_in_dataN[])(void *dest, int *valptr, int timestamp) = {
+event_function_t progctr_in_dataN[] = {
 
         (void*)progctr_in_data0,
         (void*)progctr_in_data1,
