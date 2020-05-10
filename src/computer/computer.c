@@ -109,7 +109,11 @@ void computer_sim(){
     //////// BUS ///////////////////////////////////////////////////////////////
 
     indicator *ledbus[8];
+    board_object *bus_board = board_create(40, 4, 0, "BUS");
+
+#if DISABLE_CTRUNIT_OUTS
     bitswitch *swbus[8];
+#endif
 
     int i;
     for (i = 0; i < 8; i++){
@@ -119,6 +123,7 @@ void computer_sim(){
         char dname[10];
         sprintf(dname,"D%d",i);
 
+#if DISABLE_CTRUNIT_OUTS
         swbus[i] = bitswitch_create(dname);
         bitswitch_setval(swbus[i], 1);
 
@@ -129,6 +134,7 @@ void computer_sim(){
         bitswitch_connect_out(swbus[i], regIN, (void*)reg_8bit_in_dataN[i]);
         bitswitch_connect_out(swbus[i], ram, (void*)ram_8bit_in_dataN[i]);
         bitswitch_connect_out(swbus[i], regout, (void*)reg_out_in_dataN[i]);
+#endif
 
         /// REGA OUTPUT
         reg_8bit_connect_bit_out (regA, i, ledbus[i], (void*)indicator_in_d0);
@@ -171,10 +177,16 @@ void computer_sim(){
 
         int j = 7-i;
 
-        board_add_led(mainboard,ledbus[i],2+7*j, 4+15, dname, LED_RED);
+        //board_add_led(mainboard,ledbus[i],2+7*j, 4+15, dname, LED_RED);
+        board_add_led(bus_board,ledbus[i],1+4*j, 1, dname, LED_RED);
 
+#if DISABLE_CTRUNIT_OUTS
         board_add_manual_switch(mainboard, swbus[i], 2+7*j, 4+18, '0'+i, dname);
+#endif
     }
+
+    board_add_board(mainboard,bus_board,1,17);
+
 
     for (i = 0; i < 4; i++){
 
@@ -184,7 +196,9 @@ void computer_sim(){
         alu_8bit_connect_bit_out (alu, i, pctr, progctr_in_dataN[i]);
         ram_8bit_connect_bit_out (ram, i, pctr, progctr_in_dataN[i]);
 
+#if DISABLE_CTRUNIT_OUTS
         bitswitch_connect_out(swbus[i], pctr, (void*)progctr_in_dataN[i]);
+#endif
 
         progctr_connect_bit_out (pctr, i, ledbus[i], (void*)indicator_in_d0);
         progctr_connect_bit_out (pctr, i, regA, reg_8bit_in_dataN[i]);
@@ -323,7 +337,9 @@ void computer_sim(){
     for (i = 0; i < 8; i++){
 
         DESTROY(ledbus[i]);
+#if DISABLE_CTRUNIT_OUTS
         DESTROY(swbus[i]);
+#endif
     }
 
     DESTROY(alu);
