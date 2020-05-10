@@ -10,7 +10,7 @@
 
 #include "update.h"
 
-void bitconst_connect_one(void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
-void bitconst_connect_zero(void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void bitconst_connect_one(void *dest, event_function_t dest_event_handler);
+void bitconst_connect_zero(void *dest, event_function_t dest_event_handler);
 
 #endif /* BITSWITCH_H_ */

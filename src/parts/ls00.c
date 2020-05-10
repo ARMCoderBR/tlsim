@@ -40,9 +40,9 @@ static void ls00_up(ls00 *a, int timestamp, int index){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls00_update_pin_ina(ls00 *a, int *valptr, int timestamp, int index){
+static void ls00_update_pin_ina(ls00 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->ina_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->ina_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -53,9 +53,9 @@ static void ls00_update_pin_ina(ls00 *a, int *valptr, int timestamp, int index){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls00_update_pin_inb(ls00 *a, int *valptr, int timestamp, int index){
+static void ls00_update_pin_inb(ls00 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->inb_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->inb_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -112,77 +112,77 @@ void ls00_destroy (ls00 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_connect_y1(ls00 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls00_connect_y1(ls00 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[0], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[0],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_connect_y2(ls00 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls00_connect_y2(ls00 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[1], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[1],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_connect_y3(ls00 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls00_connect_y3(ls00 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[2], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[2],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_connect_y4(ls00 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls00_connect_y4(ls00 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[3], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[3],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_in_a1(ls00 *dest, int *valptr, int timestamp){
+void ls00_in_a1(ls00 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls00_update_pin_ina(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_in_b1(ls00 *dest, int *valptr, int timestamp){
+void ls00_in_b1(ls00 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls00_update_pin_inb(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_in_a2(ls00 *dest, int *valptr, int timestamp){
+void ls00_in_a2(ls00 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls00_update_pin_ina(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_in_b2(ls00 *dest, int *valptr, int timestamp){
+void ls00_in_b2(ls00 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls00_update_pin_inb(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_in_a3(ls00 *dest, int *valptr, int timestamp){
+void ls00_in_a3(ls00 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls00_update_pin_ina(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_in_b3(ls00 *dest, int *valptr, int timestamp){
+void ls00_in_b3(ls00 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls00_update_pin_inb(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_in_a4(ls00 *dest, int *valptr, int timestamp){
+void ls00_in_a4(ls00 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls00_update_pin_ina(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls00_in_b4(ls00 *dest, int *valptr, int timestamp){
+void ls00_in_b4(ls00 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls00_update_pin_inb(dest, valptr, timestamp, 3);
 }

@@ -47,7 +47,7 @@ void event_flush(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int event_process(){
+bool_t event_process(){
 
 #ifdef DEBUG
     printf("event_process BEGIN evins:%d evget:%d\n",evins,evget);
@@ -58,7 +58,7 @@ int event_process(){
     while (scanning_timestamp <= max_timestamp){
 
         event * eventptr = event_list;
-        int found = 0;
+        bool_t found = 0;
 
         while (eventptr){
 
@@ -136,7 +136,7 @@ void event_insert(event *e){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp)){
+void new_ehandler(ehandler **ehptr, void *objdest, event_function_t objdest_event_handler){
 
     ehandler *ept = malloc(sizeof(ehandler));
     ept->objdest_event_handler = objdest_event_handler;
@@ -165,7 +165,7 @@ void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int update_val_multi(vallist **rootptr, int *valptr){
+bitvalue_t update_val_multi(vallist **rootptr, bitvalue_t *valptr){
 
     vallist *entryptr = *rootptr;
 
@@ -184,8 +184,8 @@ int update_val_multi(vallist **rootptr, int *valptr){
         return *valptr;
     }
 
-    int val = 2;
-    int found = 0;
+    bitvalue_t val = 2;
+    bool_t found = 0;
     vallist *lastptr = NULL;
 
     while (entryptr){
@@ -222,7 +222,7 @@ int update_val_multi(vallist **rootptr, int *valptr){
 ////////////////////////////////////////////////////////////////////////////////
 FILE *logfile = NULL;
 
-int logging = 0;
+bool_t logging = 0;
 
 void logger_init(){
 
@@ -289,4 +289,22 @@ void ehandler_destroy(ehandler **root){
 	}
 
 	*root = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+typedef struct {
+
+    part_destroy_function_t destroy;
+} part_descriptor;
+
+////////////////////////////////////////////////////////////////////////////////
+void part_destroy(void **part){
+
+    if (part == NULL) return;
+    part_descriptor *p = *part;
+    if (p == NULL) return;
+
+    p->destroy((void*)&p);
+
+    *part = NULL;
 }

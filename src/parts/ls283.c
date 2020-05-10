@@ -13,9 +13,9 @@
 // 4-BIT BINARY ADDER WITH FAST CARRY
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls283_up(ls283 *a, int timestamp){
+static void ls283_up(ls283 *a, timevalue_t timestamp){
 
-    int suma, sumb;
+    uint8_t suma, sumb;
     int mask = 1;
     int i = 0;
 
@@ -78,9 +78,9 @@ static void ls283_up(ls283 *a, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls283_update_pin_ina(ls283 *a, int *valptr, int timestamp, int index){
+static void ls283_update_pin_ina(ls283 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->ina_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->ina_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -93,9 +93,9 @@ static void ls283_update_pin_ina(ls283 *a, int *valptr, int timestamp, int index
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls283_update_pin_inb(ls283 *a, int *valptr, int timestamp, int index){
+static void ls283_update_pin_inb(ls283 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->inb_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->inb_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -108,9 +108,9 @@ static void ls283_update_pin_inb(ls283 *a, int *valptr, int timestamp, int index
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls283_update_pin_cin(ls283 *a, int *valptr, int timestamp){
+static void ls283_update_pin_cin(ls283 *a, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&a->cin_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&a->cin_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -183,90 +183,90 @@ void ls283_destroy (ls283 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_connect_y1(ls283 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls283_connect_y1(ls283 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y_event_handler_root[0], dest, dest_event_handler);
     dest_event_handler(dest,&source->y[0],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_connect_y2(ls283 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls283_connect_y2(ls283 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y_event_handler_root[1], dest, dest_event_handler);
     dest_event_handler(dest,&source->y[1],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_connect_y3(ls283 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls283_connect_y3(ls283 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y_event_handler_root[2], dest, dest_event_handler);
     dest_event_handler(dest,&source->y[2],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_connect_y4(ls283 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls283_connect_y4(ls283 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y_event_handler_root[3], dest, dest_event_handler);
     dest_event_handler(dest,&source->y[3],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_connect_cout(ls283 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls283_connect_cout(ls283 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->cout_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->cout,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_in_a1(ls283 *dest, int *valptr, int timestamp){
+void ls283_in_a1(ls283 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls283_update_pin_ina(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_in_a2(ls283 *dest, int *valptr, int timestamp){
+void ls283_in_a2(ls283 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls283_update_pin_ina(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_in_a3(ls283 *dest, int *valptr, int timestamp){
+void ls283_in_a3(ls283 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls283_update_pin_ina(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_in_a4(ls283 *dest, int *valptr, int timestamp){
+void ls283_in_a4(ls283 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls283_update_pin_ina(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_in_b1(ls283 *dest, int *valptr, int timestamp){
+void ls283_in_b1(ls283 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls283_update_pin_inb(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_in_b2(ls283 *dest, int *valptr, int timestamp){
+void ls283_in_b2(ls283 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls283_update_pin_inb(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_in_b3(ls283 *dest, int *valptr, int timestamp){
+void ls283_in_b3(ls283 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls283_update_pin_inb(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_in_b4(ls283 *dest, int *valptr, int timestamp){
+void ls283_in_b4(ls283 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls283_update_pin_inb(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls283_in_cin(ls283 *dest, int *valptr, int timestamp){
+void ls283_in_cin(ls283 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls283_update_pin_cin(dest, valptr, timestamp);
 }

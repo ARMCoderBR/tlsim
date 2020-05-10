@@ -14,7 +14,7 @@
 // 4-BIT D-TYPE REGISTERS WITH 3-STATE OUTPUTS
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls173_update (ls173 *a, int timestamp){
+static void ls173_update (ls173 *a, timevalue_t timestamp){
 
     int i;
 
@@ -66,9 +66,9 @@ ls173_end:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls173_update_d(ls173 *a, int *valptr, int timestamp, int index){
+static void ls173_update_d(ls173 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->inpd_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->inpd_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -143,64 +143,64 @@ void ls173_destroy (ls173 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls173_connect_q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp), int index){
+static void ls173_connect_q(ls173 *source, void *dest, event_function_t dest_event_handler, int index){
 
     new_ehandler(&source->outq_event_handler_root[index], dest, dest_event_handler);
     dest_event_handler(dest,&source->outq[index],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_connect_1q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls173_connect_1q(ls173 *source, void *dest, event_function_t dest_event_handler){
 
     ls173_connect_q(source, dest, dest_event_handler, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_connect_2q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls173_connect_2q(ls173 *source, void *dest, event_function_t dest_event_handler){
 
     ls173_connect_q(source, dest, dest_event_handler, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_connect_3q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls173_connect_3q(ls173 *source, void *dest, event_function_t dest_event_handler){
 
     ls173_connect_q(source, dest, dest_event_handler, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_connect_4q(ls173 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls173_connect_4q(ls173 *source, void *dest, event_function_t dest_event_handler){
 
     ls173_connect_q(source, dest, dest_event_handler, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_1d(ls173 *dest, int *valptr, int timestamp){
+void ls173_in_1d(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_update_d(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_2d(ls173 *dest, int *valptr, int timestamp){
+void ls173_in_2d(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_update_d(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_3d(ls173 *dest, int *valptr, int timestamp){
+void ls173_in_3d(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_update_d(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_4d(ls173 *dest, int *valptr, int timestamp){
+void ls173_in_4d(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls173_update_d(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_clk(ls173 *dest, int *valptr, int timestamp){
+void ls173_in_clk(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->clk_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->clk_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -213,9 +213,9 @@ void ls173_in_clk(ls173 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_clr(ls173 *dest, int *valptr, int timestamp){
+void ls173_in_clr(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_clr_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_clr_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -228,9 +228,9 @@ void ls173_in_clr(ls173 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_m(ls173 *dest, int *valptr, int timestamp){
+void ls173_in_m(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_m_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_m_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -243,9 +243,9 @@ void ls173_in_m(ls173 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_n(ls173 *dest, int *valptr, int timestamp){
+void ls173_in_n(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_n_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_n_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -258,9 +258,9 @@ void ls173_in_n(ls173 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_g1(ls173 *dest, int *valptr, int timestamp){
+void ls173_in_g1(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_g1_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_g1_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -273,9 +273,9 @@ void ls173_in_g1(ls173 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls173_in_g2(ls173 *dest, int *valptr, int timestamp){
+void ls173_in_g2(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_g2_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_g2_rootptr, valptr);
 
     if (val > 1) val = 1;
 

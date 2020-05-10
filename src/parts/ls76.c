@@ -14,7 +14,7 @@
 // DUAL J-K FLIP-FLOPS WITH PRESET AND CLEAR
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls76_up(ls76 *a, int timestamp, int index){
+static void ls76_up(ls76 *a, timevalue_t timestamp, int index){
 
     event e;
     e.timestamp = timestamp+1;
@@ -147,23 +147,23 @@ void ls76_destroy (ls76 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_connect_q(ls76 *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls76_connect_q(ls76 *source, int index, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->q_event_handler_root[index], dest, dest_event_handler);
     dest_event_handler(dest,&source->q[index],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_connect_qn(ls76 *source, int index, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls76_connect_qn(ls76 *source, int index, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->qn_event_handler_root[index], dest, dest_event_handler);
     dest_event_handler(dest,&source->qn[index],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_j(ls76 *dest, int index, int *valptr, int timestamp){
+void ls76_in_j(ls76 *dest, int index, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->j_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&dest->j_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -173,9 +173,9 @@ void ls76_in_j(ls76 *dest, int index, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_k(ls76 *dest, int index, int *valptr, int timestamp){
+void ls76_in_k(ls76 *dest, int index, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->k_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&dest->k_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -185,9 +185,9 @@ void ls76_in_k(ls76 *dest, int index, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_pre(ls76 *dest, int index, int *valptr, int timestamp){
+void ls76_in_pre(ls76 *dest, int index, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->pre_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&dest->pre_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -197,9 +197,9 @@ void ls76_in_pre(ls76 *dest, int index, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_clr(ls76 *dest, int index, int *valptr, int timestamp){
+void ls76_in_clr(ls76 *dest, int index, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->clr_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&dest->clr_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -209,9 +209,9 @@ void ls76_in_clr(ls76 *dest, int index, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_clk(ls76 *dest, int index, int *valptr, int timestamp){
+void ls76_in_clk(ls76 *dest, int index, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->clk_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&dest->clk_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -220,89 +220,86 @@ void ls76_in_clk(ls76 *dest, int index, int *valptr, int timestamp){
     ls76_up(dest,timestamp, index);
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_connect_1q(ls76 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls76_connect_1q(ls76 *source, void *dest, event_function_t dest_event_handler){
 
     ls76_connect_q(source, 0, dest, dest_event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_connect_1qn(ls76 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls76_connect_1qn(ls76 *source, void *dest, event_function_t dest_event_handler){
 
     ls76_connect_qn(source, 0, dest, dest_event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_1j(ls76 *dest, int *valptr, int timestamp){
+void ls76_in_1j(ls76 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls76_in_j(dest, 0, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_1k(ls76 *dest, int *valptr, int timestamp){
+void ls76_in_1k(ls76 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls76_in_k(dest, 0, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_1pre(ls76 *dest, int *valptr, int timestamp){
+void ls76_in_1pre(ls76 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls76_in_pre(dest, 0, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_1clr(ls76 *dest, int *valptr, int timestamp){
+void ls76_in_1clr(ls76 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls76_in_clr(dest, 0, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_1clk(ls76 *dest, int *valptr, int timestamp){
+void ls76_in_1clk(ls76 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls76_in_clk(dest, 0, valptr, timestamp);
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_connect_2q(ls76 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls76_connect_2q(ls76 *source, void *dest, event_function_t dest_event_handler){
 
     ls76_connect_q(source, 1, dest, dest_event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_connect_2qn(ls76 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls76_connect_2qn(ls76 *source, void *dest, event_function_t dest_event_handler){
 
     ls76_connect_qn(source, 1, dest, dest_event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_2j(ls76 *dest, int *valptr, int timestamp){
+void ls76_in_2j(ls76 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls76_in_j(dest, 1, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_2k(ls76 *dest, int *valptr, int timestamp){
+void ls76_in_2k(ls76 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls76_in_k(dest, 1, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_2pre(ls76 *dest, int *valptr, int timestamp){
+void ls76_in_2pre(ls76 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls76_in_pre(dest, 1, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_2clr(ls76 *dest, int *valptr, int timestamp){
+void ls76_in_2clr(ls76 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls76_in_clr(dest, 1, valptr, timestamp);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls76_in_2clk(ls76 *dest, int *valptr, int timestamp){
+void ls76_in_2clk(ls76 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls76_in_clk(dest, 1, valptr, timestamp);
 }

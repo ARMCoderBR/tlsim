@@ -20,7 +20,7 @@
 static void at28c16_wr_cell(at28c16 *a){
 
     int i;
-    int b = 0;
+    uint16_t b = 0;
     int msk = 1;
     for (i = 0; i < NUM_BITS_28C16; i++){
 
@@ -33,7 +33,7 @@ static void at28c16_wr_cell(at28c16 *a){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void at28c16_update (at28c16 *a, int timestamp){
+static void at28c16_update (at28c16 *a, timevalue_t timestamp){
 
     int i;
 
@@ -114,9 +114,9 @@ at28c16_end:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void at28c16_update_d(at28c16 *a, int *valptr, int timestamp, int index){
+static void at28c16_update_d(at28c16 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->inpd_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->inpd_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -130,9 +130,9 @@ static void at28c16_update_d(at28c16 *a, int *valptr, int timestamp, int index){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void at28c16_update_addr(at28c16 *a, int *valptr, int timestamp, int index){
+static void at28c16_update_addr(at28c16 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->in_addr_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->in_addr_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -150,7 +150,6 @@ static void at28c16_update_addr(at28c16 *a, int *valptr, int timestamp, int inde
         if (a->in_addr[i])
             a->current_addr++;
     }
-    //a->current_addr = (a->in_addr[3] << 3) | (a->in_addr[2] << 2) | (a->in_addr[1] << 1) | (a->in_addr[0]);
 
     at28c16_update(a, timestamp);
 }
@@ -232,178 +231,178 @@ void at28c16_destroy(at28c16 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void at28c16_connect_q(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp), int index){
+static void at28c16_connect_q(at28c16 *source, void *dest, event_function_t dest_event_handler, int index){
 
     new_ehandler(&source->outq_event_handler_root[index], dest, dest_event_handler);
     dest_event_handler(dest,&source->outq[index],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_connect_o0(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void at28c16_connect_o0(at28c16 *source, void *dest, event_function_t dest_event_handler){
 
     at28c16_connect_q(source, dest, dest_event_handler, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_connect_o1(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void at28c16_connect_o1(at28c16 *source, void *dest, event_function_t dest_event_handler){
 
     at28c16_connect_q(source, dest, dest_event_handler, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_connect_o2(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void at28c16_connect_o2(at28c16 *source, void *dest, event_function_t dest_event_handler){
 
     at28c16_connect_q(source, dest, dest_event_handler, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_connect_o3(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void at28c16_connect_o3(at28c16 *source, void *dest, event_function_t dest_event_handler){
 
     at28c16_connect_q(source, dest, dest_event_handler, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_connect_o4(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void at28c16_connect_o4(at28c16 *source, void *dest, event_function_t dest_event_handler){
 
     at28c16_connect_q(source, dest, dest_event_handler, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_connect_o5(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void at28c16_connect_o5(at28c16 *source, void *dest, event_function_t dest_event_handler){
 
     at28c16_connect_q(source, dest, dest_event_handler, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_connect_o6(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void at28c16_connect_o6(at28c16 *source, void *dest, event_function_t dest_event_handler){
 
     at28c16_connect_q(source, dest, dest_event_handler, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_connect_o7(at28c16 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void at28c16_connect_o7(at28c16 *source, void *dest, event_function_t dest_event_handler){
 
     at28c16_connect_q(source, dest, dest_event_handler, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_i0(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_i0(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_d(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_i1(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_i1(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_d(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_i2(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_i2(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_d(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_i3(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_i3(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_d(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_i4(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_i4(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_d(dest, valptr, timestamp, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_i5(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_i5(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_d(dest, valptr, timestamp, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_i6(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_i6(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_d(dest, valptr, timestamp, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_i7(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_i7(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_d(dest, valptr, timestamp, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a0(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a0(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a1(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a1(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a2(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a2(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a3(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a3(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a4(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a4(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a5(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a5(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a6(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a6(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a7(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a7(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a8(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a8(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 8);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a9(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a9(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 9);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_a10(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_a10(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     at28c16_update_addr(dest, valptr, timestamp, 10);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_we(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_we(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_we_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_we_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -416,9 +415,9 @@ void at28c16_in_we(at28c16 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_oe(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_oe(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_oe_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_oe_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -431,9 +430,9 @@ void at28c16_in_oe(at28c16 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void at28c16_in_cs(at28c16 *dest, int *valptr, int timestamp){
+void at28c16_in_cs(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_cs_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_cs_rootptr, valptr);
 
     if (val > 1) val = 1;
 

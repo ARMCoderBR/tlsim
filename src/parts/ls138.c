@@ -13,7 +13,7 @@
 // 3-LINE TO 8-LINE DECODER/DEMULTIPLEXER
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls138_up(ls138 *a, int timestamp){
+static void ls138_up(ls138 *a, timevalue_t timestamp){
 
     int i;
     for (i = 0; i < NUM_BITS_LS138; i++)
@@ -22,7 +22,7 @@ static void ls138_up(ls138 *a, int timestamp){
     if ((a->ing2a)||(a->ing2b)||(!a->ing1))
         goto end138;
 
-    int code = (a->inc?4:0) +
+    uint8_t code = (a->inc?4:0) +
                (a->inb?2:0) +
                (a->ina?1:0);
 
@@ -92,64 +92,64 @@ void ls138_destroy (ls138 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_connect_y(ls138 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp), int index){
+void ls138_connect_y(ls138 *source, void *dest, event_function_t dest_event_handler, int index){
 
     new_ehandler(&source->y_event_handler_root[index], dest, dest_event_handler);
     dest_event_handler(dest,&source->y[index],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_connect_y0(ls138 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls138_connect_y0(ls138 *source, void *dest, event_function_t dest_event_handler){
 
     ls138_connect_y(source, dest, *dest_event_handler, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_connect_y1(ls138 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls138_connect_y1(ls138 *source, void *dest, event_function_t dest_event_handler){
 
     ls138_connect_y(source, dest, *dest_event_handler, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_connect_y2(ls138 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls138_connect_y2(ls138 *source, void *dest, event_function_t dest_event_handler){
 
     ls138_connect_y(source, dest, *dest_event_handler, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_connect_y3(ls138 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls138_connect_y3(ls138 *source, void *dest, event_function_t dest_event_handler){
 
     ls138_connect_y(source, dest, *dest_event_handler, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_connect_y4(ls138 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls138_connect_y4(ls138 *source, void *dest, event_function_t dest_event_handler){
 
     ls138_connect_y(source, dest, *dest_event_handler, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_connect_y5(ls138 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls138_connect_y5(ls138 *source, void *dest, event_function_t dest_event_handler){
 
     ls138_connect_y(source, dest, *dest_event_handler, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_connect_y6(ls138 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls138_connect_y6(ls138 *source, void *dest, event_function_t dest_event_handler){
 
     ls138_connect_y(source, dest, *dest_event_handler, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_connect_y7(ls138 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls138_connect_y7(ls138 *source, void *dest, event_function_t dest_event_handler){
 
     ls138_connect_y(source, dest, *dest_event_handler, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_ina(ls138 *a, int *valptr, int timestamp){
+void ls138_ina(ls138 *a, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&a->ina_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&a->ina_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -160,9 +160,9 @@ void ls138_ina(ls138 *a, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_inb(ls138 *a, int *valptr, int timestamp){
+void ls138_inb(ls138 *a, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&a->inb_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&a->inb_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -173,9 +173,9 @@ void ls138_inb(ls138 *a, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_inc(ls138 *a, int *valptr, int timestamp){
+void ls138_inc(ls138 *a, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&a->inc_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&a->inc_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -186,9 +186,9 @@ void ls138_inc(ls138 *a, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_ing2a(ls138 *a, int *valptr, int timestamp){
+void ls138_ing2a(ls138 *a, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&a->ing2a_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&a->ing2a_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -199,9 +199,9 @@ void ls138_ing2a(ls138 *a, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_ing2b(ls138 *a, int *valptr, int timestamp){
+void ls138_ing2b(ls138 *a, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&a->ing2b_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&a->ing2b_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -212,9 +212,9 @@ void ls138_ing2b(ls138 *a, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls138_ing1(ls138 *a, int *valptr, int timestamp){
+void ls138_ing1(ls138 *a, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&a->ing1_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&a->ing1_rootptr, valptr);
 
     if (val > 1) val = 1;
 

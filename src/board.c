@@ -15,6 +15,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "update.h"
 #include "board.h"
 #include "bitswitch.h"
 #include "update.h"
@@ -40,7 +41,7 @@ WINDOW *janela3;
 pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t setrefmutex = PTHREAD_MUTEX_INITIALIZER;
-int reader_ok = 0;
+bool_t reader_ok = 0;
 
 pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -371,10 +372,10 @@ void sigterm_handler(int sig){
 ////////////////////////////////////////////////////////////////////////////////
 
 ehandler *clock_event_handler_root = NULL;
-int clock_last_val = 0;
+bitvalue_t clock_last_val = 0;
 
 ehandler *nclock_event_handler_root = NULL;
-int nclock_last_val = 0;
+bitvalue_t nclock_last_val = 0;
 
 void clock_set_val(int val){
 
@@ -400,7 +401,7 @@ void clock_set_val(int val){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp)){
+void board_clock_connect(void *objdest, event_function_t objdest_event_handler){
 
     ehandler *newe = malloc(sizeof(ehandler));
     if (!newe)
@@ -425,7 +426,7 @@ void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objd
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void board_nclock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp)){
+void board_nclock_connect(void *objdest, event_function_t objdest_event_handler){
 
     ehandler *newe = malloc(sizeof(ehandler));
     if (!newe)
@@ -455,7 +456,7 @@ void board_nclock_connect(void *objdest, void (*objdest_event_handler)(void *obj
 ////////////////////////////////////////////////////////////////////////////////
 
 pthread_t refthread;
-int refresh_run = 0;
+bool_t refresh_run = 0;
 int piperefresh[2];
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -488,7 +489,7 @@ void rectangle(int y1, int x1, int y2, int x2)
 
 #define MAX_FOCUSEABLES_BOARDS 50
 
-int focustable_done = 0;
+bool_t focustable_done = 0;
 int num_focuseable_boards = 0;
 int current_board_on_focus = 0;
 board_object *board_on_focus[MAX_FOCUSEABLES_BOARDS];
@@ -639,7 +640,7 @@ void *refresh_thread(void *args){
     struct timeval rtv;
 
     pipe(piperefresh);
-    int ref_pending = 0;
+    bool_t ref_pending = 0;
 
     struct timespec lastspec, nowspec;
     clock_gettime(CLOCK_REALTIME, &lastspec);
@@ -708,8 +709,8 @@ void refresh_thread_stop(){
 
 pthread_t clkthread;
 
-int clock_run = 0;
-int clock_pausing = 0;
+bool_t clock_run = 0;
+bool_t clock_pausing = 0;
 int clock_state_paused = 0;
 int clock_period_us = 500000;
 int iclk = 0;
@@ -759,8 +760,8 @@ void clock_redraw(){
     pthread_mutex_unlock(&ncursesmutex);
 }
 
-int clock_pulse = 0;
-int clocked = 0;
+bool_t clock_pulse = 0;
+bool_t clocked = 0;
 ////////////////////////////////////////////////////////////////////////////////
 void *clock_thread(void *args){
 
@@ -873,15 +874,6 @@ void clock_pause(){
     else{
 
         clock_pulse = 1;
-//        pthread_mutex_lock(&transitionmutex);
-//
-//        if (clock_last_val)
-//            clock_set_val(0);
-//        else
-//            clock_set_val(1);
-//
-//        pthread_mutex_unlock(&transitionmutex);
-//        board_set_refresh();
         usleep(10000);
     }
 
@@ -1161,7 +1153,7 @@ int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h){
 
 int board_run(board_object *board){
 
-    int resize = 0;
+    bool_t resize = 0;
 
     if (!board) return -2;
 
@@ -1215,7 +1207,7 @@ int board_run(board_object *board){
 
     keypad(janela1,TRUE);
 
-    int stoprun = 0;
+    bool_t stoprun = 0;
 
     pthread_create(&refthread, NULL, refresh_thread, board);
     pthread_create(&clkthread, NULL, clock_thread, NULL);
@@ -1341,20 +1333,20 @@ int board_run(board_object *board){
     return 0;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-typedef struct {
-
-    void (*destroy)(void **dest);
-} part_descriptor;
-
-////////////////////////////////////////////////////////////////////////////////
-void part_destroy(void **part){
-
-    if (part == NULL) return;
-    part_descriptor *p = *part;
-    if (p == NULL) return;
-
-    p->destroy((void*)&p);
-
-    *part = NULL;
-}
+//////////////////////////////////////////////////////////////////////////////////
+//typedef struct {
+//
+//    void (*destroy)(void **dest);
+//} part_descriptor;
+//
+//////////////////////////////////////////////////////////////////////////////////
+//void part_destroy(void **part){
+//
+//    if (part == NULL) return;
+//    part_descriptor *p = *part;
+//    if (p == NULL) return;
+//
+//    p->destroy((void*)&p);
+//
+//    *part = NULL;
+//}

@@ -140,65 +140,65 @@ void dis7seg_up(dis7seg *dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segdp(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segdp(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     dest->segval[0] = update_val_multi(&dest->seg_rootptr[0], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_sega(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_sega(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     dest->segval[1] = update_val_multi(&dest->seg_rootptr[1], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segb(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segb(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     dest->segval[2] = update_val_multi(&dest->seg_rootptr[2], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segc(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segc(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     dest->segval[3] = update_val_multi(&dest->seg_rootptr[3], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segd(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segd(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     dest->segval[4] = update_val_multi(&dest->seg_rootptr[4], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_sege(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_sege(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     dest->segval[5] = update_val_multi(&dest->seg_rootptr[5], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segf(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segf(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     dest->segval[6] = update_val_multi(&dest->seg_rootptr[6], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_segg(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_segg(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     dest->segval[7] = update_val_multi(&dest->seg_rootptr[7], valptr);
     dis7seg_up(dest);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void dis7seg_in_common(dis7seg *dest, int *valptr, int timestamp){
+void dis7seg_in_common(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->common_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->common_rootptr, valptr);
 
     dest->common_val = 0;
 
@@ -211,15 +211,6 @@ void dis7seg_in_common(dis7seg *dest, int *valptr, int timestamp){
     if (dest->common_val_old != dest->common_val){
 
         dest->common_val_old = dest->common_val;
-
-//        if (dest->refreshable){
-//
-//            if (dest->common_val){
-//                //dest->segmap = dest->presegmap;
-//                dest->count_persist = 10;
-//                //board_set_refresh();
-//            }
-//        }
     }
 }
 

@@ -8,6 +8,7 @@
 #ifndef BOARD_H_
 #define BOARD_H_
 
+#include "update.h"
 #include "bitswitch.h"
 #include "indicator.h"
 #include "dis7seg.h"
@@ -68,9 +69,9 @@ void board_destroy(board_object **dest);
 
 board_object *mainboard_create(char *name);
 
-void board_clock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp));
+void board_clock_connect(void *objdest, event_function_t objdest_event_handler);
 
-void board_nclock_connect(void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp));
+void board_nclock_connect(void *objdest, event_function_t objdest_event_handler);
 
 void board_mutex_lock();
 
@@ -78,8 +79,8 @@ void board_mutex_unlock();
 
 void board_set_refresh();
 
-void part_destroy(void **part);
-
-#define DESTROY(X) part_destroy((void**)&X)
+//void part_destroy(void **part);
+//
+//#define DESTROY(X) part_destroy((void**)&X)
 
 #endif /* BOARD_H_ */

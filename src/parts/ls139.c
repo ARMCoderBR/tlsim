@@ -13,14 +13,14 @@
 // DUAL 2-LINE TO 4-LINE DECODERS/DEMULTIPLEXERS
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls139_up(ls139 *a, int timestamp, int index){
+static void ls139_up(ls139 *a, timevalue_t timestamp, int index){
 
     a->y0[index] = a->y1[index] = a->y2[index] = a->y3[index] = 1;
 
     if (a->ing[index])
         goto end139;
 
-    int code = (a->inb[index]?2:0) +
+    uint8_t code = (a->inb[index]?2:0) +
             (a->ina[index]?1:0);
 
     switch(code){
@@ -83,9 +83,9 @@ end139:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls139_update_pin_ina(ls139 *a, int *valptr, int timestamp, int index){
+static void ls139_update_pin_ina(ls139 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->ina_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->ina_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -96,9 +96,9 @@ static void ls139_update_pin_ina(ls139 *a, int *valptr, int timestamp, int index
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls139_update_pin_inb(ls139 *a, int *valptr, int timestamp, int index){
+static void ls139_update_pin_inb(ls139 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->inb_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->inb_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -109,9 +109,9 @@ static void ls139_update_pin_inb(ls139 *a, int *valptr, int timestamp, int index
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls139_update_pin_ing(ls139 *a, int *valptr, int timestamp, int index){
+static void ls139_update_pin_ing(ls139 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->ing_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->ing_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -172,95 +172,93 @@ void ls139_destroy (ls139 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_connect_1y0(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls139_connect_1y0(ls139 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y0_event_handler_root[0], dest, dest_event_handler);
     dest_event_handler(dest,&source->y0[0],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_connect_1y1(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls139_connect_1y1(ls139 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y1_event_handler_root[0], dest, dest_event_handler);
     dest_event_handler(dest,&source->y1[0],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_connect_1y2(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls139_connect_1y2(ls139 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y2_event_handler_root[0], dest, dest_event_handler);
     dest_event_handler(dest,&source->y2[0],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_connect_1y3(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls139_connect_1y3(ls139 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y3_event_handler_root[0], dest, dest_event_handler);
     dest_event_handler(dest,&source->y3[0],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_connect_2y0(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls139_connect_2y0(ls139 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y0_event_handler_root[1], dest, dest_event_handler);
     dest_event_handler(dest,&source->y0[1],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_connect_2y1(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls139_connect_2y1(ls139 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y1_event_handler_root[1], dest, dest_event_handler);
     dest_event_handler(dest,&source->y1[1],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_connect_2y2(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls139_connect_2y2(ls139 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y2_event_handler_root[1], dest, dest_event_handler);
     dest_event_handler(dest,&source->y2[1],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_connect_2y3(ls139 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls139_connect_2y3(ls139 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->y3_event_handler_root[1], dest, dest_event_handler);
     dest_event_handler(dest,&source->y3[1],0);
 }
 
-
-
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_in_1a(ls139 *dest, int *valptr, int timestamp){
+void ls139_in_1a(ls139 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls139_update_pin_ina(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_in_1b(ls139 *dest, int *valptr, int timestamp){
+void ls139_in_1b(ls139 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls139_update_pin_inb(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_in_1g(ls139 *dest, int *valptr, int timestamp){
+void ls139_in_1g(ls139 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls139_update_pin_ing(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_in_2a(ls139 *dest, int *valptr, int timestamp){
+void ls139_in_2a(ls139 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls139_update_pin_ina(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_in_2b(ls139 *dest, int *valptr, int timestamp){
+void ls139_in_2b(ls139 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls139_update_pin_inb(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls139_in_2g(ls139 *dest, int *valptr, int timestamp){
+void ls139_in_2g(ls139 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls139_update_pin_ing(dest, valptr, timestamp, 1);
 }

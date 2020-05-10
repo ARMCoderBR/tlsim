@@ -14,7 +14,7 @@
 // 64-BIT RANDOM ACCESS MEMORY WITH 3-STATE OUTPUTS
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls189_update (ls189 *a, int timestamp){
+static void ls189_update (ls189 *a, timevalue_t timestamp){
 
     int i;
 
@@ -62,9 +62,9 @@ ls189_end:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls189_update_d(ls189 *a, int *valptr, int timestamp, int index){
+static void ls189_update_d(ls189 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->inpd_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->inpd_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -78,9 +78,9 @@ static void ls189_update_d(ls189 *a, int *valptr, int timestamp, int index){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls189_update_addr(ls189 *a, int *valptr, int timestamp, int index){
+static void ls189_update_addr(ls189 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
-    int val = update_val_multi(&a->in_addr_rootptr[index], valptr);
+    bitvalue_t val = update_val_multi(&a->in_addr_rootptr[index], valptr);
 
     if (val > 1) val = 1;
 
@@ -161,86 +161,86 @@ void ls189_destroy (ls189 **dest){
 
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls189_connect_q(ls189 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp), int index){
+static void ls189_connect_q(ls189 *source, void *dest, event_function_t dest_event_handler, int index){
 
     new_ehandler(&source->outq_event_handler_root[index], dest, dest_event_handler);
     dest_event_handler(dest,&source->outq[index],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_connect_1q(ls189 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls189_connect_1q(ls189 *source, void *dest, event_function_t dest_event_handler){
 
     ls189_connect_q(source, dest, dest_event_handler, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_connect_2q(ls189 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls189_connect_2q(ls189 *source, void *dest, event_function_t dest_event_handler){
 
     ls189_connect_q(source, dest, dest_event_handler, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_connect_3q(ls189 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls189_connect_3q(ls189 *source, void *dest, event_function_t dest_event_handler){
 
     ls189_connect_q(source, dest, dest_event_handler, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_connect_4q(ls189 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls189_connect_4q(ls189 *source, void *dest, event_function_t dest_event_handler){
 
     ls189_connect_q(source, dest, dest_event_handler, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_in_1d(ls189 *dest, int *valptr, int timestamp){
+void ls189_in_1d(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls189_update_d(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_in_2d(ls189 *dest, int *valptr, int timestamp){
+void ls189_in_2d(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls189_update_d(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_in_3d(ls189 *dest, int *valptr, int timestamp){
+void ls189_in_3d(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls189_update_d(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_in_4d(ls189 *dest, int *valptr, int timestamp){
+void ls189_in_4d(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls189_update_d(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_in_a0(ls189 *dest, int *valptr, int timestamp){
+void ls189_in_a0(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls189_update_addr(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_in_a1(ls189 *dest, int *valptr, int timestamp){
+void ls189_in_a1(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls189_update_addr(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_in_a2(ls189 *dest, int *valptr, int timestamp){
+void ls189_in_a2(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls189_update_addr(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_in_a3(ls189 *dest, int *valptr, int timestamp){
+void ls189_in_a3(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls189_update_addr(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_in_we(ls189 *dest, int *valptr, int timestamp){
+void ls189_in_we(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     int val = update_val_multi(&dest->in_we_rootptr, valptr);
 
@@ -255,7 +255,7 @@ void ls189_in_we(ls189 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls189_in_cs(ls189 *dest, int *valptr, int timestamp){
+void ls189_in_cs(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     int val = update_val_multi(&dest->in_cs_rootptr, valptr);
 

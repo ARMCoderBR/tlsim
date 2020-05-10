@@ -102,7 +102,7 @@ end_ls161:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls161_up(ls161 *a, int timestamp){
+static void ls161_up(ls161 *a, timevalue_t timestamp){
 
     event e;
     e.timestamp = timestamp+1;
@@ -199,44 +199,44 @@ void ls161_destroy (ls161 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_connect_qa(ls161 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls161_connect_qa(ls161 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->qa_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->qa,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_connect_qb(ls161 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls161_connect_qb(ls161 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->qb_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->qb,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_connect_qc(ls161 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls161_connect_qc(ls161 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->qc_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->qc,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_connect_qd(ls161 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls161_connect_qd(ls161 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->qd_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->qd,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_connect_ripclk(ls161 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls161_connect_ripclk(ls161 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->ripclk_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->ripclk,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_in_da(ls161 *dest, int *valptr, int timestamp){
+void ls161_in_da(ls161 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->da_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->da_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -246,9 +246,9 @@ void ls161_in_da(ls161 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_in_db(ls161 *dest, int *valptr, int timestamp){
+void ls161_in_db(ls161 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->db_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->db_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -258,9 +258,9 @@ void ls161_in_db(ls161 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_in_dc(ls161 *dest, int *valptr, int timestamp){
+void ls161_in_dc(ls161 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->dc_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->dc_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -270,9 +270,9 @@ void ls161_in_dc(ls161 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_in_dd(ls161 *dest, int *valptr, int timestamp){
+void ls161_in_dd(ls161 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->dd_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->dd_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -282,9 +282,9 @@ void ls161_in_dd(ls161 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_in_load(ls161 *dest, int *valptr, int timestamp){
+void ls161_in_load(ls161 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->load_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->load_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -294,9 +294,9 @@ void ls161_in_load(ls161 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_in_enp(ls161 *dest, int *valptr, int timestamp){
+void ls161_in_enp(ls161 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->enp_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->enp_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -306,9 +306,9 @@ void ls161_in_enp(ls161 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_in_ent(ls161 *dest, int *valptr, int timestamp){
+void ls161_in_ent(ls161 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->ent_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->ent_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -318,9 +318,9 @@ void ls161_in_ent(ls161 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_in_clk(ls161 *dest, int *valptr, int timestamp){
+void ls161_in_clk(ls161 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->clk_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->clk_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -330,9 +330,9 @@ void ls161_in_clk(ls161 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls161_in_clear(ls161 *dest, int *valptr, int timestamp){
+void ls161_in_clear(ls161 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->clear_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->clear_rootptr, valptr);
 
     if (val > 1) val = 1;
 

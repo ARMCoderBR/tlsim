@@ -12,9 +12,9 @@
 
 typedef struct{
 
-    void (*destroy)(void **dest);
-    int oldvalue;
-    int value;
+    part_destroy_function_t destroy;
+    bitvalue_t oldvalue;
+    bitvalue_t value;
     ehandler *out_event_handler_root;
     char name[30];
 } bitswitch;
@@ -23,8 +23,8 @@ bitswitch *bitswitch_create(char *name);
 
 void bitswitch_destroy(bitswitch **dest);
 
-void bitswitch_connect_out(bitswitch *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp));
+void bitswitch_connect_out(bitswitch *source, void *dest, event_function_t dest_event_handler);
 
-void bitswitch_setval(bitswitch *s, int val);
+void bitswitch_setval(bitswitch *s, bitvalue_t val);
 
 #endif /* BITSWITCH_H_ */

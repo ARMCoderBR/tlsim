@@ -106,7 +106,7 @@ static int ls191_update(ls191 *a){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls191_up(ls191 *a, int timestamp){
+static void ls191_up(ls191 *a, timevalue_t timestamp){
 
     event e;
     e.timestamp = timestamp+1;
@@ -211,51 +211,51 @@ void ls191_destroy (ls191 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_qa(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls191_connect_qa(ls191 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->qa_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->qa,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_qb(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls191_connect_qb(ls191 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->qb_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->qb,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_qc(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls191_connect_qc(ls191 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->qc_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->qc,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_qd(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls191_connect_qd(ls191 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->qd_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->qd,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_maxmin(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls191_connect_maxmin(ls191 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->maxmin_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->maxmin,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_connect_ripclk(ls191 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls191_connect_ripclk(ls191 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->ripclk_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->ripclk,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_in_da(ls191 *dest, int *valptr, int timestamp){
+void ls191_in_da(ls191 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->da_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->da_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -265,9 +265,9 @@ void ls191_in_da(ls191 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_in_db(ls191 *dest, int *valptr, int timestamp){
+void ls191_in_db(ls191 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->db_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->db_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -277,9 +277,9 @@ void ls191_in_db(ls191 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_in_dc(ls191 *dest, int *valptr, int timestamp){
+void ls191_in_dc(ls191 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->dc_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->dc_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -289,9 +289,9 @@ void ls191_in_dc(ls191 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_in_dd(ls191 *dest, int *valptr, int timestamp){
+void ls191_in_dd(ls191 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->dd_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->dd_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -301,9 +301,9 @@ void ls191_in_dd(ls191 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_in_load(ls191 *dest, int *valptr, int timestamp){
+void ls191_in_load(ls191 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->load_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->load_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -313,9 +313,9 @@ void ls191_in_load(ls191 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_in_enable(ls191 *dest, int *valptr, int timestamp){
+void ls191_in_enable(ls191 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->enable_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->enable_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -325,9 +325,9 @@ void ls191_in_enable(ls191 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_in_updown(ls191 *dest, int *valptr, int timestamp){
+void ls191_in_updown(ls191 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->downup_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->downup_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -337,9 +337,9 @@ void ls191_in_updown(ls191 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls191_in_clk(ls191 *dest, int *valptr, int timestamp){
+void ls191_in_clk(ls191 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->clk_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->clk_rootptr, valptr);
 
     if (val > 1) val = 1;
 

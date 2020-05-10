@@ -10,6 +10,8 @@
 
 #include <pthread.h>
 
+#include "update.h"
+
 #define MSK_DP 0x80
 #define MSK_A  0x40
 #define MSK_B  0x20
@@ -28,17 +30,17 @@ typedef enum{
 
 typedef struct  {
 
-    void (*destroy)(void **dest);
+    part_destroy_function_t destroy;
     char name[30];
     vallist *seg_rootptr[8];
-    int segval[8];
+    bitvalue_t segval[8];
     vallist *common_rootptr;
-    int common_val, common_val_old;
+    bitvalue_t common_val, common_val_old;
     int segmap, segmap_old;
     int presegmap;
     dis7seg_type type;
-    int refreshable;
-    int running;
+    bool_t refreshable;
+    bool_t running;
     pthread_t persist_thread;
     int count_persist;
     int delay_latch_display;
@@ -48,15 +50,15 @@ dis7seg *dis7seg_create(dis7seg_type type, char *name);
 
 void dis7seg_destroy(dis7seg **dest);
 
-void dis7seg_in_sega(dis7seg *dest, int *valptr, int timestamp);
-void dis7seg_in_segb(dis7seg *dest, int *valptr, int timestamp);
-void dis7seg_in_segc(dis7seg *dest, int *valptr, int timestamp);
-void dis7seg_in_segd(dis7seg *dest, int *valptr, int timestamp);
-void dis7seg_in_sege(dis7seg *dest, int *valptr, int timestamp);
-void dis7seg_in_segf(dis7seg *dest, int *valptr, int timestamp);
-void dis7seg_in_segg(dis7seg *dest, int *valptr, int timestamp);
-void dis7seg_in_segdp(dis7seg *dest, int *valptr, int timestamp);
-void dis7seg_in_common(dis7seg *dest, int *valptr, int timestamp);
+void dis7seg_in_sega(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void dis7seg_in_segb(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void dis7seg_in_segc(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void dis7seg_in_segd(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void dis7seg_in_sege(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void dis7seg_in_segf(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void dis7seg_in_segg(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void dis7seg_in_segdp(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void dis7seg_in_common(dis7seg *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
 int map7seg(int val);
 

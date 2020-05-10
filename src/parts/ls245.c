@@ -13,7 +13,7 @@
 // OCTAL BUS TRANSCEIVERS WITH 3-STATE OUTPUTS
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls245_update (ls245 *a, int timestamp){
+static void ls245_update (ls245 *a, timevalue_t timestamp){
 
     int i;
 
@@ -64,7 +64,7 @@ end_ls245:
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls245_update_a(ls245 *a, int *valptr, int timestamp, int index){
+static void ls245_update_a(ls245 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
     int val = update_val_multi(&a->inpa_rootptr[index], valptr);
 
@@ -75,7 +75,7 @@ static void ls245_update_a(ls245 *a, int *valptr, int timestamp, int index){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls245_update_b(ls245 *a, int *valptr, int timestamp, int index){
+static void ls245_update_b(ls245 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
     int val = update_val_multi(&a->inpb_rootptr[index], valptr);
 
@@ -141,215 +141,215 @@ void ls245_destroy (ls245 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls245_connect_a(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp), int index){
+static void ls245_connect_a(ls245 *source, void *dest, event_function_t dest_event_handler, int index){
 
     new_ehandler(&source->outq_event_handler_root[index], dest, dest_event_handler);
     dest_event_handler(dest,&source->outa[index],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_a1(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_a1(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_a(source, dest, dest_event_handler, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_a2(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_a2(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_a(source, dest, dest_event_handler, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_a3(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_a3(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_a(source, dest, dest_event_handler, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_a4(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_a4(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_a(source, dest, dest_event_handler, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_a5(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_a5(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_a(source, dest, dest_event_handler, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_a6(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_a6(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_a(source, dest, dest_event_handler, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_a7(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_a7(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_a(source, dest, dest_event_handler, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_a8(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_a8(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_a(source, dest, dest_event_handler, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls245_connect_b(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp), int index){
+static void ls245_connect_b(ls245 *source, void *dest, event_function_t dest_event_handler, int index){
 
     new_ehandler(&source->outq_event_handler_root[NUM_ELEM_LS245+index], dest, dest_event_handler);
     dest_event_handler(dest,&source->outb[index],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_b1(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_b1(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_b(source, dest, dest_event_handler, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_b2(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_b2(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_b(source, dest, dest_event_handler, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_b3(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_b3(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_b(source, dest, dest_event_handler, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_b4(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_b4(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_b(source, dest, dest_event_handler, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_b5(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_b5(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_b(source, dest, dest_event_handler, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_b6(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_b6(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_b(source, dest, dest_event_handler, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_b7(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_b7(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_b(source, dest, dest_event_handler, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_connect_b8(ls245 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls245_connect_b8(ls245 *source, void *dest, event_function_t dest_event_handler){
 
     ls245_connect_b(source, dest, dest_event_handler, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_a1(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_a1(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_a(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_a2(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_a2(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_a(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_a3(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_a3(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_a(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_a4(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_a4(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_a(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_a5(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_a5(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_a(dest, valptr, timestamp, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_a6(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_a6(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_a(dest, valptr, timestamp, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_a7(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_a7(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_a(dest, valptr, timestamp, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_a8(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_a8(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_a(dest, valptr, timestamp, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_b1(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_b1(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_b(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_b2(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_b2(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_b(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_b3(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_b3(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_b(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_b4(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_b4(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_b(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_b5(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_b5(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_b(dest, valptr, timestamp, 4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_b6(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_b6(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_b(dest, valptr, timestamp, 5);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_b7(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_b7(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_b(dest, valptr, timestamp, 6);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_b8(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_b8(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls245_update_b(dest, valptr, timestamp, 7);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_dir(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_dir(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_dir_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_dir_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -360,9 +360,9 @@ void ls245_in_dir(ls245 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls245_in_oe(ls245 *dest, int *valptr, int timestamp){
+void ls245_in_oe(ls245 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_oe_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_oe_rootptr, valptr);
 
     if (val > 1) val = 1;
 

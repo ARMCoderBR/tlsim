@@ -65,13 +65,13 @@ void indicator_destroy(indicator **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void indicator_in_d0(indicator *dest, int *valptr, int timestamp){
+void indicator_in_d0(indicator *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
 #ifdef DEBUG
     printf("output_update_d0 val:%d\n",val);
 #endif
 
-    int val = update_val_multi(&dest->ind0_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->ind0_rootptr, valptr);
 
     logger("indicator_in_d0 [%s] *valptr:%d val:%d TS:%d", dest->name,*valptr,val,timestamp);
 
@@ -84,13 +84,13 @@ void indicator_in_d0(indicator *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void indicator_in_d1(indicator *dest, int *valptr, int timestamp){
+void indicator_in_d1(indicator *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
 #ifdef DEBUG
     printf("output_update_d1 val:%d\n",val);
 #endif
 
-    int val = update_val_multi(&dest->ind1_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->ind1_rootptr, valptr);
 
     if (val)
         dest->value |= 2;
@@ -101,13 +101,13 @@ void indicator_in_d1(indicator *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void indicator_in_d2(indicator *dest, int *valptr, int timestamp){
+void indicator_in_d2(indicator *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
 #ifdef DEBUG
     printf("output_update_d2 val:%d\n",val);
 #endif
 
-    int val = update_val_multi(&dest->ind2_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->ind2_rootptr, valptr);
 
     if (val)
         dest->value |= 4;
@@ -118,13 +118,13 @@ void indicator_in_d2(indicator *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void indicator_in_d3(indicator *dest, int *valptr, int timestamp){
+void indicator_in_d3(indicator *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
 #ifdef DEBUG
     printf("output_update_d2 val:%d\n",val);
 #endif
 
-    int val = update_val_multi(&dest->ind3_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->ind3_rootptr, valptr);
 
     if (val)
         dest->value |= 8;

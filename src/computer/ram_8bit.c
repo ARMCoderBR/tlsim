@@ -410,7 +410,7 @@ void ram_8bit_in_clk(ram_8bit *dest, int *valptr, int timestamp){
 
 #if DIFPULSE
 
-    int val = update_val_multi(&dest->clk_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->clk_rootptr, valptr);
     if (val > 1) val = 1;
 
     if (val == dest->oldclk) return;

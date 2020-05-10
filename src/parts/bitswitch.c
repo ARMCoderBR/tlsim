@@ -46,14 +46,14 @@ void bitswitch_destroy(bitswitch **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void bitswitch_connect_out(bitswitch *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void bitswitch_connect_out(bitswitch *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root, dest, dest_event_handler);
     dest_event_handler(dest,&source->value,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void bitswitch_setval(bitswitch *s, int val){
+void bitswitch_setval(bitswitch *s, bitvalue_t val){
 
     s->value = val;
 

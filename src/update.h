@@ -8,6 +8,14 @@
 #ifndef UPDATE_H_
 #define UPDATE_H_
 
+#include <stdint.h>
+
+typedef uint8_t bitvalue_t;
+typedef uint8_t bool_t;
+typedef uint32_t timevalue_t;
+
+typedef void (*event_function_t)(void *objdest, bitvalue_t *valptr, timevalue_t timestamp);
+
 typedef struct {
 
     int type;
@@ -16,13 +24,13 @@ typedef struct {
 
 typedef struct {
 
-    int *valptr;
+    bitvalue_t *valptr;
     void *next;
 } vallist;
 
 typedef struct {
 
-    void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp);
+    event_function_t objdest_event_handler;
     void *objdest;
     void *next;
 } ehandler;
@@ -30,9 +38,9 @@ typedef struct {
 typedef struct {
 
     ehandler *event_handler_root;
-    int *valueptr;
-    int timestamp;
-    int done;
+    bitvalue_t *valueptr;
+    timevalue_t timestamp;
+    bool_t done;
     void *next;
 } event;
 
@@ -42,11 +50,11 @@ void update_register (void *o, int type);
 
 void update_run();
 
-int event_process();
+bool_t event_process();
 
-void new_ehandler(ehandler **ehptr, void *objdest, void (*objdest_event_handler)(void *objdest, int *valptr, int timestamp));
+void new_ehandler(ehandler **ehptr, void *objdest, event_function_t objdest_event_handler);
 
-int update_val_multi(vallist **rootptr, int *valptr);
+bitvalue_t update_val_multi(vallist **rootptr, bitvalue_t *valptr);
 
 ////////////////////////////////////////////////////////////////////////////////
 void logger_init();
@@ -56,5 +64,12 @@ void logger_end();
 void vallist_destroy(vallist **root);
 
 void ehandler_destroy(ehandler **root);
+
+
+////////////////////////////////////////////////////////////////////////////////
+typedef void (*part_destroy_function_t)(void **dest);
+void part_destroy(void **part);
+
+#define DESTROY(X) part_destroy((void**)&X)
 
 #endif /* UPDATE_H_ */

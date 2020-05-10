@@ -11,17 +11,17 @@
 #include "bitconst.h"
 
 
-int bit_one = 1;
-int bit_zero = 0;
+bitvalue_t bit_one = 1;
+bitvalue_t bit_zero = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
-void bitconst_connect_one(void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void bitconst_connect_one(void *dest, event_function_t dest_event_handler){
 
     dest_event_handler(dest,&bit_one,0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void bitconst_connect_zero(void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void bitconst_connect_zero(void *dest, event_function_t dest_event_handler){
 
     dest_event_handler(dest,&bit_zero,0);
 }

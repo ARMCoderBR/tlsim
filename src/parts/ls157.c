@@ -50,7 +50,7 @@ static void ls157_up(ls157 *a, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls157_update_pin_ina(ls157 *a, int *valptr, int timestamp, int index){
+static void ls157_update_pin_ina(ls157 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
     int val = update_val_multi(&a->ina_rootptr[index], valptr);
 
@@ -63,7 +63,7 @@ static void ls157_update_pin_ina(ls157 *a, int *valptr, int timestamp, int index
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls157_update_pin_inb(ls157 *a, int *valptr, int timestamp, int index){
+static void ls157_update_pin_inb(ls157 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
     int val = update_val_multi(&a->inb_rootptr[index], valptr);
 
@@ -128,85 +128,85 @@ void ls157_destroy (ls157 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_connect_y1(ls157 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls157_connect_y1(ls157 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[0], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[0],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_connect_y2(ls157 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls157_connect_y2(ls157 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[1], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[1],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_connect_y3(ls157 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls157_connect_y3(ls157 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[2], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[2],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_connect_y4(ls157 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls157_connect_y4(ls157 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[3], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[3],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_in_a1(ls157 *dest, int *valptr, int timestamp){
+void ls157_in_a1(ls157 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls157_update_pin_ina(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_in_b1(ls157 *dest, int *valptr, int timestamp){
+void ls157_in_b1(ls157 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls157_update_pin_inb(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_in_a2(ls157 *dest, int *valptr, int timestamp){
+void ls157_in_a2(ls157 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls157_update_pin_ina(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_in_b2(ls157 *dest, int *valptr, int timestamp){
+void ls157_in_b2(ls157 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls157_update_pin_inb(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_in_a3(ls157 *dest, int *valptr, int timestamp){
+void ls157_in_a3(ls157 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls157_update_pin_ina(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_in_b3(ls157 *dest, int *valptr, int timestamp){
+void ls157_in_b3(ls157 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls157_update_pin_inb(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_in_a4(ls157 *dest, int *valptr, int timestamp){
+void ls157_in_a4(ls157 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls157_update_pin_ina(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_in_b4(ls157 *dest, int *valptr, int timestamp){
+void ls157_in_b4(ls157 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls157_update_pin_inb(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_in_sel(ls157 *dest, int *valptr, int timestamp){
+void ls157_in_sel(ls157 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_sel_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_sel_rootptr, valptr);
 
     if (val > 1) val = 1;
 
@@ -217,9 +217,9 @@ void ls157_in_sel(ls157 *dest, int *valptr, int timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls157_in_g(ls157 *dest, int *valptr, int timestamp){
+void ls157_in_g(ls157 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
-    int val = update_val_multi(&dest->in_g_rootptr, valptr);
+    bitvalue_t val = update_val_multi(&dest->in_g_rootptr, valptr);
 
     if (val > 1) val = 1;
 

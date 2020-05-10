@@ -25,7 +25,7 @@ static int ls86_update(ls86 *a, int index){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls86_up(ls86 *a, int timestamp, int index){
+static void ls86_up(ls86 *a, timevalue_t timestamp, int index){
 
     if (ls86_update(a,index)){
 
@@ -38,7 +38,7 @@ static void ls86_up(ls86 *a, int timestamp, int index){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls86_update_pin_ina(ls86 *a, int *valptr, int timestamp, int index){
+static void ls86_update_pin_ina(ls86 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
     int val = update_val_multi(&a->ina_rootptr[index], valptr);
 
@@ -51,7 +51,7 @@ static void ls86_update_pin_ina(ls86 *a, int *valptr, int timestamp, int index){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-static void ls86_update_pin_inb(ls86 *a, int *valptr, int timestamp, int index){
+static void ls86_update_pin_inb(ls86 *a, bitvalue_t *valptr, timevalue_t timestamp, int index){
 
     int val = update_val_multi(&a->inb_rootptr[index], valptr);
 
@@ -110,77 +110,77 @@ void ls86_destroy (ls86 **dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_connect_y1(ls86 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls86_connect_y1(ls86 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[0], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[0],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_connect_y2(ls86 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls86_connect_y2(ls86 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[1], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[1],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_connect_y3(ls86 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls86_connect_y3(ls86 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[2], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[2],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_connect_y4(ls86 *source, void *dest, void (*dest_event_handler)(void *dest, int *valptr, int timestamp)){
+void ls86_connect_y4(ls86 *source, void *dest, event_function_t dest_event_handler){
 
     new_ehandler(&source->out_event_handler_root[3], dest, dest_event_handler);
     dest_event_handler(dest,&source->value[3],0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_in_a1(ls86 *dest, int *valptr, int timestamp){
+void ls86_in_a1(ls86 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls86_update_pin_ina(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_in_b1(ls86 *dest, int *valptr, int timestamp){
+void ls86_in_b1(ls86 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls86_update_pin_inb(dest, valptr, timestamp, 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_in_a2(ls86 *dest, int *valptr, int timestamp){
+void ls86_in_a2(ls86 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls86_update_pin_ina(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_in_b2(ls86 *dest, int *valptr, int timestamp){
+void ls86_in_b2(ls86 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls86_update_pin_inb(dest, valptr, timestamp, 1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_in_a3(ls86 *dest, int *valptr, int timestamp){
+void ls86_in_a3(ls86 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls86_update_pin_ina(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_in_b3(ls86 *dest, int *valptr, int timestamp){
+void ls86_in_b3(ls86 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls86_update_pin_inb(dest, valptr, timestamp, 2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_in_a4(ls86 *dest, int *valptr, int timestamp){
+void ls86_in_a4(ls86 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls86_update_pin_ina(dest, valptr, timestamp, 3);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void ls86_in_b4(ls86 *dest, int *valptr, int timestamp){
+void ls86_in_b4(ls86 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls86_update_pin_inb(dest, valptr, timestamp, 3);
 }
