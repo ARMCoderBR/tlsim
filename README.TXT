@@ -130,3 +130,18 @@ hinted within brackets.
 
     Stay tuned and have fun!
     
+    
+    CHANGELOG
+    ~~~~~~~~~
+    
+    V1.0.1 - May 11, 2020:
+    
+    - Created the "pulldown" object to condition the bus to read as zero when no
+      peripheral is active.
+    
+    - Added the new instructions: SUB, STA, LDI, JMP and HLT.
+    
+    
+    
+    
+    

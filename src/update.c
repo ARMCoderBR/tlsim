@@ -188,9 +188,13 @@ bitvalue_t update_val_multi(vallist **rootptr, bitvalue_t *valptr){
 
     bitvalue_t val = 2;
     bool_t found = 0;
+    bool_t found_pulldown = 0;
     vallist *lastptr = NULL;
 
     while (entryptr){
+
+    	if (*entryptr->valptr == 3)
+    		found_pulldown = 1;
 
         if (*entryptr->valptr < val)
             val = *entryptr->valptr;
@@ -217,6 +221,9 @@ bitvalue_t update_val_multi(vallist **rootptr, bitvalue_t *valptr){
         newptr->next = NULL;
         lastptr->next = newptr;
     }
+
+    if ((val == 2) && (found_pulldown))
+    	val = 0;
 
     return val;
 }

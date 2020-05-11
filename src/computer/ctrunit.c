@@ -94,22 +94,40 @@ ctrunit *ctrunit_create(char *name){
         ofs = 8*i;
         memset(buf+ofs,0,8);
         //FETCH
-        buf[0+ofs] = 0x40;
-        buf[1+ofs] = 0x14;
+        buf[0+ofs] = HMI;
+        buf[1+ofs] = HRO|HII;
 
         switch(i){
 
         case 0x01:  //LDA
-            buf[2+ofs] = 0x48;
-            buf[3+ofs] = 0x12;
+            buf[2+ofs] = HIO|HMI;
+            buf[3+ofs] = HRO|HAI;
             break;
         case 0x02:  //ADD
-            buf[2+ofs] = 0x48;
-            buf[3+ofs] = 0x10;
-            buf[4+ofs] = 0x02;
+            buf[2+ofs] = HIO|HMI;
+            buf[3+ofs] = HRO;
+            buf[4+ofs] = HAI;
+            break;
+        case 0x03:  //SUB
+            buf[2+ofs] = HIO|HMI;
+            buf[3+ofs] = HRO;
+            buf[4+ofs] = HAI;
+            break;
+        case 0x04:  //STA
+            buf[2+ofs] = HIO|HMI;
+            buf[3+ofs] = HAO|HRI;
+            break;
+        case 0x05:  //LDI
+            buf[2+ofs] = HIO|HAI;
+            break;
+        case 0x06:  //JMP
+            buf[2+ofs] = HIO;
             break;
         case 0x0e:  //OUT
-            buf[2+ofs] = 0x01;
+            buf[2+ofs] = HAO;
+            break;
+        case 0x0f:  //HLT
+            buf[2+ofs] = HHLT;
             break;
         }
     }
@@ -123,18 +141,25 @@ ctrunit *ctrunit_create(char *name){
         ofs = 8*i;
         memset(buf+ofs,0,8);
         //FETCH
-        buf[0+ofs] = 0x04;
-        buf[1+ofs] = 0x08;
+        buf[0+ofs] = LCO;
+        buf[1+ofs] = LCE;
 
         switch(i){
         case 0x01:  //LDA
             break;
         case 0x02:  //ADD
-            buf[3+ofs] = 0x20;
-            buf[4+ofs] = 0x80;
+            buf[3+ofs] = LBI;
+            buf[4+ofs] = LSO;
+            break;
+        case 0x03:  //SUB
+            buf[3+ofs] = LBI;
+            buf[4+ofs] = LSO|LSU;
+            break;
+        case 0x06:  //JMP
+            buf[2+ofs] = LJ;
             break;
         case 0x0e:  //OUT
-            buf[2+ofs] = 0x10;
+            buf[2+ofs] = LOI;
             break;
         }
     }

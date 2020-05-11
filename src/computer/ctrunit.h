@@ -41,6 +41,22 @@
 #define CO  2
 #define J   1
 
+#define HHLT 0x80
+#define HMI  0x40
+#define HRI  0x20
+#define HRO  0x10
+#define HIO  0x08
+#define HII  0x04
+#define HAI  0x02
+#define HAO  0x01
+
+#define LSO  0x80
+#define LSU  0x40
+#define LBI  0x20
+#define LOI  0x10
+#define LCE  0x08
+#define LCO  0x04
+#define LJ   0x02
 
 typedef struct {
 

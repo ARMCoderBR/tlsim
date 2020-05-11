@@ -7,12 +7,11 @@
 // SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef BITCONST_H_
-#define BITCONST_H_
+#ifndef PULLDOWN_H_
+#define PULLDOWN_H_
 
 #include "update.h"
 
-void bitconst_connect_one(void *dest, event_function_t dest_event_handler);
-void bitconst_connect_zero(void *dest, event_function_t dest_event_handler);
+void pulldown_connect(void *dest, event_function_t dest_event_handler);
 
-#endif /* BITCONST_H_ */
+#endif /* PULLDOWN_H_ */

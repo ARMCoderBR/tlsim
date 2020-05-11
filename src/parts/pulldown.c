@@ -7,12 +7,17 @@
 // SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef BITCONST_H_
-#define BITCONST_H_
+#include <malloc.h>
 
 #include "update.h"
+#include "pulldown.h"
 
-void bitconst_connect_one(void *dest, event_function_t dest_event_handler);
-void bitconst_connect_zero(void *dest, event_function_t dest_event_handler);
 
-#endif /* BITCONST_H_ */
+bitvalue_t bit_pulldown = 3;
+
+////////////////////////////////////////////////////////////////////////////////
+void pulldown_connect(void *dest, event_function_t dest_event_handler){
+
+    dest_event_handler(dest,&bit_pulldown,0);
+}
+

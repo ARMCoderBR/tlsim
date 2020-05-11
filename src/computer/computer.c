@@ -22,6 +22,7 @@
 #include "board.h"
 #include "indicator.h"
 #include "clkgen.h"
+#include "pulldown.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 void computer_sim(){
@@ -29,8 +30,6 @@ void computer_sim(){
     board_object *mainboard = board_create(0,0,0,"BEN EATER'S 8-BIT COMPUTER");
 
     clkgen *mainclk = clkgen_create("",1000000);
-
-    bitconst_connect_zero(mainclk, (void*)&clkgen_in_halt);
 
     board_set_clk(mainclk);
 
@@ -55,10 +54,6 @@ void computer_sim(){
         perror("regx_board create");
         exit(0);
     }
-
-//    board_clock_connect(regA, (void*)&reg_8bit_in_clock);
-//    board_clock_connect(regB, (void*)&reg_8bit_in_clock);
-//    board_clock_connect(regIN, (void*)&reg_8bit_in_clock);
 
     clkgen_connect_out(mainclk, regA, (void*)&reg_8bit_in_clock);
     clkgen_connect_out(mainclk, regB, (void*)&reg_8bit_in_clock);
@@ -99,7 +94,6 @@ void computer_sim(){
     ram_8bit *ram = ram_8bit_create("RAM");
     board_object *ram_board = ram_8bit_board_create(ram, KEY_F(5), "RAM"); // Requer NCURSES
     board_add_board(mainboard,ram_board,66,1);
-    //board_clock_connect(ram, (void*)&ram_8bit_in_clk);
     clkgen_connect_out(mainclk, ram, (void*)&ram_8bit_in_clk);
 
     //////// PROGRAM COUNTER ///////////////////////////////////////////////////
@@ -107,7 +101,6 @@ void computer_sim(){
     progctr *pctr = progctr_create("PC");
     board_object *pctr_board = progctr_board_create(pctr, KEY_F(6), "PC");
     board_add_board(mainboard,pctr_board,1,26);
-    //board_clock_connect(pctr, (void*)&progctr_in_clock);
     clkgen_connect_out(mainclk, pctr, (void*)&progctr_in_clock);
 
     //////// REG OUT ///////////////////////////////////////////////////////////
@@ -115,7 +108,6 @@ void computer_sim(){
     reg_out *regout = reg_out_create("RO");
     board_object *regout_board = reg_out_board_create(regout, KEY_F(6), "RO");
     board_add_board(mainboard,regout_board,66,18);
-    //board_clock_connect(regout, (void*)&reg_out_in_clock);
     clkgen_connect_out(mainclk, regout, (void*)&reg_out_in_clock);
 
     //////// BUS ///////////////////////////////////////////////////////////////
@@ -148,8 +140,16 @@ void computer_sim(){
         bitswitch_connect_out(swbus[i], regout, (void*)reg_out_in_dataN[i]);
 #endif
 
+        /// BUS PULL DOWNS
+        pulldown_connect(ledbus[i], (void*)indicator_in_d0);
+        pulldown_connect(regA, reg_8bit_in_dataN[i]);
+        pulldown_connect(regB, reg_8bit_in_dataN[i]);
+        pulldown_connect(regIN, reg_8bit_in_dataN[i]);
+        pulldown_connect(ram, ram_8bit_in_dataN[i]);
+        pulldown_connect(regout, reg_out_in_dataN[i]);
+
         /// REGA OUTPUT
-        reg_8bit_connect_bit_out (regA, i, ledbus[i], (void*)indicator_in_d0);
+		reg_8bit_connect_bit_out (regA, i, ledbus[i], (void*)indicator_in_d0);
         reg_8bit_connect_bit_out (regA, i, regB, reg_8bit_in_dataN[i]);
         reg_8bit_connect_bit_out (regA, i, regIN, reg_8bit_in_dataN[i]);
         reg_8bit_connect_bit_out (regA, i, ram, ram_8bit_in_dataN[i]);
@@ -189,7 +189,6 @@ void computer_sim(){
 
         int j = 7-i;
 
-        //board_add_led(mainboard,ledbus[i],2+7*j, 4+15, dname, LED_RED);
         board_add_led(bus_board,ledbus[i],1+4*j, 1, dname, LED_RED);
 
 #if DISABLE_CTRUNIT_OUTS
@@ -227,7 +226,6 @@ void computer_sim(){
     board_object *ctru_board = ctrunit_board_create(ctru, '*', "CONTROL UNIT");
     board_add_board(mainboard,ctru_board,1,32);
 
-    //board_nclock_connect(ctru, (void*)&ctrunit_in_clk);
     clkgen_connect_outn(mainclk, ctru, (void*)&ctrunit_in_clk);
 
     //// Reset controls
@@ -245,6 +243,7 @@ void computer_sim(){
     reg_8bit_connect_bit_out (regIN, 7, ctru, (void*)&ctrunit_in_instr3);
 
     //// Controls to the registers
+    ctrunit_connect_out_hlt(ctru, mainclk, (void*)&clkgen_in_halt);
     ctrunit_connect_out_mi(ctru, ram, (void*)&ram_8bit_in_waddr);
     ctrunit_connect_out_ri(ctru, ram, (void*)&ram_8bit_in_wdata);
     ctrunit_connect_out_ro(ctru, ram, (void*)&ram_8bit_in_oe);
@@ -279,7 +278,6 @@ void computer_sim(){
     ////////////////
 
     bitswitch *sw_ao = bitswitch_create("AO");
-    //bitswitch *sw_enable2 = bitswitch_create("ENB");
     bitswitch *sw_io = bitswitch_create("IO");
 
     bitconst_connect_one(regB,(void*)&reg_8bit_in_enable);
