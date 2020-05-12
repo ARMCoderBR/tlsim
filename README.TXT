@@ -103,7 +103,7 @@ BEC's original design, that is:
     ~~~~~~~~~~
 
     This version can already run the first BEC's program, that one that adds two
-numbers (in Ben's example, 18 + 28 = 42).
+numbers (in Ben's example, 14 + 28 = 42).
 
     The EEPROM's microcode is automatically initialized, but the RAM contents 
 must be inserted by the user through the UI.
