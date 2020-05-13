@@ -64,6 +64,9 @@ ls138 *ls138_create(){
         b->y_event_handler_root[i] = NULL;
     }
 
+    b->ina = b->inb = b->inc = 2;
+    b->ina_rootptr = b->inb_rootptr = b->inc_rootptr = NULL;
+
     b->ing2a = b->ing2b = b->ing1 = 2;
     b->ing2a_rootptr = b->ing2b_rootptr = b->ing1_rootptr = NULL;
 
@@ -84,6 +87,10 @@ void ls138_destroy (ls138 **dest){
 
         ehandler_destroy(&b->y_event_handler_root[i]);
     }
+
+    vallist_destroy(&b->ina_rootptr);
+    vallist_destroy(&b->inb_rootptr);
+    vallist_destroy(&b->inc_rootptr);
 
     vallist_destroy(&b->ing2a_rootptr);
     vallist_destroy(&b->ing2b_rootptr);

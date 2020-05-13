@@ -141,7 +141,7 @@ hinted within brackets.
     
     - Added the new instructions: SUB, STA, LDI, JMP and HLT.
     
+    V1.0.2 - May 12, 2020:
     
-    
-    
-    
+    - Corrected the Creator and the Destroyer of the LS138 - some members were
+      missing initialization/destruction.
