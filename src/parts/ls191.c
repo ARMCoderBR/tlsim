@@ -172,6 +172,7 @@ ls191 *ls191_create(){
 
     b->da = b->db = b->dc = b->dd = b->load = b->enable = b->downup = b->clk = 2;
 	b->da_rootptr = b->db_rootptr = b->dc_rootptr = b->dd_rootptr = b->load_rootptr = b->enable_rootptr = b->downup_rootptr = b->clk_rootptr = NULL;
+	b->qa = b->qb = b->qc = b->qd = b->maxmin = b->ripclk = 0;
     b->qa_o = b->qb_o = b->qc_o = b->qd_o = b->maxmin_o = b->ripclk_o = 0;
     b->qa_event_handler_root =
     b->qb_event_handler_root =

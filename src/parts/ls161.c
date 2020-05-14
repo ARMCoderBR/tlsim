@@ -162,6 +162,7 @@ ls161 *ls161_create(){
     b->clk_o = b->da = b->db = b->dc = b->dd = b->load = b->enp = b->ent = b->clk = b->clear = 2;
 	b->da_rootptr = b->db_rootptr = b->dc_rootptr = b->dd_rootptr = b->load_rootptr = b->enp_rootptr = b->ent_rootptr = b->clk_rootptr = b->clear_rootptr = NULL;
     b->qa_o = b->qb_o = b->qc_o = b->qd_o = b->ripclk_o = 0;
+    b->qa = b->qb = b->qc = b->qd = b->ripclk = 0;
     b->qa_event_handler_root =
     b->qb_event_handler_root =
     b->qc_event_handler_root =
