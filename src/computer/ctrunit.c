@@ -20,6 +20,124 @@
 char labels[16][4] = {"FI", " J", "CO", "CE", "OI", "BI", "SU", "SO", "AO", "AI", "II", "IO", "RO", "RI", "MI", "HLT" };
 
 ////////////////////////////////////////////////////////////////////////////////
+void microcode_initialize_buf(uint8_t *buf){    //Beware: buffer must have at least 2048 bytes!
+
+    // This code initializes the microcode to achieve exactly the same result
+    // as Ben's method, but IMO it's much simpler.
+    memset(buf,0xff,2048);
+
+    int i;
+    int ofs;
+
+    // Microcode Data: https://www.youtube.com/watch?v=Zg1NdPKoosU
+
+    // EEP HIGH Data
+    //  HL MI RI RO IO II AI AO
+    //  7  6  5  4  3  2  1  0
+    int zf, cf;     //cf = A8  zf=a9
+
+    for (zf = 0; zf < 2; zf++)  // Iterate through the ZF values
+    for (cf = 0; cf < 2; cf++)  // Iterate through the CF values
+    for (i = 0; i < 16; i++){   // All instructions from 0 to 15.
+
+        ofs = (512*zf)+(256*cf)+8*i;    // ZF maps to A9, multiply by 512; CF maps to A8, multiply by 256
+        memset(buf+ofs,0,8);            // Fill all steps with 0.
+
+        //FETCH
+        buf[0+ofs] = HMI;
+        buf[1+ofs] = HRO|HII;
+
+        switch(i){
+
+        case 0x01:  //LDA
+            buf[2+ofs] = HIO|HMI;
+            buf[3+ofs] = HRO|HAI;
+            break;
+        case 0x02:  //ADD
+            buf[2+ofs] = HIO|HMI;
+            buf[3+ofs] = HRO;
+            buf[4+ofs] = HAI;
+            break;
+        case 0x03:  //SUB
+            buf[2+ofs] = HIO|HMI;
+            buf[3+ofs] = HRO;
+            buf[4+ofs] = HAI;
+            break;
+        case 0x04:  //STA
+            buf[2+ofs] = HIO|HMI;
+            buf[3+ofs] = HAO|HRI;
+            break;
+        case 0x05:  //LDI
+            buf[2+ofs] = HIO|HAI;
+            break;
+        case 0x06:  //JMP
+            buf[2+ofs] = HIO;
+            break;
+        case 0x07:  //JC
+            if (cf)
+                buf[2+ofs] = HIO;
+            break;
+        case 0x08:  //JZ
+            if (zf)
+                buf[2+ofs] = HIO;
+            break;
+        case 0x0e:  //OUT
+            buf[2+ofs] = HAO;
+            break;
+        case 0x0f:  //HLT
+            buf[2+ofs] = HHLT;
+            break;
+        }
+    }
+
+    // EEP LOW Data (+offset 128 because A7 is set to one)
+    //  SO SU BI OI CE CO J  --
+    //  7  6  5  4  3  2  1  0
+    for (zf = 0; zf < 2; zf++)  // Iterate through the ZF values
+    for (cf = 0; cf < 2; cf++)  // Iterate through the CF values
+    for (i = 0; i < 16; i++){   // All instructions from 0 to 15.
+
+        ofs = 128+(512*zf)+(256*cf)+8*i;    // ZF maps to A9, multiply by 512; CF maps to A8, multiply by 256; A7 is forced '1', so adds 128 to the offset.
+        memset(buf+ofs,0,8);            // Fill all steps with 0.
+
+        //FETCH
+        buf[0+ofs] = LCO;
+        buf[1+ofs] = LCE;
+
+        switch(i){
+        case 0x01:  //LDA
+            break;
+        case 0x02:  //ADD
+            buf[3+ofs] = LBI;
+            buf[4+ofs] = LSO|LFI;
+            break;
+        case 0x03:  //SUB
+            buf[3+ofs] = LBI;
+            buf[4+ofs] = LSO|LSU|LFI;
+            break;
+        case 0x04:  //STA
+            break;
+        case 0x05:  //LDI
+            break;
+        case 0x06:  //JMP
+            buf[2+ofs] = LJ;
+            break;
+        case 0x07:  //JC
+            if (cf)
+                buf[2+ofs] = LJ;
+            break;
+        case 0x08:  //JZ
+            if (zf)
+                buf[2+ofs] = LJ;
+            break;
+        case 0x0e:  //OUT
+            buf[2+ofs] = LOI;
+            break;
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 ctrunit *ctrunit_create(char *name){
 
     ctrunit *ctru = malloc (sizeof(ctrunit));
@@ -83,113 +201,8 @@ ctrunit *ctrunit_create(char *name){
     //// EEPROMs
 
     uint8_t buf[2048];
-    int ofs;
-
-    memset(buf,0xff,sizeof(buf));
-    // Dados da EEP HIGH
-    //  HL MI RI RO IO II AI AO
-    //  7  6  5  4  3  2  1  0
-    int zf, cf;     //cf = A8  zf=a9
-    for (zf = 0; zf < 2; zf++)
-    for (cf = 0; cf < 2; cf++)
-    for (i = 0; i < 16; i++){   // Dados do microcódigo: https://www.youtube.com/watch?v=dHWFpkGsxOs
-
-        ofs = (512*zf)+(256*cf)+8*i;
-        memset(buf+ofs,0,8);
-        //FETCH
-        buf[0+ofs] = HMI;
-        buf[1+ofs] = HRO|HII;
-
-        switch(i){
-
-        case 0x01:  //LDA
-            buf[2+ofs] = HIO|HMI;
-            buf[3+ofs] = HRO|HAI;
-            break;
-        case 0x02:  //ADD
-            buf[2+ofs] = HIO|HMI;
-            buf[3+ofs] = HRO;
-            buf[4+ofs] = HAI;
-            break;
-        case 0x03:  //SUB
-            buf[2+ofs] = HIO|HMI;
-            buf[3+ofs] = HRO;
-            buf[4+ofs] = HAI;
-            break;
-        case 0x04:  //STA
-            buf[2+ofs] = HIO|HMI;
-            buf[3+ofs] = HAO|HRI;
-            break;
-        case 0x05:  //LDI
-            buf[2+ofs] = HIO|HAI;
-            break;
-        case 0x06:  //JMP
-            buf[2+ofs] = HIO;
-            break;
-        case 0x07:  //JC
-            if (cf)
-                buf[2+ofs] = HIO;
-            break;
-        case 0x08:  //JZ
-            if (zf)
-                buf[2+ofs] = HIO;
-            break;
-        case 0x0e:  //OUT
-            buf[2+ofs] = HAO;
-            break;
-        case 0x0f:  //HLT
-            buf[2+ofs] = HHLT;
-            break;
-        }
-    }
+    microcode_initialize_buf(buf);
     ctru->eep_hi = at28c16_create("UC-HI",buf);
-
-    memset(buf,0xff,sizeof(buf));
-    // Dados da EEP LOW
-    //  SO SU BI OI CE CO J  --
-    //  7  6  5  4  3  2  1  0
-    for (zf = 0; zf < 2; zf++)
-    for (cf = 0; cf < 2; cf++)
-    for (i = 0; i < 16; i++){
-
-        ofs = (512*zf)+(256*cf)+8*i;
-        memset(buf+ofs,0,8);
-        //FETCH
-        buf[0+ofs] = LCO;
-        buf[1+ofs] = LCE;
-
-        switch(i){
-        case 0x01:  //LDA
-            break;
-        case 0x02:  //ADD
-            buf[3+ofs] = LBI;
-            buf[4+ofs] = LSO|LFI;
-            break;
-        case 0x03:  //SUB
-            buf[3+ofs] = LBI;
-            buf[4+ofs] = LSO|LSU|LFI;
-            break;
-        case 0x04:  //STA
-            break;
-        case 0x05:  //LDI
-            break;
-        case 0x06:  //JMP
-            buf[2+ofs] = LJ;
-            break;
-        case 0x07:  //JC
-            if (cf)
-                buf[2+ofs] = LJ;
-            break;
-        case 0x08:  //JZ
-            if (zf)
-                buf[2+ofs] = LJ;
-            break;
-        case 0x0e:  //OUT
-            buf[2+ofs] = LOI;
-            break;
-        }
-    }
-
     ctru->eep_lo = at28c16_create("UC-LO",buf);
 
     ls161_connect_qa(ctru->ls161, ctru->eep_hi, (void*)&at28c16_in_a0);
@@ -207,15 +220,10 @@ ctrunit *ctrunit_create(char *name){
     bitconst_connect_one(ctru->eep_lo, (void*)&at28c16_in_we);
 
     bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a7);
-    //bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a8);
-    //bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a9);
-    bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a10);
-    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a7);
-    //bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a8);
-    //bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a9);
-    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a10);
+    bitconst_connect_one(ctru->eep_lo, (void*)&at28c16_in_a7);      // Here A7 is one, so both EEPROMs can be recorded with the same DATA!
 
-#if !DISABLE_CTRUNIT_OUTS
+    bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a10);
+    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a10);
 
     at28c16_connect_o7(ctru->eep_hi, ctru, (void*)&ctrunit_in_hlt);
     at28c16_connect_o6(ctru->eep_hi, ctru, (void*)&ctrunit_in_mi);
@@ -234,8 +242,6 @@ ctrunit *ctrunit_create(char *name){
     at28c16_connect_o2(ctru->eep_lo, ctru, (void*)&ctrunit_in_co);
     at28c16_connect_o1(ctru->eep_lo, ctru, (void*)&ctrunit_in_j);
     at28c16_connect_o0(ctru->eep_lo, ctru, (void*)&ctrunit_in_fi);
-
-#endif
 
     //// LS173 (Flags)
     ctru->ls173 = ls173_create("");
@@ -381,10 +387,20 @@ board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
     board_add_led(board, reg->t[4],41,4,"T4", LED_GREEN);
     board_add_led(board, reg->t[5],45,4,"T5", LED_GREEN);
 
-    board_add_led(board, reg->ledc,53,4,"CF", LED_WHITE);
-    board_add_led(board, reg->ledz,57,4,"ZF", LED_WHITE);
-
     board_add_led(board, reg->ledclk,61,4,"CLK", LED_BLUE);
+
+    return board;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+board_object *ctrunit_board_flags_create(ctrunit *reg, int key, char *name){
+
+    board_object *board = board_create(12, 5, key, name);
+
+    if (!board) return board;
+
+    board_add_led(board, reg->ledc,2,2,"CF", LED_WHITE);
+    board_add_led(board, reg->ledz,6,2,"ZF", LED_WHITE);
 
     return board;
 }

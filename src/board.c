@@ -330,7 +330,7 @@ void desenha_janelas(void)
                                  * for the vertical and horizontal
                                  * lines            */
     wmove(janela1, TERM_LINES-LINHAS_JANELA2B-2, 1);
-    waddstr(janela1,"F2,F3: Change focused Panel");
+    waddstr(janela1,"F2,F3: Change focused Panel     https://github.com/ARMCoderBR/tlsim");
 
     wrefresh(janela2);
 }

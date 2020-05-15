@@ -67,6 +67,9 @@ void *clkgen_thread(void *args){
 
         if (!s->pause)
             usleep(s->period_us >> 1);
+        else
+            usleep(20000);
+
         s->value ^= 1;
     }
 

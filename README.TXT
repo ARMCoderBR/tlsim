@@ -7,8 +7,8 @@
 // SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 ////////////////////////////////////////////////////////////////////////////////
 
-    Version 1.0
-    May 10, 2020
+    Version 1.0.5
+    May 15, 2020
 
     INTRO
     ~~~~~
@@ -159,3 +159,14 @@ hinted within brackets.
     - Better screen presentation of the Bitswitch controls
     
     - Other screen small enhancements
+
+    V1.0.5 - May 15, 2020:
+
+    - Clock step - screen refresh correction
+    
+    - More screen layout tweaks
+    
+    - Microcode generation closer to Ben's implementation
+    
+    - Change in the style of the switches
+    

@@ -22,8 +22,6 @@
 #include "ls173.h"
 #include "at28c16.h"
 
-#define DISABLE_CTRUNIT_OUTS 0
-
 #define NSIGNALS_CTRU 16
 
 #define HLT 15
@@ -89,6 +87,8 @@ ctrunit *ctrunit_create(char *name);
 void ctrunit_destroy (ctrunit **dest);
 
 board_object *ctrunit_board_create(ctrunit *reg, int key, char *name); // Requer NCURSES
+
+board_object *ctrunit_board_flags_create(ctrunit *reg, int key, char *name); // Requer NCURSES
 
 void ctrunit_in_hlt(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 void ctrunit_connect_out_hlt(ctrunit *source, void *dest, event_function_t dest_event_handler);
