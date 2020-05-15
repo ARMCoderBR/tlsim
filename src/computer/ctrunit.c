@@ -181,12 +181,12 @@ ctrunit *ctrunit_create(char *name){
     bitconst_connect_one(ctru->eep_lo, (void*)&at28c16_in_we);
 
     bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a7);
-    bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a8);
-    bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a9);
+    //bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a8);
+    //bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a9);
     bitconst_connect_zero(ctru->eep_hi, (void*)&at28c16_in_a10);
     bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a7);
-    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a8);
-    bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a9);
+    //bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a8);
+    //bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a9);
     bitconst_connect_zero(ctru->eep_lo, (void*)&at28c16_in_a10);
 
 #if !DISABLE_CTRUNIT_OUTS
@@ -220,10 +220,16 @@ ctrunit *ctrunit_create(char *name){
     bitconst_connect_zero(ctru->ls173, (void*)&ls173_in_n);
     bitconst_connect_zero(ctru->ls173, (void*)&ls173_in_g1);
 
-    ls04_connect_y6(ctru->ls04_2, ctru->ls173, (void*)&ls173_in_g2); // Vai usar g2 para controlar o load
+    ls04_connect_y6(ctru->ls04_2, ctru->ls173, (void*)&ls173_in_g2);    // Load Strobe from the microcode in EEPROM (O0, low EEPROM - inverted)
 
     ls173_connect_1q(ctru->ls173, ctru->ledz, (void*)indicator_in_d0);
     ls173_connect_2q(ctru->ls173, ctru->ledc, (void*)indicator_in_d0);
+
+    ls173_connect_2q(ctru->ls173, ctru->eep_hi, (void*)&at28c16_in_a8); // CF mapped in A8
+    ls173_connect_1q(ctru->ls173, ctru->eep_hi, (void*)&at28c16_in_a9); // ZF mapped in A9
+    ls173_connect_2q(ctru->ls173, ctru->eep_lo, (void*)&at28c16_in_a8); // CF mapped in A8
+    ls173_connect_1q(ctru->ls173, ctru->eep_lo, (void*)&at28c16_in_a9); // ZF mapped in A9
+
 
     //Clear
     ls00_connect_y2(ctru->ls00, ctru->ls173, (void*)&ls173_in_clr);
@@ -349,8 +355,8 @@ board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
     board_add_led(board, reg->t[4],41,4,"T4", LED_GREEN);
     board_add_led(board, reg->t[5],45,4,"T5", LED_GREEN);
 
-    board_add_led(board, reg->ledz,53,4,"ZF", LED_WHITE);
-    board_add_led(board, reg->ledc,57,4,"CF", LED_WHITE);
+    board_add_led(board, reg->ledc,53,4,"CF", LED_WHITE);
+    board_add_led(board, reg->ledz,57,4,"ZF", LED_WHITE);
 
     board_add_led(board, reg->ledclk,61,4,"CLK", LED_BLUE);
 
