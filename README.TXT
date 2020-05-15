@@ -149,5 +149,13 @@ hinted within brackets.
     V1.0.3 - May 14, 2020:
     
     - FLAGS Register fully operational. Conditional Jumps implemented!
+    
+    - Slight screen relayout
+    
+    V1.0.4 - May 15, 2020:
+    
+    - Clock Step key(F10) faster response
 
-      
+    - Better screen presentation of the Bitswitch controls
+    
+    - Other screen small enhancements

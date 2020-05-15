@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#define LINHAS_JANELA2 4
+#define LINHAS_JANELA2 3
 #define LINHAS_JANELA2B (LINHAS_JANELA2+2)
 
 int TERM_LINES = 0;
@@ -329,6 +329,9 @@ void desenha_janelas(void)
     box(janela2, 0 , 0);        /* 0, 0 gives default characters
                                  * for the vertical and horizontal
                                  * lines            */
+    wmove(janela1, TERM_LINES-LINHAS_JANELA2B-2, 1);
+    waddstr(janela1,"F2,F3: Change focused Panel");
+
     wrefresh(janela2);
 }
 
@@ -456,12 +459,16 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
         case MANUAL_SWITCH:
             {
                 bitswitch* bs = b->objptr;
-                wattron(janela1,COLOR_PAIR(LED_WHITE));
-                if (bs->value)
-                    waddstr(janela1,"[ >1]");
-                else
-                    waddstr(janela1,"[0< ]");
-                wattroff(janela1,COLOR_PAIR(LED_WHITE));
+                if (bs->value){
+                    wattron(janela1,COLOR_PAIR(6));
+                    waddstr(janela1,"[ "); waddch(janela1,ACS_DIAMOND); waddstr(janela1,"1]");
+                    wattroff(janela1,COLOR_PAIR(6));
+                }
+                else{
+                    wattron(janela1,COLOR_PAIR(LED_WHITE));
+                    waddstr(janela1,"["); waddch(janela1,ACS_DIAMOND); waddstr(janela1," 1]");
+                    wattroff(janela1,COLOR_PAIR(LED_WHITE));
+                }
             }
             break;
 
@@ -666,16 +673,16 @@ void clock_redraw(){
             strcat(s,"|");
     strcat(s,"]");
 
-    wmove(janela3,1,1);
+    wmove(janela3,0,1);
     waddstr(janela3,s);
 
-    wmove(janela3,2,1);
+    wmove(janela3,1,1);
     if (!clock_pausing)
         waddstr(janela3,"RUNNING");
     else
         waddstr(janela3,"PAUSED ");
 
-    wmove(janela3,3,1);
+    wmove(janela3,2,1);
     waddstr(janela3,"F10:Pause/Pulse F11:Slower F12:Faster");
 
     wrefresh(janela3);
@@ -1033,6 +1040,7 @@ int board_run(board_object *board){
     init_pair(3, 8|COLOR_YELLOW, 16|COLOR_BLACK);
     init_pair(4, 8|COLOR_BLUE, 16|COLOR_BLACK);
     init_pair(5, COLOR_WHITE, 16|COLOR_BLACK);
+    init_pair(6, COLOR_WHITE, COLOR_RED);
 
     init_pair(10, COLOR_WHITE, 8|COLOR_BLACK);
 

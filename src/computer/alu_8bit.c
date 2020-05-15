@@ -354,8 +354,8 @@ board_object *alu_8bit_board_create(alu_8bit *alu, int key, char *name){
         board_add_led(board, alu->led[i],1+4*j,1,s, LED_RED);
     }
 
-    board_add_led(board, alu->ledz,33,1," Z", LED_BLUE);
-    board_add_led(board, alu->ledc,36,1," C", LED_BLUE);
+    board_add_led(board, alu->ledz,33,1," Z", LED_WHITE);
+    board_add_led(board, alu->ledc,36,1," C", LED_WHITE);
 
     return board;
 }

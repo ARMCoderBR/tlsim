@@ -47,7 +47,7 @@ void *clkgen_thread(void *args){
                 s->step = 0;
             else{
 
-                usleep(50000);
+                usleep(10000);
                 continue;
             }
         }
@@ -65,7 +65,8 @@ void *clkgen_thread(void *args){
         event_insert(&e);
         board_mutex_unlock();
 
-        usleep(s->period_us >> 1);
+        if (!s->pause)
+            usleep(s->period_us >> 1);
         s->value ^= 1;
     }
 

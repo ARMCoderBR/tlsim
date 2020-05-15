@@ -17,7 +17,7 @@
 #include "ctrunit.h"
 #include "bitconst.h"
 
-char labels[16][4] = {"FI", "J", "CO", "CE", "OI", "BI", "SU", "SO", "AO", "AI", "II", "IO", "RO", "RI", "MI", "HLT" };
+char labels[16][4] = {"FI", " J", "CO", "CE", "OI", "BI", "SU", "SO", "AO", "AI", "II", "IO", "RO", "RI", "MI", "HLT" };
 
 ////////////////////////////////////////////////////////////////////////////////
 ctrunit *ctrunit_create(char *name){
