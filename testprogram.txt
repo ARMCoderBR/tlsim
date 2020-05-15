@@ -1,0 +1,10 @@
+
+0   OUT         E0
+1   ADD 15      2F
+2   JC 4        74
+3   JMP 0       60
+4   SUB 15      3F
+5   OUT         E0
+6   JZ 0        80
+7   JMP 4       64
+15  1           01
