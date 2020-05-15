@@ -12,6 +12,8 @@
 
 // Based on Ben Eater's project (https://www.youtube.com/watch?v=S-3fXU3FZQc)
 
+#include "ls02.h"
+#include "ls08.h"
 #include "ls86.h"
 #include "ls283.h"
 #include "ls245.h"
@@ -26,8 +28,10 @@ typedef struct {
     ls283 *ls283_hi, *ls283_lo;
     ls245 *ls245_1;
     indicator *led[8];
+    indicator *ledz,*ledc;
     char name[30];
-
+    ls08 *ls08;
+    ls02 *ls02;
 } alu_8bit;
 
 alu_8bit *alu_8bit_create(char *name);
@@ -47,6 +51,10 @@ void alu_8bit_in_sub_from(void (*connect_fn)(void *source, void *dest, event_fun
 
 void alu_8bit_in_enable_from(void (*connect_fn)(void *source, void *dest, event_function_t dest_event_handler),
                         void *from, alu_8bit *dest);
+
+void alu_8bit_connect_carry_out (alu_8bit *source, void *dest, event_function_t dest_event_handler);
+
+void alu_8bit_connect_zero_out (alu_8bit *source, void *dest, event_function_t dest_event_handler);
 
 ///////////////////////////////
 

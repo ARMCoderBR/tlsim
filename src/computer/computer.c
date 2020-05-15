@@ -226,7 +226,11 @@ void computer_sim(){
     board_object *ctru_board = ctrunit_board_create(ctru, '*', "CONTROL UNIT");
     board_add_board(mainboard,ctru_board,1,32);
 
-    clkgen_connect_outn(mainclk, ctru, (void*)&ctrunit_in_clk);
+    clkgen_connect_out(mainclk, ctru, (void*)&ctrunit_in_clk);
+    clkgen_connect_outn(mainclk, ctru, (void*)&ctrunit_in_clkn);
+
+    alu_8bit_connect_zero_out (alu, ctru, (void*)&ctrunit_in_zero);
+    alu_8bit_connect_carry_out (alu, ctru, (void*)&ctrunit_in_carry);
 
     //// Reset controls
     reg_8bit_in_clear_from((void*)&ctrunit_connect_out_reset,ctru,regA);

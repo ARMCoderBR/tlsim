@@ -89,6 +89,33 @@ alu_8bit *alu_8bit_create(char *name){
     else
         alu->name[0] = 0;
 
+    alu->ls02 = ls02_create();
+    alu->ls08 = ls08_create();
+
+    ls283_connect_y1(alu->ls283_lo, alu->ls02, (void*)&ls02_in_a1);
+    ls283_connect_y2(alu->ls283_lo, alu->ls02, (void*)&ls02_in_b1);
+    ls283_connect_y3(alu->ls283_lo, alu->ls02, (void*)&ls02_in_a2);
+    ls283_connect_y4(alu->ls283_lo, alu->ls02, (void*)&ls02_in_b2);
+
+    ls283_connect_y1(alu->ls283_hi, alu->ls02, (void*)&ls02_in_a3);
+    ls283_connect_y2(alu->ls283_hi, alu->ls02, (void*)&ls02_in_b3);
+    ls283_connect_y3(alu->ls283_hi, alu->ls02, (void*)&ls02_in_a4);
+    ls283_connect_y4(alu->ls283_hi, alu->ls02, (void*)&ls02_in_b4);
+
+    ls02_connect_y1(alu->ls02, alu->ls08, (void*)&ls08_in_a1);
+    ls02_connect_y2(alu->ls02, alu->ls08, (void*)&ls08_in_b1);
+    ls02_connect_y3(alu->ls02, alu->ls08, (void*)&ls08_in_a2);
+    ls02_connect_y4(alu->ls02, alu->ls08, (void*)&ls08_in_b2);
+
+    ls08_connect_y1(alu->ls08, alu->ls08, (void*)&ls08_in_a3);
+    ls08_connect_y2(alu->ls08, alu->ls08, (void*)&ls08_in_b3);
+
+    alu->ledz = indicator_create("Z");
+    alu->ledc = indicator_create("C");
+
+    ls08_connect_y3(alu->ls08, alu->ledz, (void*)&indicator_in_d0);
+    ls283_connect_cout(alu->ls283_hi, alu->ledc, (void*)&indicator_in_d0);
+
     alu->destroy = (void*)alu_8bit_destroy;
 
     return alu;
@@ -101,18 +128,35 @@ void alu_8bit_destroy (alu_8bit **dest){
     alu_8bit *b = *dest;
     if (b == NULL) return;
 
-    ls86_destroy(&b->ls86_hi);
-    ls86_destroy(&b->ls86_lo);
-    ls283_destroy(&b->ls283_hi);
-    ls283_destroy(&b->ls283_lo);
-    ls245_destroy(&b->ls245_1);
+    DESTROY(b->ls86_hi);
+    DESTROY(b->ls86_lo);
+    DESTROY(b->ls283_hi);
+    DESTROY(b->ls283_lo);
+    DESTROY(b->ls245_1);
+    DESTROY(b->ls02);
+    DESTROY(b->ls08);
 
     int i;
     for (i = 0; i < 8; i++)
         indicator_destroy(&b->led[i]);
 
+    DESTROY(b->ledz);
+    DESTROY(b->ledc);
+
     free(b);
     *dest = NULL;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void alu_8bit_connect_carry_out (alu_8bit *source, void *dest, event_function_t dest_event_handler){
+
+    ls283_connect_cout(source->ls283_hi, dest, dest_event_handler);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void alu_8bit_connect_zero_out (alu_8bit *source, void *dest, event_function_t dest_event_handler){
+
+    ls08_connect_y3(source->ls08, dest, dest_event_handler);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -309,6 +353,9 @@ board_object *alu_8bit_board_create(alu_8bit *alu, int key, char *name){
         sprintf(s,"D%d",i);
         board_add_led(board, alu->led[i],1+4*j,1,s, LED_RED);
     }
+
+    board_add_led(board, alu->ledz,33,1," Z", LED_BLUE);
+    board_add_led(board, alu->ledc,36,1," C", LED_BLUE);
 
     return board;
 }

@@ -17,7 +17,7 @@
 #include "ctrunit.h"
 #include "bitconst.h"
 
-char labels[16][4] = {"", "J", "CO", "CE", "OI", "BI", "SU", "SO", "AO", "AI", "II", "IO", "RO", "RI", "MI", "HLT" };
+char labels[16][4] = {"FI", "J", "CO", "CE", "OI", "BI", "SU", "SO", "AO", "AI", "II", "IO", "RO", "RI", "MI", "HLT" };
 
 ////////////////////////////////////////////////////////////////////////////////
 ctrunit *ctrunit_create(char *name){
@@ -207,8 +207,26 @@ ctrunit *ctrunit_create(char *name){
     at28c16_connect_o3(ctru->eep_lo, ctru, (void*)&ctrunit_in_ce);
     at28c16_connect_o2(ctru->eep_lo, ctru, (void*)&ctrunit_in_co);
     at28c16_connect_o1(ctru->eep_lo, ctru, (void*)&ctrunit_in_j);
+    at28c16_connect_o0(ctru->eep_lo, ctru, (void*)&ctrunit_in_fi);
 
 #endif
+
+    //// LS173 (Flags)
+    ctru->ls173 = ls173_create("");
+    ctru->ledz = indicator_create("ZF");
+    ctru->ledc = indicator_create("CF");
+
+    bitconst_connect_zero(ctru->ls173, (void*)&ls173_in_m);
+    bitconst_connect_zero(ctru->ls173, (void*)&ls173_in_n);
+    bitconst_connect_zero(ctru->ls173, (void*)&ls173_in_g1);
+
+    ls04_connect_y6(ctru->ls04_2, ctru->ls173, (void*)&ls173_in_g2); // Vai usar g2 para controlar o load
+
+    ls173_connect_1q(ctru->ls173, ctru->ledz, (void*)indicator_in_d0);
+    ls173_connect_2q(ctru->ls173, ctru->ledc, (void*)indicator_in_d0);
+
+    //Clear
+    ls00_connect_y2(ctru->ls00, ctru->ls173, (void*)&ls173_in_clr);
 
     ctru->destroy = (void*)ctrunit_destroy;
 
@@ -263,6 +281,10 @@ void ctrunit_destroy (ctrunit **dest){
     DESTROY(b->eep_hi);
     DESTROY(b->eep_lo);
 
+    DESTROY(b->ls173);
+    DESTROY(b->ledz);
+    DESTROY(b->ledc);
+
     free(b);
     *dest = NULL;
 }
@@ -300,14 +322,14 @@ void ctrunit_connect_out(ctrunit *source, int index, void *dest, event_function_
 ////////////////////////////////////////////////////////////////////////////////
 board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
 
-    board_object *board = board_create(62, 7, key, name);
+    board_object *board = board_create(66, 7, key, name);
 
     if (!board) return board;
 
     char s[32];
     int i,j;
 
-    for (i = 1; i < NSIGNALS_CTRU; i++){
+    for (i = 0; i < NSIGNALS_CTRU; i++){
 
         j = NSIGNALS_CTRU-i;
         sprintf(s,labels[i],i);
@@ -327,7 +349,10 @@ board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
     board_add_led(board, reg->t[4],41,4,"T4", LED_GREEN);
     board_add_led(board, reg->t[5],45,4,"T5", LED_GREEN);
 
-    board_add_led(board, reg->ledclk,57,4,"CLK", LED_BLUE);
+    board_add_led(board, reg->ledz,53,4,"ZF", LED_WHITE);
+    board_add_led(board, reg->ledc,57,4,"CF", LED_WHITE);
+
+    board_add_led(board, reg->ledclk,61,4,"CLK", LED_BLUE);
 
     return board;
 }
@@ -532,7 +557,20 @@ void ctrunit_in_j(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_fi(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp){
+
+    ls04_in_a6(dest->ls04_2, valptr, timestamp);
+    indicator_in_d0(dest->led[FI], valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
 void ctrunit_in_clk(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp){
+
+    ls173_in_clk(dest->ls173, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_clkn(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     ls161_in_clk(dest->ls161, valptr, timestamp);
     indicator_in_d0(dest->ledclk, valptr, timestamp);
@@ -585,3 +623,14 @@ void ctrunit_in_instr3(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp)
     at28c16_in_a6(dest->eep_lo, valptr, timestamp);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_zero(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp){
+
+    ls173_in_1d(dest->ls173, valptr, timestamp);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void ctrunit_in_carry(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp){
+
+    ls173_in_2d(dest->ls173, valptr, timestamp);
+}

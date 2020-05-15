@@ -19,6 +19,7 @@
 #include "board.h"
 #include "ls161.h"
 #include "ls138.h"
+#include "ls173.h"
 #include "at28c16.h"
 
 #define DISABLE_CTRUNIT_OUTS 0
@@ -40,6 +41,7 @@
 #define CE  3
 #define CO  2
 #define J   1
+#define FI  0
 
 #define HHLT 0x80
 #define HMI  0x40
@@ -57,6 +59,7 @@
 #define LCE  0x08
 #define LCO  0x04
 #define LJ   0x02
+#define LFI  0x01
 
 typedef struct {
 
@@ -77,6 +80,8 @@ typedef struct {
     indicator *t[6];
     indicator *ledclk;
     at28c16 *eep_hi, *eep_lo;
+    ls173 *ls173;
+    indicator *ledz, *ledc;
 } ctrunit;
 
 ctrunit *ctrunit_create(char *name);
@@ -131,6 +136,9 @@ void ctrunit_in_j(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 void ctrunit_connect_out_j(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
 void ctrunit_in_clk(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+void ctrunit_in_clkn(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+
+void ctrunit_in_fi(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
 void ctrunit_connect_out_reset(ctrunit *source, void *dest, event_function_t dest_event_handler);
 
@@ -143,5 +151,9 @@ void ctrunit_in_instr1(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp)
 void ctrunit_in_instr2(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
 void ctrunit_in_instr3(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+
+void ctrunit_in_zero(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
+
+void ctrunit_in_carry(ctrunit *dest, bitvalue_t *valptr, timevalue_t timestamp);
 
 #endif /* CTRUNIT_H_ */
