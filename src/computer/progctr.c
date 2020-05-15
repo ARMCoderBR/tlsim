@@ -175,7 +175,7 @@ event_function_t progctr_in_dataN[] = {
 ////////////////////////////////////////////////////////////////////////////////
 board_object *progctr_board_create(progctr *reg, int key, char *name){
 
-    board_object *board = board_create(40, 4, key, name);
+    board_object *board = board_create(33, 4, key, name);
 
     if (!board) return board;
 
@@ -189,7 +189,7 @@ board_object *progctr_board_create(progctr *reg, int key, char *name){
         board_add_led(board, reg->led[i],1+4*j,1,s, LED_GREEN);
     }
 
-    board_add_led(board, reg->ledclk,35,1,"CLK", LED_BLUE);
+    board_add_led(board, reg->ledclk,28,1,"CLK", LED_BLUE);
 
     return board;
 }

@@ -89,9 +89,12 @@ ctrunit *ctrunit_create(char *name){
     // Dados da EEP HIGH
     //  HL MI RI RO IO II AI AO
     //  7  6  5  4  3  2  1  0
+    int zf, cf;     //cf = A8  zf=a9
+    for (zf = 0; zf < 2; zf++)
+    for (cf = 0; cf < 2; cf++)
     for (i = 0; i < 16; i++){   // Dados do microcódigo: https://www.youtube.com/watch?v=dHWFpkGsxOs
 
-        ofs = 8*i;
+        ofs = (512*zf)+(256*cf)+8*i;
         memset(buf+ofs,0,8);
         //FETCH
         buf[0+ofs] = HMI;
@@ -123,6 +126,14 @@ ctrunit *ctrunit_create(char *name){
         case 0x06:  //JMP
             buf[2+ofs] = HIO;
             break;
+        case 0x07:  //JC
+            if (cf)
+                buf[2+ofs] = HIO;
+            break;
+        case 0x08:  //JZ
+            if (zf)
+                buf[2+ofs] = HIO;
+            break;
         case 0x0e:  //OUT
             buf[2+ofs] = HAO;
             break;
@@ -137,8 +148,11 @@ ctrunit *ctrunit_create(char *name){
     // Dados da EEP LOW
     //  SO SU BI OI CE CO J  --
     //  7  6  5  4  3  2  1  0
+    for (zf = 0; zf < 2; zf++)
+    for (cf = 0; cf < 2; cf++)
     for (i = 0; i < 16; i++){
-        ofs = 8*i;
+
+        ofs = (512*zf)+(256*cf)+8*i;
         memset(buf+ofs,0,8);
         //FETCH
         buf[0+ofs] = LCO;
@@ -149,14 +163,26 @@ ctrunit *ctrunit_create(char *name){
             break;
         case 0x02:  //ADD
             buf[3+ofs] = LBI;
-            buf[4+ofs] = LSO;
+            buf[4+ofs] = LSO|LFI;
             break;
         case 0x03:  //SUB
             buf[3+ofs] = LBI;
-            buf[4+ofs] = LSO|LSU;
+            buf[4+ofs] = LSO|LSU|LFI;
+            break;
+        case 0x04:  //STA
+            break;
+        case 0x05:  //LDI
             break;
         case 0x06:  //JMP
             buf[2+ofs] = LJ;
+            break;
+        case 0x07:  //JC
+            if (cf)
+                buf[2+ofs] = LJ;
+            break;
+        case 0x08:  //JZ
+            if (zf)
+                buf[2+ofs] = LJ;
             break;
         case 0x0e:  //OUT
             buf[2+ofs] = LOI;

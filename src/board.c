@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#define LINHAS_JANELA2 8
+#define LINHAS_JANELA2 4
 #define LINHAS_JANELA2B (LINHAS_JANELA2+2)
 
 int TERM_LINES = 0;
@@ -584,14 +584,8 @@ void *refresh_thread(void *args){
         FD_ZERO(&rreadfds);
         FD_SET(piperefresh[0],&rreadfds);
 
-        if (!ref_pending){
-            rtv.tv_sec = 2;
-            rtv.tv_usec = 0;
-        }
-        else{
-            rtv.tv_sec = 0;
-            rtv.tv_usec = 100000;
-        }
+        rtv.tv_sec = 0;
+        rtv.tv_usec = 100000;
 
         select(1+piperefresh[0],&rreadfds,NULL,NULL,&rtv);
 
@@ -680,6 +674,9 @@ void clock_redraw(){
         waddstr(janela3,"RUNNING");
     else
         waddstr(janela3,"PAUSED ");
+
+    wmove(janela3,3,1);
+    waddstr(janela3,"F10:Pause/Pulse F11:Slower F12:Faster");
 
     wrefresh(janela3);
 
@@ -1135,12 +1132,15 @@ int board_run(board_object *board){
                 break;
             case KEY_F(12):
                 clock_faster();
+                board_set_refresh();
                 break;
             case KEY_F(11):
                 clock_slower();
+                board_set_refresh();
                 break;
             case KEY_F(10):
                 clock_pause();
+                board_set_refresh();
                 break;
             }
 

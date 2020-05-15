@@ -145,3 +145,9 @@ hinted within brackets.
     
     - Corrected the Creator and the Destroyer of the LS138 - some members were
       missing initialization/destruction.
+
+    V1.0.3 - May 14, 2020:
+    
+    - FLAGS Register fully operational. Conditional Jumps implemented!
+
+      

@@ -27,7 +27,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 void computer_sim(){
 
-    board_object *mainboard = board_create(0,0,0,"BEN EATER'S 8-BIT COMPUTER");
+    char name[64];
+
+    sprintf(name,"BEN EATER'S COMPUTER SIM BY ARMCODER V%d.%d.%d",SW_VERSION, SW_REVISION, SW_MINOR);
+    board_object *mainboard = board_create(0,0,0,name);
 
     clkgen *mainclk = clkgen_create("",1000000);
 
@@ -93,21 +96,33 @@ void computer_sim(){
 
     ram_8bit *ram = ram_8bit_create("RAM");
     board_object *ram_board = ram_8bit_board_create(ram, KEY_F(5), "RAM"); // Requer NCURSES
+#if DISABLE_CTRUNIT_OUTS
     board_add_board(mainboard,ram_board,66,1);
+#else
+    board_add_board(mainboard,ram_board,42,1);
+#endif
     clkgen_connect_out(mainclk, ram, (void*)&ram_8bit_in_clk);
 
     //////// PROGRAM COUNTER ///////////////////////////////////////////////////
 
     progctr *pctr = progctr_create("PC");
     board_object *pctr_board = progctr_board_create(pctr, KEY_F(6), "PC");
+#if DISABLE_CTRUNIT_OUTS
     board_add_board(mainboard,pctr_board,1,26);
+#else
+    board_add_board(mainboard,pctr_board,67,24);
+#endif
     clkgen_connect_out(mainclk, pctr, (void*)&progctr_in_clock);
 
     //////// REG OUT ///////////////////////////////////////////////////////////
 
     reg_out *regout = reg_out_create("RO");
     board_object *regout_board = reg_out_board_create(regout, KEY_F(6), "RO");
+#if DISABLE_CTRUNIT_OUTS
     board_add_board(mainboard,regout_board,66,18);
+#else
+    board_add_board(mainboard,regout_board,60,14);
+#endif
     clkgen_connect_out(mainclk, regout, (void*)&reg_out_in_clock);
 
     //////// BUS ///////////////////////////////////////////////////////////////
@@ -224,7 +239,11 @@ void computer_sim(){
 
     ctrunit *ctru =ctrunit_create("CONTROL UNIT");
     board_object *ctru_board = ctrunit_board_create(ctru, '*', "CONTROL UNIT");
+#if DISABLE_CTRUNIT_OUTS
     board_add_board(mainboard,ctru_board,1,32);
+#else
+    board_add_board(mainboard,ctru_board,1,21);
+#endif
 
     clkgen_connect_out(mainclk, ctru, (void*)&ctrunit_in_clk);
     clkgen_connect_outn(mainclk, ctru, (void*)&ctrunit_in_clkn);

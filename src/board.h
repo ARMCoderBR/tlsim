@@ -33,7 +33,7 @@ typedef enum {
     LED_WHITE
 } led_color_t;
 
-#define NAMESIZE 32
+#define NAMESIZE 64
 
 typedef struct {
 
