@@ -62,17 +62,13 @@ int board_add_xdigit(board_object *b, indicator *out, int pos_w, int pos_h, char
 
 int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h);
 
-int board_run(board_object *board);
+int board_run(event_context_t *ec, board_object *board);
 
 board_object *board_create(int width, int height, int key, char *name);
 
 void board_destroy(board_object **dest);
 
 board_object *mainboard_create(char *name);
-
-//void board_clock_connect(void *objdest, event_function_t objdest_event_handler);
-//
-//void board_nclock_connect(void *objdest, event_function_t objdest_event_handler);
 
 void board_set_clk(clkgen *clk);
 
@@ -81,9 +77,5 @@ void board_mutex_lock();
 void board_mutex_unlock();
 
 void board_set_refresh();
-
-//void part_destroy(void **part);
-//
-//#define DESTROY(X) part_destroy((void**)&X)
 
 #endif /* BOARD_H_ */

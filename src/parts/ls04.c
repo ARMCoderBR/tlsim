@@ -37,7 +37,7 @@ static void ls04_up(ls04 *a, int timestamp, int index){
         e.event_handler_root = a->out_event_handler_root[index];
         e.valueptr = &a->value[index];
         e.timestamp = timestamp+1;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 }
 
@@ -59,12 +59,14 @@ static void ls04_update_pin_in(ls04 *a, bitvalue_t *valptr, timevalue_t timestam
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls04 *ls04_create(){
+ls04 *ls04_create(event_context_t *ec){
 
     ls04 *b = malloc(sizeof(ls04));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     int i;
     for (i = 0; i < NUM_ELEM_LS04; i++){

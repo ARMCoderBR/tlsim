@@ -34,10 +34,10 @@ typedef struct {
     indicator *ledclk;
     reg8bit_type_t type;
     char name[30];
-
+    event_context_t *ec;
 } reg_8bit;
 
-reg_8bit *reg_8bit_create(reg8bit_type_t type, char *name);
+reg_8bit *reg_8bit_create(event_context_t *ec, reg8bit_type_t type, char *name);
 
 void reg_8bit_destroy(reg_8bit **dest);
 

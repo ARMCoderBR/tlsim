@@ -10,6 +10,7 @@
 #ifndef UPDATE_H_
 #define UPDATE_H_
 
+#include <stdio.h>
 #include <stdint.h>
 
 typedef uint8_t bitvalue_t;
@@ -46,22 +47,31 @@ typedef struct {
     void *next;
 } event;
 
-void event_insert(event *e);
+////////////////////////////////////////////////////////////////////////////////
+typedef struct {
 
-void update_register (void *o, int type);
+    event *event_list;
+    event *event_last;
+    int scanning_timestamp;
+    int max_timestamp;
+    FILE *logfile;
+    bool_t logging;
+} event_context_t;
 
-void update_run();
+void event_init(event_context_t *ec);
 
-bool_t event_process();
+void event_insert(event_context_t *ec, event *e);
+
+bool_t event_process(event_context_t *ec);
 
 void new_ehandler(ehandler **ehptr, void *objdest, event_function_t objdest_event_handler);
 
 bitvalue_t update_val_multi(vallist **rootptr, bitvalue_t *valptr);
 
 ////////////////////////////////////////////////////////////////////////////////
-void logger_init();
-void logger(const char *fmt, ...);
-void logger_end();
+void logger_init(event_context_t *ec);
+void logger(event_context_t *ec, const char *fmt, ...);
+void logger_end(event_context_t *ec);
 
 void vallist_destroy(vallist **root);
 

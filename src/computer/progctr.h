@@ -25,10 +25,10 @@ typedef struct {
     indicator *led[4];
     indicator *ledclk;
     char name[30];
-
+    event_context_t *ec;
 } progctr;
 
-progctr *progctr_create(char *name);
+progctr *progctr_create(event_context_t *ec, char *name);
 
 void progctr_destroy(progctr **dest);
 

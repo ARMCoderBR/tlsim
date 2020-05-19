@@ -19,9 +19,10 @@ typedef struct{
     bitvalue_t value;
     ehandler *out_event_handler_root;
     char name[30];
+    event_context_t *ec;
 } bitswitch;
 
-bitswitch *bitswitch_create(char *name);
+bitswitch *bitswitch_create(event_context_t *ec, char *name);
 
 void bitswitch_destroy(bitswitch **dest);
 

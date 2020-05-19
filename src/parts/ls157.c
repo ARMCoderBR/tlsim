@@ -46,7 +46,7 @@ static void ls157_up(ls157 *a, int timestamp){
             e.event_handler_root = a->out_event_handler_root[i];
             e.valueptr = &a->value[i];
             e.timestamp = timestamp+1;
-            event_insert(&e);
+            event_insert(a->ec, &e);
         }
     }
 }
@@ -82,12 +82,14 @@ static void ls157_update_pin_inb(ls157 *a, bitvalue_t *valptr, timevalue_t times
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls157 *ls157_create(){
+ls157 *ls157_create(event_context_t *ec){
 
     ls157 *b = malloc(sizeof(ls157));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     int i;
     for (i = 0; i < NUM_ELEM_LS157; i++){

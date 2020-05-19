@@ -32,15 +32,21 @@ void computer_sim(){
     sprintf(name,"BEN EATER'S COMPUTER SIM BY ARMCODER V%d.%d.%d",SW_VERSION, SW_REVISION, SW_MINOR);
     board_object *mainboard = board_create(0,0,0,name);
 
-    clkgen *mainclk = clkgen_create("",1000000);
+    event_context_t ec;
+
+    event_init(&ec);
+
+    logger_init(&ec);
+
+    clkgen *mainclk = clkgen_create(&ec, "",1000000);
 
     board_set_clk(mainclk);
 
     //////// REGS //////////////////////////////////////////////////////////////
 
-    reg_8bit *regA = reg_8bit_create(REG8BIT_NORMAL, "regA");
-    reg_8bit *regB = reg_8bit_create(REG8BIT_NORMAL, "regB");
-    reg_8bit *regIN = reg_8bit_create(REG8BIT_IR, "regIN");
+    reg_8bit *regA = reg_8bit_create(&ec, REG8BIT_NORMAL, "regA");
+    reg_8bit *regB = reg_8bit_create(&ec, REG8BIT_NORMAL, "regB");
+    reg_8bit *regIN = reg_8bit_create(&ec, REG8BIT_IR, "regIN");
 
     if ((!regA)||(!regB)||(!regIN)){
 
@@ -69,7 +75,7 @@ void computer_sim(){
 
     //////// ALU ///////////////////////////////////////////////////////////////
 
-    alu_8bit *alu = alu_8bit_create("ALU");
+    alu_8bit *alu = alu_8bit_create(&ec, "ALU");
     board_object *alu_board = alu_8bit_board_create(alu, KEY_F(4), "ALU"); // Requer NCURSES
     board_add_board(mainboard,alu_board,1,5);
 
@@ -94,21 +100,21 @@ void computer_sim(){
 
     //////// RAM ///////////////////////////////////////////////////////////////
 
-    ram_8bit *ram = ram_8bit_create("RAM");
+    ram_8bit *ram = ram_8bit_create(&ec, "RAM");
     board_object *ram_board = ram_8bit_board_create(ram, KEY_F(5), "RAM"); // Requer NCURSES
     board_add_board(mainboard,ram_board,42,1);
     clkgen_connect_out(mainclk, ram, (void*)&ram_8bit_in_clk);
 
     //////// PROGRAM COUNTER ///////////////////////////////////////////////////
 
-    progctr *pctr = progctr_create("PC");
+    progctr *pctr = progctr_create(&ec, "PC");
     board_object *pctr_board = progctr_board_create(pctr, KEY_F(6), "PC");
     board_add_board(mainboard,pctr_board,67,21);
     clkgen_connect_out(mainclk, pctr, (void*)&progctr_in_clock);
 
     //////// REG OUT ///////////////////////////////////////////////////////////
 
-    reg_out *regout = reg_out_create("RO");
+    reg_out *regout = reg_out_create(&ec, "RO");
     board_object *regout_board = reg_out_board_create(regout, KEY_F(6), "RO");
     board_add_board(mainboard,regout_board,60,14);
     clkgen_connect_out(mainclk, regout, (void*)&reg_out_in_clock);
@@ -200,7 +206,7 @@ void computer_sim(){
 
     //////// CONTROL UNIT //////////////////////////////////////////////////////
 
-    ctrunit *ctru =ctrunit_create("CONTROL UNIT");
+    ctrunit *ctru =ctrunit_create(&ec, "CONTROL UNIT");
     board_object *ctru_board = ctrunit_board_create(ctru, '*', "CONTROL UNIT");
     board_add_board(mainboard,ctru_board,1,21);
 
@@ -246,7 +252,9 @@ void computer_sim(){
 
     ////////////////
 
-    board_run(mainboard);
+    board_run(&ec, mainboard);
+
+    logger_end(&ec);
 
     ////////////////
 

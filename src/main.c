@@ -20,11 +20,7 @@ int main (int argc, char *argv[]){
     //do_testls191();
     //gatetest();
 
-    logger_init();
-
     computer_sim();
-
-    logger_end();
 
     return 0;
 }

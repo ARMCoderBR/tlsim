@@ -35,7 +35,7 @@ static void ls86_up(ls86 *a, timevalue_t timestamp, int index){
         e.event_handler_root = a->out_event_handler_root[index];
         e.valueptr = &a->value[index];
         e.timestamp = timestamp+1;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 }
 
@@ -70,12 +70,14 @@ static void ls86_update_pin_inb(ls86 *a, bitvalue_t *valptr, timevalue_t timesta
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls86 *ls86_create(){
+ls86 *ls86_create(event_context_t *ec){
 
     ls86 *b = malloc(sizeof(ls86));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     int i;
     for (i = 0; i < NUM_ELEM_LS86; i++){

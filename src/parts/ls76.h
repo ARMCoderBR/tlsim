@@ -26,9 +26,10 @@ typedef struct {
 	bitvalue_t q[NUM_BITS_LS76],qn[NUM_BITS_LS76];
     ehandler *q_event_handler_root[NUM_BITS_LS76];
     ehandler *qn_event_handler_root[NUM_BITS_LS76];
+    event_context_t *ec;
 } ls76;
 
-ls76 *ls76_create();
+ls76 *ls76_create(event_context_t *ec);
 
 void ls76_destroy(ls76 **dest);
 

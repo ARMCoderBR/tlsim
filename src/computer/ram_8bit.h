@@ -53,9 +53,10 @@ typedef struct {
     bitvalue_t valpulse;
     bool_t running;
     char name[30];
+    event_context_t *ec;
 } ram_8bit;
 
-ram_8bit *ram_8bit_create(char *name);
+ram_8bit *ram_8bit_create(event_context_t *ec, char *name);
 
 void ram_8bit_destroy(ram_8bit **dest);
 

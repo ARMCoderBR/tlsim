@@ -32,9 +32,10 @@ typedef struct {
     bitvalue_t outq_o[NUM_BITS_LS189];
     ehandler *outq_event_handler_root[NUM_BITS_LS189];
     char name[32];
+    event_context_t *ec;
 } ls189;
 
-ls189 *ls189_create(char *name);
+ls189 *ls189_create(event_context_t *ec, char *name);
 
 void ls189_destroy (ls189 **dest);
 

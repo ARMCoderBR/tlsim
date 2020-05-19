@@ -110,7 +110,7 @@ at28c16_end:
             a->outq_o[i] = a->outq[i];
             e.event_handler_root = a->outq_event_handler_root[i];
             e.valueptr = &a->outq[i];
-            event_insert(&e);
+            event_insert(a->ec,&e);
         }
     }
 }
@@ -124,7 +124,7 @@ static void at28c16_update_d(at28c16 *a, bitvalue_t *valptr, timevalue_t timesta
 
     if (a->inpd[index] == val) return;
 
-    logger("at28c16_update_d%d [%s] *valptr:%d val:%d TS:%d",index,a->name,*valptr,val,timestamp);
+    logger(a->ec, "at28c16_update_d%d [%s] *valptr:%d val:%d TS:%d",index,a->name,*valptr,val,timestamp);
 
     a->inpd[index] = val;
 
@@ -140,7 +140,7 @@ static void at28c16_update_addr(at28c16 *a, bitvalue_t *valptr, timevalue_t time
 
     if (a->in_addr[index] == val) return;
 
-    logger("at28c16_update_addr%d [%s] *valptr:%d val:%d TS:%d",index,a->name,*valptr,val,timestamp);
+    logger(a->ec, "at28c16_update_addr%d [%s] *valptr:%d val:%d TS:%d",index,a->name,*valptr,val,timestamp);
 
     a->in_addr[index] = val;
 
@@ -161,7 +161,7 @@ static void at28c16_update_addr(at28c16 *a, bitvalue_t *valptr, timevalue_t time
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-at28c16 *at28c16_create(char *name, unsigned char *template){
+at28c16 *at28c16_create(event_context_t *ec, char *name, unsigned char *template){
 
     at28c16 *b = malloc(sizeof(at28c16));
 
@@ -169,6 +169,8 @@ at28c16 *at28c16_create(char *name, unsigned char *template){
         return NULL;
 
     int i;
+
+    b->ec = ec;
 
     for (i = 0; i < 11; i++){
 
@@ -410,7 +412,7 @@ void at28c16_in_we(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->in_we == val) return;
 
-    logger("at28c16_in_we [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger(dest->ec, "at28c16_in_we [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_we = val;
     at28c16_update(dest, timestamp);
@@ -425,7 +427,7 @@ void at28c16_in_oe(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->in_oe == val) return;
 
-    logger("at28c16_in_oe [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger(dest->ec, "at28c16_in_oe [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_oe = val;
     at28c16_update(dest, timestamp);
@@ -440,7 +442,7 @@ void at28c16_in_cs(at28c16 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->in_cs == val) return;
 
-    logger("at28c16_in_cs [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger(dest->ec, "at28c16_in_cs [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_cs = val;
     at28c16_update(dest, timestamp);

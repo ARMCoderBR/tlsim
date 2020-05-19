@@ -14,13 +14,14 @@
 #include "update.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-bitswitch *bitswitch_create(char *name){
+bitswitch *bitswitch_create(event_context_t *ec, char *name){
 
     bitswitch *b = malloc(sizeof(bitswitch));
 
     if (b == NULL)
         return NULL;
 
+    b->ec = ec;
     b->oldvalue = 2;
     b->out_event_handler_root = NULL;
 
@@ -61,13 +62,13 @@ void bitswitch_setval(bitswitch *s, bitvalue_t val){
 
     if (s->oldvalue != s->value){
 
-        logger("\n== bitswitch_setval [%s] val:%d",s->name,val);
+        logger(s->ec, "\n== bitswitch_setval [%s] val:%d",s->name,val);
 
         s->oldvalue = s->value;
         event e;
         e.event_handler_root = s->out_event_handler_root;
         e.valueptr = &s->value;
         e.timestamp = 0;
-        event_insert(&e);
+        event_insert(s->ec, &e);
     }
 }

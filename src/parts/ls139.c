@@ -50,7 +50,7 @@ end139:
         e.event_handler_root = a->y0_event_handler_root[index];
         e.valueptr = &a->y0[index];
         e.timestamp = timestamp+1;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 
     if (a->oy1[index] != a->y1[index]){
@@ -60,7 +60,7 @@ end139:
         e.event_handler_root = a->y1_event_handler_root[index];
         e.valueptr = &a->y1[index];
         e.timestamp = timestamp+1;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 
     if (a->oy2[index] != a->y2[index]){
@@ -70,7 +70,7 @@ end139:
         e.event_handler_root = a->y2_event_handler_root[index];
         e.valueptr = &a->y2[index];
         e.timestamp = timestamp+1;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 
     if (a->oy3[index] != a->y3[index]){
@@ -80,7 +80,7 @@ end139:
         e.event_handler_root = a->y3_event_handler_root[index];
         e.valueptr = &a->y3[index];
         e.timestamp = timestamp+1;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 }
 
@@ -128,12 +128,14 @@ static void ls139_update_pin_ing(ls139 *a, bitvalue_t *valptr, timevalue_t times
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls139 *ls139_create(){
+ls139 *ls139_create(event_context_t *ec){
 
     ls139 *b = malloc(sizeof(ls139));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     int i;
     for (i = 0; i < NUM_ELEM_LS139; i++){

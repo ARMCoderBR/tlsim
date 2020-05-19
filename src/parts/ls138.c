@@ -40,7 +40,7 @@ end138:
             e.event_handler_root = a->y_event_handler_root[i];
             e.valueptr = &a->y[i];
             e.timestamp = timestamp+1;
-            event_insert(&e);
+            event_insert(a->ec, &e);
         }
 }
 
@@ -49,12 +49,14 @@ end138:
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls138 *ls138_create(){
+ls138 *ls138_create(event_context_t *ec){
 
     ls138 *b = malloc(sizeof(ls138));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     int i;
     for (i = 0; i < NUM_BITS_LS138; i++){

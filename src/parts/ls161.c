@@ -114,35 +114,35 @@ static void ls161_up(ls161 *a, timevalue_t timestamp){
 
         e.event_handler_root = a->qa_event_handler_root;
         e.valueptr = &a->qa;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 
     if (mask & 0x02){
 
         e.event_handler_root = a->qb_event_handler_root;
         e.valueptr = &a->qb;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 
     if (mask & 0x04){
 
         e.event_handler_root = a->qc_event_handler_root;
         e.valueptr = &a->qc;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 
     if (mask & 0x08){
 
         e.event_handler_root = a->qd_event_handler_root;
         e.valueptr = &a->qd;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 
     if (mask & 0x10){
 
         e.event_handler_root = a->ripclk_event_handler_root;
         e.valueptr = &a->ripclk;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 }
 
@@ -151,13 +151,15 @@ static void ls161_up(ls161 *a, timevalue_t timestamp){
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls161 *ls161_create(){
+ls161 *ls161_create(event_context_t *ec){
 
     ls161 *b = malloc(sizeof(ls161));
 
     if (b == NULL){
         return NULL;
     }
+
+    b->ec = ec;
 
     b->clk_o = b->da = b->db = b->dc = b->dd = b->load = b->enp = b->ent = b->clk = b->clear = 2;
 	b->da_rootptr = b->db_rootptr = b->dc_rootptr = b->dd_rootptr = b->load_rootptr = b->enp_rootptr = b->ent_rootptr = b->clk_rootptr = b->clear_rootptr = NULL;

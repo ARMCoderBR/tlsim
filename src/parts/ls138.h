@@ -32,9 +32,10 @@ typedef struct {
     bitvalue_t y[NUM_BITS_LS138];
     bitvalue_t oy[NUM_BITS_LS138];
     ehandler *y_event_handler_root[NUM_BITS_LS138];
+    event_context_t *ec;
 } ls138;
 
-ls138 *ls138_create();
+ls138 *ls138_create(event_context_t *ec);
 
 void ls138_destroy(ls138 **dest);
 

@@ -79,7 +79,7 @@ end76:
         a->q[index] = q;
         e.event_handler_root = a->q_event_handler_root[index];
         e.valueptr = &a->q[index];
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 
     if (a->qn[index] != qn){
@@ -87,7 +87,7 @@ end76:
         a->qn[index] = qn;
         e.event_handler_root = a->qn_event_handler_root[index];
         e.valueptr = &a->qn[index];
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 }
 
@@ -96,13 +96,15 @@ end76:
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls76 *ls76_create(){
+ls76 *ls76_create(event_context_t *ec){
 
     ls76 *b = malloc(sizeof(ls76));
 
     if (b == NULL){
         return NULL;
     }
+
+    b->ec = ec;
 
     int i;
     for (i = 0; i < NUM_BITS_LS76; i++){

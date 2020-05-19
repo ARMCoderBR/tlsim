@@ -32,9 +32,10 @@ typedef struct {
 	bitvalue_t outq[NUM_ELEM_LS173];
     ehandler *outq_event_handler_root[NUM_ELEM_LS173];
     char name[32];
+    event_context_t *ec;
 } ls173;
 
-ls173 *ls173_create(char *name);
+ls173 *ls173_create(event_context_t *ec, char *name);
 
 void ls173_destroy(ls173 **dest);
 

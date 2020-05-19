@@ -28,9 +28,10 @@ typedef struct {
     bitvalue_t oldvalue[NUM_ELEM_LS157];
     bitvalue_t value[NUM_ELEM_LS157];
     ehandler *out_event_handler_root[NUM_ELEM_LS157];
+    event_context_t *ec;
 } ls157;
 
-ls157 *ls157_create();
+ls157 *ls157_create(event_context_t *ec);
 
 void ls157_destroy(ls157 **dest);
 

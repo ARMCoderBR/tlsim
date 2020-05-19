@@ -17,10 +17,12 @@
 #include "bitconst.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-reg_out *reg_out_create(char *name){
+reg_out *reg_out_create(event_context_t *ec, char *name){
 
     reg_out *reg = malloc (sizeof(reg_out));
     if (!reg) return reg;
+
+    reg->ec = ec;
 
     char lshi[60];
     char lslo[60];
@@ -35,8 +37,8 @@ reg_out *reg_out_create(char *name){
     strncat(lshi,"-hiWord",sizeof(lshi)/2);
     strncat(lslo,"-loWord",sizeof(lslo)/2);
 
-    reg->ls173_hi = ls173_create(lshi);
-    reg->ls173_lo = ls173_create(lslo);
+    reg->ls173_hi = ls173_create(ec, lshi);
+    reg->ls173_lo = ls173_create(ec, lslo);
     reg->ledclk = indicator_create("Clk");
 
     int i;
@@ -74,7 +76,7 @@ reg_out *reg_out_create(char *name){
             bufcreate[768+addr] = 0;
     }
 
-    reg->eep1 = at28c16_create("",bufcreate);
+    reg->eep1 = at28c16_create(ec, "",bufcreate);
 
     for (i = 0; i < 4; i++){
 
@@ -128,14 +130,14 @@ reg_out *reg_out_create(char *name){
     else
         reg->name[0] = 0;
 
-    reg->clk = clkgen_create("",20000);
+    reg->clk = clkgen_create(ec, "",20000);
     bitconst_connect_zero(reg->clk, (void*)&clkgen_in_halt);
 
     reg->ledclki = indicator_create("");
 
     clkgen_connect_out(reg->clk, reg->ledclki, (void*)&indicator_in_d0);
 
-    reg->ls76 = ls76_create();
+    reg->ls76 = ls76_create(ec);
     reg->led76_0 = indicator_create("");
     reg->led76_1 = indicator_create("");
     bitconst_connect_one(reg->ls76,(void*)&ls76_in_1j);
@@ -152,7 +154,7 @@ reg_out *reg_out_create(char *name){
 
     clkgen_connect_out(reg->clk, reg->ls76, (void*)&ls76_in_1clk);
 
-    reg->ls139 = ls139_create("");
+    reg->ls139 = ls139_create(ec);
     bitconst_connect_zero(reg->ls139,(void*)&ls139_in_1g);
     ls76_connect_1q(reg->ls76, reg->ls139, (void*)&ls139_in_1a);
     ls76_connect_2q(reg->ls76, reg->ls139, (void*)&ls139_in_1b);
@@ -160,13 +162,12 @@ reg_out *reg_out_create(char *name){
     ls76_connect_1q(reg->ls76, reg->eep1, (void*)&at28c16_in_a8);
     ls76_connect_2q(reg->ls76, reg->eep1, (void*)&at28c16_in_a9);
 
-
     ls139_connect_1y0(reg->ls139,reg->display[3], (void*)&dis7seg_in_common);
     ls139_connect_1y1(reg->ls139,reg->display[2], (void*)&dis7seg_in_common);
     ls139_connect_1y2(reg->ls139,reg->display[1], (void*)&dis7seg_in_common);
     ls139_connect_1y3(reg->ls139,reg->display[0], (void*)&dis7seg_in_common);
 
-    reg->sw_signed = bitswitch_create("Un/Sg");
+    reg->sw_signed = bitswitch_create(ec, "Un/Sg");
 
     bitswitch_connect_out(reg->sw_signed, reg->eep1, (void*)&at28c16_in_a10);
 

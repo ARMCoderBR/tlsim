@@ -35,7 +35,7 @@ static void ls02_up(ls02 *a, int timestamp, int index){
         e.event_handler_root = a->out_event_handler_root[index];
         e.valueptr = &a->value[index];
         e.timestamp = timestamp+1;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 }
 
@@ -70,12 +70,14 @@ static void ls02_update_pin_inb(ls02 *a, bitvalue_t *valptr, timevalue_t timesta
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls02 *ls02_create(){
+ls02 *ls02_create(event_context_t *ec){
 
     ls02 *b = malloc(sizeof(ls02));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     int i;
     for (i = 0; i < NUM_ELEM_LS02; i++){

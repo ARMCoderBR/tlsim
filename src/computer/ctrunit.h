@@ -80,9 +80,10 @@ typedef struct {
     at28c16 *eep_hi, *eep_lo;
     ls173 *ls173;
     indicator *ledz, *ledc;
+    event_context_t *ec;
 } ctrunit;
 
-ctrunit *ctrunit_create(char *name);
+ctrunit *ctrunit_create(event_context_t *ec, char *name);
 
 void ctrunit_destroy (ctrunit **dest);
 

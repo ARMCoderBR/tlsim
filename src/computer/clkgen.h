@@ -26,9 +26,10 @@ typedef struct{
     bool_t pause;
     bool_t step;
     char name[30];
+    event_context_t *ec;
 } clkgen;
 
-clkgen *clkgen_create(char *name, int period_us);
+clkgen *clkgen_create(event_context_t *ec, char *name, int period_us);
 
 void clkgen_destroy (clkgen **dest);
 

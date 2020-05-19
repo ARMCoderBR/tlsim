@@ -16,55 +16,52 @@
 
 #include "update.h"
 
-//#define EVQUEUELEN 2000
-
-//event evqueue[EVQUEUELEN];
-//int evinq = 0;
-//int evins = 0;
-//int evget = 0;
-
-void event_insert(event *e);
-
-event *event_list = NULL;
-event *event_last = NULL;
-int scanning_timestamp = 0;
-int max_timestamp = 0;
-
 ////////////////////////////////////////////////////////////////////////////////
-void event_flush(){
+void event_init(event_context_t *ec){
 
-    if (max_timestamp || event_list)
-        logger("== event_flush() max_timestamp:%d",max_timestamp);
-
-    while (event_list){
-
-        event_last = event_list;
-        event_list = event_list->next;
-        free(event_last);
-    }
-
-    event_last = NULL;
-    scanning_timestamp = 0;
-    max_timestamp = 0;
+    ec->event_list = NULL;
+    ec->event_last = NULL;
+    ec->scanning_timestamp = 0;
+    ec->max_timestamp = 0;
+    ec->logfile = NULL;
+    ec->logging = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-bool_t event_process(){
+void event_flush(event_context_t *ec){
+
+    if (ec->max_timestamp || ec->event_list)
+        logger(ec, "== event_flush() max_timestamp:%d",ec->max_timestamp);
+
+    while (ec->event_list){
+
+        ec->event_last = ec->event_list;
+        ec->event_list = ec->event_list->next;
+        free(ec->event_last);
+    }
+
+    ec->event_last = NULL;
+    ec->scanning_timestamp = 0;
+    ec->max_timestamp = 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+bool_t event_process(event_context_t *ec){
 
 #ifdef DEBUG
     printf("event_process BEGIN evins:%d evget:%d\n",evins,evget);
 #endif
 
-    if (!event_list) return 0;
+    if (!ec->event_list) return 0;
 
-    while (scanning_timestamp <= max_timestamp){
+    while (ec->scanning_timestamp <= ec->max_timestamp){
 
-        event * eventptr = event_list;
+        event * eventptr = ec->event_list;
         bool_t found = 0;
 
         while (eventptr){
 
-            if ((eventptr->timestamp == scanning_timestamp) && (!eventptr->done)){
+            if ((eventptr->timestamp == ec->scanning_timestamp) && (!eventptr->done)){
 
                 found = 1;
                 eventptr->done = 1;
@@ -76,7 +73,7 @@ bool_t event_process(){
                 int seq=0;
                 while (ehandlerptr != NULL){
 
-                    logger("### run(%d) valueptr:%p *valueptr:%d TS:%d",seq++,eventptr->valueptr,*eventptr->valueptr,eventptr->timestamp);
+                    logger(ec, "### run(%d) valueptr:%p *valueptr:%d TS:%d",seq++,eventptr->valueptr,*eventptr->valueptr,eventptr->timestamp);
                     ehandlerptr->objdest_event_handler(ehandlerptr->objdest,eventptr->valueptr,eventptr->timestamp);
                     ehandlerptr = ehandlerptr->next;
                 }
@@ -86,10 +83,10 @@ bool_t event_process(){
         }
 
         if (!found)
-            scanning_timestamp++;
+            ec->scanning_timestamp++;
     }
 
-    event_flush();
+    event_flush(ec);
 
 #ifdef DEBUG
     printf("event_process END\n");
@@ -99,7 +96,7 @@ bool_t event_process(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void event_insert(event *e){
+void event_insert(event_context_t *ec, event *e){
 
 #ifdef DEBUG
     printf("event_insert BEGIN\n");
@@ -112,28 +109,26 @@ void event_insert(event *e){
         exit(-1);
     }
 
-    logger("\n+++ event_insert valptr:%p *valptr:%d timestamp:%d", e->valueptr, *e->valueptr, e->timestamp);
+    logger(ec, "\n+++ event_insert valptr:%p *valptr:%d timestamp:%d", e->valueptr, *e->valueptr, e->timestamp);
 
     memcpy(newev,e,sizeof(event));
     newev->done = 0;
     newev->next = NULL;
 
-    if (!event_list){
+    if (!ec->event_list){
 
-        event_list = newev;
-        scanning_timestamp = max_timestamp = 0;
+        ec->event_list = newev;
+        ec->scanning_timestamp = ec->max_timestamp = 0;
     }else
-        event_last->next = newev;
+        ec->event_last->next = newev;
 
-    if (newev->timestamp > max_timestamp)
-        max_timestamp = newev->timestamp;
+    if (newev->timestamp > ec->max_timestamp)
+        ec->max_timestamp = newev->timestamp;
 
-    event_last = newev;
-
-    //event_process();
+    ec->event_last = newev;
 
 #ifdef DEBUG
-    printf("event_insert END evins:%d evget:%d\n",evins,evget);
+    printf("event_insert END\n");
 #endif
 }
 
@@ -229,24 +224,20 @@ bitvalue_t update_val_multi(vallist **rootptr, bitvalue_t *valptr){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-FILE *logfile = NULL;
+void logger_init(event_context_t *ec){
 
-bool_t logging = 0;
+    if (!ec->logging) return;
 
-void logger_init(){
-
-    if (!logging) return;
-
-    logfile = fopen ("out.log","w");
-    logger("=============================");
-    logger("======= SESSION START =======");
-    logger("=============================");
+    ec->logfile = fopen ("out.log","w");
+    logger(ec, "=============================");
+    logger(ec, "======= SESSION START =======");
+    logger(ec, "=============================");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void logger(const char *fmt, ...) {
+void logger(event_context_t *ec, const char *fmt, ...) {
 
-    if (!logging) return;
+    if (!ec->logging) return;
 
     char buftxt[301];
 
@@ -254,16 +245,16 @@ void logger(const char *fmt, ...) {
     va_start(args, fmt);
     vsnprintf(buftxt, 300, fmt, args);
     va_end(args);
-    fprintf(logfile,"%s\n",buftxt);
-    fflush(logfile);
+    fprintf(ec->logfile,"%s\n",buftxt);
+    fflush(ec->logfile);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void logger_end(){
+void logger_end(event_context_t *ec){
 
-    if (!logging) return;
+    if (!ec->logging) return;
 
-    if (logfile) fclose(logfile);
+    if (ec->logfile) fclose(ec->logfile);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -52,7 +52,7 @@ end_ls245:
             a->outa_o[i] = a->outa[i];
             e.event_handler_root = a->outq_event_handler_root[i];
             e.valueptr = &a->outa[i];
-            event_insert(&e);
+            event_insert(a->ec, &e);
         }
 
         if (a->outb_o[i] != a->outb[i]){
@@ -60,7 +60,7 @@ end_ls245:
             a->outb_o[i] = a->outb[i];
             e.event_handler_root = a->outq_event_handler_root[NUM_ELEM_LS245+i];
             e.valueptr = &a->outb[i];
-            event_insert(&e);
+            event_insert(a->ec, &e);
         }
     }
 }
@@ -92,12 +92,14 @@ static void ls245_update_b(ls245 *a, bitvalue_t *valptr, timevalue_t timestamp, 
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls245 *ls245_create(){
+ls245 *ls245_create(event_context_t *ec){
 
     ls245 *b = malloc(sizeof(ls245));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     b->in_dir = b->in_oe = 2;
     b->in_dir_rootptr = b->in_oe_rootptr = NULL;

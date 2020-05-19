@@ -34,9 +34,10 @@ typedef struct {
 	bitvalue_t outq_o[NUM_BITS_28C16];
     ehandler *outq_event_handler_root[NUM_BITS_28C16];
     char name[32];
+    event_context_t *ec;
 } at28c16;
 
-at28c16 *at28c16_create(char *name, unsigned char *template);
+at28c16 *at28c16_create(event_context_t *ec, char *name, unsigned char *template);
 void at28c16_destroy(at28c16 **dest);
 
 void at28c16_connect_o0(at28c16 *source, void *dest, event_function_t dest_event_handler);

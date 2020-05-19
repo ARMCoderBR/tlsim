@@ -75,7 +75,7 @@ void indicator_in_d0(indicator *dest, bitvalue_t *valptr, timevalue_t timestamp)
 
     bitvalue_t val = update_val_multi(&dest->ind0_rootptr, valptr);
 
-    logger("indicator_in_d0 [%s] *valptr:%d val:%d TS:%d", dest->name,*valptr,val,timestamp);
+    ///logger(???->ec, "indicator_in_d0 [%s] *valptr:%d val:%d TS:%d", dest->name,*valptr,val,timestamp);
 
     if (val)
         dest->value |= 1;

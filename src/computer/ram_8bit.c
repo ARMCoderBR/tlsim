@@ -47,14 +47,14 @@ void *difpulse_function(void *args){
         if (o->reqpulse){
 
             board_mutex_lock();
-            event_process();
+            event_process(o->ec);
             board_mutex_unlock();
             o->reqpulse = 0;
             o->valpulse = 0;
             ls00_in_b1(o->ls00_clk, &o->valpulse, 0);
             usleep(100);
             board_mutex_lock();
-            event_process();
+            event_process(o->ec);
             board_mutex_unlock();
         }
     }
@@ -74,10 +74,12 @@ void ram_8bit_reqpulse(ram_8bit *dest){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ram_8bit *ram_8bit_create(char *name){
+ram_8bit *ram_8bit_create(event_context_t *ec, char *name){
 
     ram_8bit *ram = malloc (sizeof(ram_8bit));
     if (!ram) return ram;
+
+    ram->ec = ec;
 
     char lshi[60];
     char lslo[60];
@@ -92,11 +94,11 @@ ram_8bit *ram_8bit_create(char *name){
     strncat(lshi,"-hiWord",sizeof(lshi)/2);
     strncat(lslo,"-loWord",sizeof(lslo)/2);
 
-    ram->ls189_hi = ls189_create(lshi);
-    ram->ls189_lo = ls189_create(lslo);
-    ram->ls245_1  = ls245_create();
-    ram->ls04_hi = ls04_create();
-    ram->ls04_lo = ls04_create();
+    ram->ls189_hi = ls189_create(ec, lshi);
+    ram->ls189_lo = ls189_create(ec, lslo);
+    ram->ls245_1  = ls245_create(ec);
+    ram->ls04_hi = ls04_create(ec);
+    ram->ls04_lo = ls04_create(ec);
 
     int i;
     for (i = 0; i < 8; i++){
@@ -144,12 +146,12 @@ ram_8bit *ram_8bit_create(char *name){
 
     /////////////////////////
 
-    ram->ls157_addr = ls157_create();
-    ram->ls173_addreg = ls173_create("ADDREG");
-    ram->ls157_datalo = ls157_create();
-    ram->ls157_datahi = ls157_create();
-    ram->ls157_write = ls157_create();
-    ram->ls00_clk = ls00_create();
+    ram->ls157_addr = ls157_create(ec);
+    ram->ls173_addreg = ls173_create(ec, "ADDREG");
+    ram->ls157_datalo = ls157_create(ec);
+    ram->ls157_datahi = ls157_create(ec);
+    ram->ls157_write = ls157_create(ec);
+    ram->ls00_clk = ls00_create(ec);
 
     ls00_connect_y1(ram->ls00_clk, ram->ls157_write, (void*)&ls157_in_b1);
 
@@ -157,20 +159,20 @@ ram_8bit *ram_8bit_create(char *name){
     ram->ledaddr[1] = indicator_create("A1");
     ram->ledaddr[2] = indicator_create("A2");
     ram->ledaddr[3] = indicator_create("A3");
-    ram->prog_run = bitswitch_create("ProgRun");
-    ram->progaddr[0] = bitswitch_create("RA0");
-    ram->progaddr[1] = bitswitch_create("RA1");
-    ram->progaddr[2] = bitswitch_create("RA2");
-    ram->progaddr[3] = bitswitch_create("RA3");
-    ram->progdata[0] = bitswitch_create("RD0");
-    ram->progdata[1] = bitswitch_create("RD1");
-    ram->progdata[2] = bitswitch_create("RD2");
-    ram->progdata[3] = bitswitch_create("RD3");
-    ram->progdata[4] = bitswitch_create("RD4");
-    ram->progdata[5] = bitswitch_create("RD5");
-    ram->progdata[6] = bitswitch_create("RD6");
-    ram->progdata[7] = bitswitch_create("RD7");
-    ram->progwrite = bitswitch_create("PRW");
+    ram->prog_run = bitswitch_create(ec, "ProgRun");
+    ram->progaddr[0] = bitswitch_create(ec, "RA0");
+    ram->progaddr[1] = bitswitch_create(ec, "RA1");
+    ram->progaddr[2] = bitswitch_create(ec, "RA2");
+    ram->progaddr[3] = bitswitch_create(ec, "RA3");
+    ram->progdata[0] = bitswitch_create(ec, "RD0");
+    ram->progdata[1] = bitswitch_create(ec, "RD1");
+    ram->progdata[2] = bitswitch_create(ec, "RD2");
+    ram->progdata[3] = bitswitch_create(ec, "RD3");
+    ram->progdata[4] = bitswitch_create(ec, "RD4");
+    ram->progdata[5] = bitswitch_create(ec, "RD5");
+    ram->progdata[6] = bitswitch_create(ec, "RD6");
+    ram->progdata[7] = bitswitch_create(ec, "RD7");
+    ram->progwrite = bitswitch_create(ec, "PRW");
 
     bitswitch_setval(ram->progwrite, 1);
 

@@ -32,9 +32,10 @@ typedef struct {
     char name[30];
     ls08 *ls08;
     ls02 *ls02;
+    event_context_t *ec;
 } alu_8bit;
 
-alu_8bit *alu_8bit_create(char *name);
+alu_8bit *alu_8bit_create(event_context_t *ec, char *name);
 
 void alu_8bit_destroy (alu_8bit **dest);
 

@@ -17,10 +17,12 @@
 #include "bitconst.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-alu_8bit *alu_8bit_create(char *name){
+alu_8bit *alu_8bit_create(event_context_t *ec, char *name){
 
     alu_8bit *alu = malloc (sizeof(alu_8bit));
     if (!alu) return alu;
+
+    alu->ec = ec;
 
     char lshi[60];
     char lslo[60];
@@ -35,11 +37,11 @@ alu_8bit *alu_8bit_create(char *name){
     strncat(lshi,"-hiWord",sizeof(lshi)/2);
     strncat(lslo,"-loWord",sizeof(lslo)/2);
 
-    alu->ls86_hi = ls86_create(lshi);
-    alu->ls86_lo = ls86_create(lslo);
-    alu->ls283_hi = ls283_create(lshi);
-    alu->ls283_lo = ls283_create(lslo);
-    alu->ls245_1  = ls245_create();
+    alu->ls86_hi = ls86_create(ec);
+    alu->ls86_lo = ls86_create(ec);
+    alu->ls283_hi = ls283_create(ec, lshi);
+    alu->ls283_lo = ls283_create(ec, lslo);
+    alu->ls245_1  = ls245_create(ec);
 
     int i;
     for (i = 0; i < 8; i++){
@@ -89,8 +91,8 @@ alu_8bit *alu_8bit_create(char *name){
     else
         alu->name[0] = 0;
 
-    alu->ls02 = ls02_create();
-    alu->ls08 = ls08_create();
+    alu->ls02 = ls02_create(ec);
+    alu->ls08 = ls08_create(ec);
 
     ls283_connect_y1(alu->ls283_lo, alu->ls02, (void*)&ls02_in_a1);
     ls283_connect_y2(alu->ls283_lo, alu->ls02, (void*)&ls02_in_b1);

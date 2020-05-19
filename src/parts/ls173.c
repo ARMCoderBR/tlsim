@@ -62,7 +62,7 @@ ls173_end:
             a->outq_o[i] = a->outq[i];
             e.event_handler_root = a->outq_event_handler_root[i];
             e.valueptr = &a->outq[i];
-            event_insert(&e);
+            event_insert(a->ec, &e);
         }
     }
 }
@@ -76,7 +76,7 @@ static void ls173_update_d(ls173 *a, bitvalue_t *valptr, timevalue_t timestamp, 
 
     if (a->inpd[index] == val) return;
 
-    logger("ls173_update_d%d [%s] *valptr:%d val:%d TS:%d",index,a->name,*valptr,val,timestamp);
+    logger(a->ec, "ls173_update_d%d [%s] *valptr:%d val:%d TS:%d",index,a->name,*valptr,val,timestamp);
 
     a->inpd[index] = val;
 }
@@ -86,12 +86,14 @@ static void ls173_update_d(ls173 *a, bitvalue_t *valptr, timevalue_t timestamp, 
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls173 *ls173_create(char *name){
+ls173 *ls173_create(event_context_t *ec, char *name){
 
     ls173 *b = malloc(sizeof(ls173));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     int i;
 
@@ -208,7 +210,7 @@ void ls173_in_clk(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->clk == val) return;
 
-    logger("ls173_in_clk [%s] valptr:%p *valptr:%d val:%d TS:%d",dest->name,valptr,*valptr,val,timestamp);
+    logger(dest->ec, "ls173_in_clk [%s] valptr:%p *valptr:%d val:%d TS:%d",dest->name,valptr,*valptr,val,timestamp);
 
     dest->clk = val;
     ls173_update(dest, timestamp);
@@ -223,7 +225,7 @@ void ls173_in_clr(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->in_clr == val) return;
 
-    logger("ls173_in_clr [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger(dest->ec, "ls173_in_clr [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_clr = val;
     ls173_update(dest, timestamp);
@@ -238,7 +240,7 @@ void ls173_in_m(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->in_m == val) return;
 
-    logger("ls173_in_m [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger(dest->ec, "ls173_in_m [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_m = val;
     ls173_update(dest, timestamp);
@@ -253,7 +255,7 @@ void ls173_in_n(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->in_n == val) return;
 
-    logger("ls173_in_n [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger(dest->ec, "ls173_in_n [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_n = val;
     ls173_update(dest, timestamp);
@@ -268,7 +270,7 @@ void ls173_in_g1(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->in_g1 == val) return;
 
-    logger("ls173_in_g1 [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger(dest->ec, "ls173_in_g1 [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_g1 = val;
     ls173_update(dest, timestamp);
@@ -283,7 +285,7 @@ void ls173_in_g2(ls173 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->in_g2 == val) return;
 
-    logger("ls173_in_g2 [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger(dest->ec, "ls173_in_g2 [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_g2 = val;
     ls173_update(dest, timestamp);

@@ -34,7 +34,7 @@ static void ls283_up(ls283 *a, timevalue_t timestamp){
         mask <<= 1;
     }
 
-    logger("ls283 suma:%d sumb:%d",suma,sumb);
+    logger(a->ec, "ls283 suma:%d sumb:%d",suma,sumb);
 
     suma += sumb;
 
@@ -57,7 +57,7 @@ static void ls283_up(ls283 *a, timevalue_t timestamp){
             e.event_handler_root = a->y_event_handler_root[i];
             e.valueptr = &a->y[i];
             e.timestamp = timestamp+1;
-            event_insert(&e);
+            event_insert(a->ec, &e);
         }
 
         mask <<= 1;
@@ -75,7 +75,7 @@ static void ls283_up(ls283 *a, timevalue_t timestamp){
         e.event_handler_root = a->cout_event_handler_root;
         e.valueptr = &a->cout;
         e.timestamp = timestamp+1;
-        event_insert(&e);
+        event_insert(a->ec, &e);
     }
 }
 
@@ -88,7 +88,7 @@ static void ls283_update_pin_ina(ls283 *a, bitvalue_t *valptr, timevalue_t times
 
     if (val == a->ina[index]) return;
 
-    logger("ls283_update_pin_ina%d [%s] *valptr:%d val:%d TS:%d",index, a->name,*valptr,val,timestamp);
+    logger(a->ec, "ls283_update_pin_ina%d [%s] *valptr:%d val:%d TS:%d",index, a->name,*valptr,val,timestamp);
 
     a->ina[index] = val;
     ls283_up(a, timestamp);
@@ -103,7 +103,7 @@ static void ls283_update_pin_inb(ls283 *a, bitvalue_t *valptr, timevalue_t times
 
     if (val == a->inb[index]) return;
 
-    logger("ls283_update_pin_inb%d [%s] *valptr:%d val:%d TS:%d",index, a->name,*valptr,val,timestamp);
+    logger(a->ec, "ls283_update_pin_inb%d [%s] *valptr:%d val:%d TS:%d",index, a->name,*valptr,val,timestamp);
 
     a->inb[index] = val;
     ls283_up(a, timestamp);
@@ -118,7 +118,7 @@ static void ls283_update_pin_cin(ls283 *a, bitvalue_t *valptr, timevalue_t times
 
     if (val == a->cin) return;
 
-    logger("ls283_update_pin_cin [%s] *valptr:%d val:%d TS:%d",a->name,*valptr,val,timestamp);
+    logger(a->ec, "ls283_update_pin_cin [%s] *valptr:%d val:%d TS:%d",a->name,*valptr,val,timestamp);
 
     a->cin = val;
     ls283_up(a, timestamp);
@@ -129,12 +129,14 @@ static void ls283_update_pin_cin(ls283 *a, bitvalue_t *valptr, timevalue_t times
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls283 *ls283_create(char *name){
+ls283 *ls283_create(event_context_t *ec, char *name){
 
     ls283 *b = malloc(sizeof(ls283));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     int i;
 

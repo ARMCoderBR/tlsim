@@ -1008,7 +1008,7 @@ int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-int board_run(board_object *board){
+int board_run(event_context_t *ec, board_object *board){
 
     bool_t resize = 0;
 
@@ -1075,7 +1075,7 @@ int board_run(board_object *board){
     while (!stoprun){
 
         board_mutex_lock();
-        while (event_process());
+        while (event_process(ec));
         board_mutex_unlock();
 
 //        if (clocked){

@@ -17,10 +17,12 @@
 #include "bitconst.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-reg_8bit *reg_8bit_create(reg8bit_type_t type, char *name){
+reg_8bit *reg_8bit_create(event_context_t *ec, reg8bit_type_t type, char *name){
 
     reg_8bit *reg = malloc (sizeof(reg_8bit));
     if (!reg) return reg;
+
+    reg->ec = ec;
 
     char lshi[60];
     char lslo[60];
@@ -35,9 +37,9 @@ reg_8bit *reg_8bit_create(reg8bit_type_t type, char *name){
     strncat(lshi,"-hiWord",sizeof(lshi)/2);
     strncat(lslo,"-loWord",sizeof(lslo)/2);
 
-    reg->ls173_hi = ls173_create(lshi);
-    reg->ls173_lo = ls173_create(lslo);
-    reg->ls245_1  = ls245_create();
+    reg->ls173_hi = ls173_create(ec, lshi);
+    reg->ls173_lo = ls173_create(ec, lslo);
+    reg->ls245_1  = ls245_create(ec);
     reg->ledclk = indicator_create("Clk");
 
     reg->type = type;

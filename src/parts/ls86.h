@@ -24,9 +24,10 @@ typedef struct {
     bitvalue_t oldvalue[NUM_ELEM_LS86];
     bitvalue_t value[NUM_ELEM_LS86];
     ehandler *out_event_handler_root[NUM_ELEM_LS86];
+    event_context_t *ec;
 } ls86;
 
-ls86 *ls86_create();
+ls86 *ls86_create(event_context_t *ec);
 
 void ls86_destroy (ls86 **dest);
 

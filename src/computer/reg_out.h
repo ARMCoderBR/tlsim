@@ -37,10 +37,10 @@ typedef struct {
     ls139* ls139;
     bitswitch *sw_signed;
     char name[30];
-
+    event_context_t *ec;
 } reg_out;
 
-reg_out *reg_out_create(char *name);
+reg_out *reg_out_create(event_context_t *ec, char *name);
 
 void reg_out_destroy (reg_out **dest);
 

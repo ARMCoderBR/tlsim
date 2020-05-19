@@ -35,9 +35,10 @@ typedef struct {
     ehandler *y1_event_handler_root[NUM_ELEM_LS139];
     ehandler *y2_event_handler_root[NUM_ELEM_LS139];
     ehandler *y3_event_handler_root[NUM_ELEM_LS139];
+    event_context_t *ec;
 } ls139;
 
-ls139 *ls139_create();
+ls139 *ls139_create(event_context_t *ec);
 
 void ls139_destroy(ls139 **dest);
 

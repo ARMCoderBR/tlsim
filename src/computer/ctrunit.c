@@ -138,15 +138,17 @@ void microcode_initialize_buf(uint8_t *buf){    //Beware: buffer must have at le
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-ctrunit *ctrunit_create(char *name){
+ctrunit *ctrunit_create(event_context_t *ec, char *name){
 
     ctrunit *ctru = malloc (sizeof(ctrunit));
     if (!ctru) return ctru;
 
-    ctru->ls00 = ls00_create();
-    ctru->ls04_1 = ls04_create();
-    ctru->ls04_2 = ls04_create();
-    ctru->reset_sw = bitswitch_create("Reset");
+    ctru->ec = ec;
+
+    ctru->ls00 = ls00_create(ec);
+    ctru->ls04_1 = ls04_create(ec);
+    ctru->ls04_2 = ls04_create(ec);
+    ctru->reset_sw = bitswitch_create(ec, "Reset");
 
     bitswitch_connect_out(ctru->reset_sw, ctru->ls00, (void*)&ls00_in_a1);
     bitswitch_connect_out(ctru->reset_sw, ctru->ls00, (void*)&ls00_in_b1);
@@ -161,7 +163,7 @@ ctrunit *ctrunit_create(char *name){
     }
 
     //// LS161
-    ctru->ls161 = ls161_create();
+    ctru->ls161 = ls161_create(ec);
     ctru->ct[0] = indicator_create("C0");
     ctru->ct[1] = indicator_create("C1");
     ctru->ct[2] = indicator_create("C2");
@@ -175,7 +177,7 @@ ctrunit *ctrunit_create(char *name){
     ls00_connect_y1(ctru->ls00, ctru->ls161, (void*)&ls161_in_clear);
 
     //// LS138
-    ctru->ls138 = ls138_create();
+    ctru->ls138 = ls138_create(ec);
     ctru->t[0]  = indicator_create("T0");
     ctru->t[1]  = indicator_create("T1");
     ctru->t[2]  = indicator_create("T2");
@@ -202,8 +204,8 @@ ctrunit *ctrunit_create(char *name){
 
     uint8_t buf[2048];
     microcode_initialize_buf(buf);
-    ctru->eep_hi = at28c16_create("UC-HI",buf);
-    ctru->eep_lo = at28c16_create("UC-LO",buf);
+    ctru->eep_hi = at28c16_create(ec, "UC-HI",buf);
+    ctru->eep_lo = at28c16_create(ec, "UC-LO",buf);
 
     ls161_connect_qa(ctru->ls161, ctru->eep_hi, (void*)&at28c16_in_a0);
     ls161_connect_qb(ctru->ls161, ctru->eep_hi, (void*)&at28c16_in_a1);
@@ -244,7 +246,7 @@ ctrunit *ctrunit_create(char *name){
     at28c16_connect_o0(ctru->eep_lo, ctru, (void*)&ctrunit_in_fi);
 
     //// LS173 (Flags)
-    ctru->ls173 = ls173_create("");
+    ctru->ls173 = ls173_create(ec, "");
     ctru->ledz = indicator_create("ZF");
     ctru->ledc = indicator_create("CF");
 
@@ -347,7 +349,7 @@ void ctrunit_in(ctrunit *dest, int index, bitvalue_t *valptr, timevalue_t timest
     e.event_handler_root = dest->out_event_handler_root[index];
     e.valueptr = &dest->val[index];
     e.timestamp = timestamp+1;
-    event_insert(&e);
+    event_insert(dest->ec, &e);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

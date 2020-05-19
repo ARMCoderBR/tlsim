@@ -56,13 +56,13 @@ void *clkgen_thread(void *args){
         e.event_handler_root = s->out_event_handler_root;
         e.valueptr = &s->value;
         e.timestamp = 0;
-        event_insert(&e);
+        event_insert(s->ec, &e);
 
         s->valuen = s->value ^1;
         e.event_handler_root = s->outn_event_handler_root;
         e.valueptr = &s->valuen;
         e.timestamp = 0;
-        event_insert(&e);
+        event_insert(s->ec, &e);
         board_mutex_unlock();
 
         if (!s->pause)
@@ -77,12 +77,14 @@ void *clkgen_thread(void *args){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-clkgen *clkgen_create(char *name, int period_us){
+clkgen *clkgen_create(event_context_t *ec, char *name, int period_us){
 
     clkgen *b = malloc(sizeof(clkgen));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     b->halt = 2;
     b->halt_rootptr = NULL;

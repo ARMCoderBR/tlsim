@@ -29,9 +29,10 @@ typedef struct {
     ehandler *qd_event_handler_root;
     ehandler *maxmin_event_handler_root;
     ehandler *ripclk_event_handler_root;
+    event_context_t *ec;
 } ls191;
 
-ls191 *ls191_create();
+ls191 *ls191_create(event_context_t *ec);
 
 void ls191_destroy (ls191 **dest);
 

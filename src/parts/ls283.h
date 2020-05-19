@@ -24,9 +24,10 @@ typedef struct {
     ehandler *y_event_handler_root[LS283_NBITS];
     ehandler *cout_event_handler_root;
     char name[30];
+    event_context_t *ec;
 } ls283;
 
-ls283 *ls283_create(char *name);
+ls283 *ls283_create(event_context_t *ec, char *name);
 
 void ls283_destroy(ls283 **dest);
 

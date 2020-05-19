@@ -58,7 +58,7 @@ ls189_end:
             a->outq_o[i] = a->outq[i];
             e.event_handler_root = a->outq_event_handler_root[i];
             e.valueptr = &a->outq[i];
-            event_insert(&e);
+            event_insert(a->ec, &e);
         }
     }
 }
@@ -72,7 +72,7 @@ static void ls189_update_d(ls189 *a, bitvalue_t *valptr, timevalue_t timestamp, 
 
     if (a->inpd[index] == val) return;
 
-    logger("ls189_update_d%d [%s] *valptr:%d val:%d TS:%d",index,a->name,*valptr,val,timestamp);
+    logger(a->ec, "ls189_update_d%d [%s] *valptr:%d val:%d TS:%d",index,a->name,*valptr,val,timestamp);
 
     a->inpd[index] = val;
 
@@ -88,7 +88,7 @@ static void ls189_update_addr(ls189 *a, bitvalue_t *valptr, timevalue_t timestam
 
     if (a->in_addr[index] == val) return;
 
-    logger("ls189_update_addr%d [%s] *valptr:%d val:%d TS:%d",index,a->name,*valptr,val,timestamp);
+    logger(a->ec, "ls189_update_addr%d [%s] *valptr:%d val:%d TS:%d",index,a->name,*valptr,val,timestamp);
 
     a->in_addr[index] = val;
 
@@ -102,12 +102,14 @@ static void ls189_update_addr(ls189 *a, bitvalue_t *valptr, timevalue_t timestam
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-ls189 *ls189_create(char *name){
+ls189 *ls189_create(event_context_t *ec, char *name){
 
     ls189 *b = malloc(sizeof(ls189));
 
     if (b == NULL)
         return NULL;
+
+    b->ec = ec;
 
     int i;
 
@@ -250,7 +252,7 @@ void ls189_in_we(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->in_we == val) return;
 
-    logger("ls189_in_we [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger(dest->ec, "ls189_in_we [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_we = val;
     ls189_update(dest, timestamp);
@@ -265,7 +267,7 @@ void ls189_in_cs(ls189 *dest, bitvalue_t *valptr, timevalue_t timestamp){
 
     if (dest->in_cs == val) return;
 
-    logger("ls189_in_cs [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
+    logger(dest->ec, "ls189_in_cs [%s] *valptr:%d val:%d TS:%d",dest->name,*valptr,val,timestamp);
 
     dest->in_cs = val;
     ls189_update(dest, timestamp);

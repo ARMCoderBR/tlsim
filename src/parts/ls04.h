@@ -22,9 +22,10 @@ typedef struct {
     bitvalue_t oldvalue[NUM_ELEM_LS04];
     bitvalue_t value[NUM_ELEM_LS04];
     ehandler *out_event_handler_root[NUM_ELEM_LS04];
+    event_context_t *ec;
 } ls04;
 
-ls04 *ls04_create();
+ls04 *ls04_create(event_context_t *ec);
 
 void ls04_destroy (ls04 **dest);
 

@@ -30,9 +30,10 @@ typedef struct {
     bitvalue_t in_oe;
     vallist *in_oe_rootptr;
     ehandler *outq_event_handler_root[2*NUM_ELEM_LS245];
+    event_context_t *ec;
 } ls245;
 
-ls245 *ls245_create();
+ls245 *ls245_create(event_context_t *ec);
 
 void ls245_destroy(ls245 **dest);
 

@@ -17,10 +17,12 @@
 #include "bitconst.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-progctr *progctr_create(char *name){
+progctr *progctr_create(event_context_t *ec, char *name){
 
     progctr *reg = malloc (sizeof(progctr));
     if (!reg) return reg;
+
+    reg->ec = ec;
 
     char lshi[60];
     char lslo[60];
@@ -33,8 +35,8 @@ progctr *progctr_create(char *name){
 
     strncat(lshi,"-Word",sizeof(lshi)/2);
 
-    reg->ls161 = ls161_create(lshi);
-    reg->ls245_1  = ls245_create();
+    reg->ls161 = ls161_create(ec);
+    reg->ls245_1  = ls245_create(ec);
     reg->ledclk = indicator_create("Clk");
 
     int i;
