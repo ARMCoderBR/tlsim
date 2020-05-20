@@ -408,16 +408,16 @@ void board_set_refresh(){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void rectangle(int y1, int x1, int y2, int x2)
+void rectangle(WINDOW *wnd, int y1, int x1, int y2, int x2)
 {
-    mvwhline(janela1, y1, x1, 0, x2-x1);
-    mvwhline(janela1, y2, x1, 0, x2-x1);
-    mvwvline(janela1, y1, x1, 0, y2-y1);
-    mvwvline(janela1, y1, x2, 0, y2-y1);
-    mvwaddch(janela1, y1, x1, ACS_ULCORNER);
-    mvwaddch(janela1, y2, x1, ACS_LLCORNER);
-    mvwaddch(janela1, y1, x2, ACS_URCORNER);
-    mvwaddch(janela1, y2, x2, ACS_LRCORNER);
+    mvwhline(wnd, y1, x1, 0, x2-x1);
+    mvwhline(wnd, y2, x1, 0, x2-x1);
+    mvwvline(wnd, y1, x1, 0, y2-y1);
+    mvwvline(wnd, y1, x2, 0, y2-y1);
+    mvwaddch(wnd, y1, x1, ACS_ULCORNER);
+    mvwaddch(wnd, y2, x1, ACS_LLCORNER);
+    mvwaddch(wnd, y1, x2, ACS_URCORNER);
+    mvwaddch(wnd, y2, x2, ACS_LRCORNER);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -435,7 +435,7 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
     if (b->type != BOARD) return;   // Erro interno - nunca deve acontecer.
 
     wattrset(janela1,A_NORMAL);
-    rectangle(new_h, new_w, new_h+b->w_height-1, new_w+b->w_width-1);
+    rectangle(janela1, new_h, new_w, new_h+b->w_height-1, new_w+b->w_width-1);
 
     if (b->name[0]){
 
@@ -644,7 +644,7 @@ int iclk = 0;
 
 #define NCLKS 10
 
-int CLKS_PERIOD_US[NCLKS] = {
+const int CLKS_PERIOD_US[NCLKS] = {
                              2000000,    //2s
                              1000000,    //1s
                              500000,     //500ms
@@ -823,7 +823,6 @@ void board_destroy_a(board_object *dest){
 
         board_object *tofree = bo;
         bo = bo->objptr_next;
-        //printf("freeing TYPE:%p %s\n",tofree,stypes[tofree->type]);
         free(tofree);
     }
     b->objptr_root = NULL;
@@ -832,11 +831,7 @@ void board_destroy_a(board_object *dest){
 ////////////////////////////////////////////////////////////////////////////////
 void board_destroy(board_object **dest){
 
-	//printf("============================================\n");
-	//printf("============================================\n");
-
 	board_destroy_a(*dest);
-    //printf("freeing board:%p\n",*dest);
     free(*dest);
     *dest = NULL;
 }
@@ -864,10 +859,6 @@ int board_add_object(board_object *b, board_object *newobject){
         b = b->objptr_next;
 
     b->objptr_next = newobject;
-
-//    if (newobject->type == BOARD)
-//    if (b->board_on_focus == b)
-//        b->board_on_focus = newobject;
 
     newobject->objptr_next = NULL;  // Dupla garantia.
 
@@ -1045,7 +1036,6 @@ int board_run(event_context_t *ec, board_object *board){
     init_pair(10, COLOR_WHITE, 8|COLOR_BLACK);
 
     janela0 = newwin(TERM_LINES,TERM_COLS,0,0);
-    //janela1 = newwin(TERM_LINES-1-LINHAS_JANELA2B,TERM_COLS-2,1,1);
     janela1 = newwin(TERM_LINES-LINHAS_JANELA2B,TERM_COLS,0,0);
     janela2 = newwin(LINHAS_JANELA2B,TERM_COLS,TERM_LINES-LINHAS_JANELA2B,0);
     janela3 = newwin(LINHAS_JANELA2,TERM_COLS-2,1+TERM_LINES-LINHAS_JANELA2B,1);
@@ -1056,19 +1046,15 @@ int board_run(event_context_t *ec, board_object *board){
     if (!board->w_height)
         board->w_height = TERM_LINES-LINHAS_JANELA2B;
 
-    //printf("4\n");
     desenha_janelas();
 
     clock_reinit();
-
-    //printf("5\n");
 
     keypad(janela1,TRUE);
 
     bool_t stoprun = 0;
 
     pthread_create(&refthread, NULL, refresh_thread, board);
-//    pthread_create(&clkthread, NULL, clock_thread, NULL);
 
     board_set_refresh();
 
@@ -1077,12 +1063,6 @@ int board_run(event_context_t *ec, board_object *board){
         board_mutex_lock();
         while (event_process(ec));
         board_mutex_unlock();
-
-//        if (clocked){
-//
-//            clocked = 0;
-//            board_set_refresh();
-//        }
 
         if (resize){
 
