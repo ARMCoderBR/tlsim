@@ -46,16 +46,16 @@ void *difpulse_function(void *args){
 
         if (o->reqpulse){
 
-            board_mutex_lock();
+            pthread_mutex_lock(&o->ec->event_mutex);
             event_process(o->ec);
-            board_mutex_unlock();
+            pthread_mutex_unlock(&o->ec->event_mutex);
             o->reqpulse = 0;
             o->valpulse = 0;
             ls00_in_b1(o->ls00_clk, &o->valpulse, 0);
             usleep(100);
-            board_mutex_lock();
+            pthread_mutex_lock(&o->ec->event_mutex);
             event_process(o->ec);
-            board_mutex_unlock();
+            pthread_mutex_unlock(&o->ec->event_mutex);
         }
     }
 

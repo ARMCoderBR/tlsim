@@ -40,22 +40,10 @@ WINDOW *janela1;
 WINDOW *janela2;
 WINDOW *janela3;
 
-pthread_mutex_t transitionmutex = PTHREAD_MUTEX_INITIALIZER;
-
 pthread_mutex_t setrefmutex = PTHREAD_MUTEX_INITIALIZER;
 bool_t reader_ok = 0;
 
 pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
-
-void board_mutex_lock(){
-
-    pthread_mutex_lock(&transitionmutex);
-}
-
-void board_mutex_unlock(){
-
-    pthread_mutex_unlock(&transitionmutex);
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 void combine_7seg(int segmap, int C[]){
@@ -1060,9 +1048,9 @@ int board_run(event_context_t *ec, board_object *board){
 
     while (!stoprun){
 
-        board_mutex_lock();
+        pthread_mutex_lock(&ec->event_mutex);
         while (event_process(ec));
-        board_mutex_unlock();
+        pthread_mutex_unlock(&ec->event_mutex);
 
         if (resize){
 
@@ -1150,10 +1138,10 @@ int board_run(event_context_t *ec, board_object *board){
 
                     if (p->key == key){
 
-                        board_mutex_lock();
                         bitswitch *bs = p->objptr;
+                        pthread_mutex_lock(&bs->ec->event_mutex);
                         bitswitch_setval(bs, 1 ^ bs->value);
-                        board_mutex_unlock();
+                        pthread_mutex_unlock(&bs->ec->event_mutex);
 
                         board_set_refresh();
                     }
@@ -1164,8 +1152,6 @@ int board_run(event_context_t *ec, board_object *board){
     }
 
     refresh_thread_stop();
-
-    pthread_mutex_destroy(&transitionmutex);
 
     pthread_mutex_destroy(&setrefmutex);
 

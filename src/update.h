@@ -12,6 +12,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <pthread.h>
 
 typedef uint8_t bitvalue_t;
 typedef uint8_t bool_t;
@@ -56,6 +57,7 @@ typedef struct {
     int max_timestamp;
     FILE *logfile;
     bool_t logging;
+    pthread_mutex_t event_mutex;
 } event_context_t;
 
 void event_init(event_context_t *ec);

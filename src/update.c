@@ -25,6 +25,7 @@ void event_init(event_context_t *ec){
     ec->max_timestamp = 0;
     ec->logfile = NULL;
     ec->logging = 0;
+    pthread_mutex_init(&ec->event_mutex,NULL);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
