@@ -262,7 +262,7 @@ void combine_7seg(int segmap, int C[]){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void display_7seg(int segmap, int common, int pos_w, int pos_h){
+void display_7seg(WINDOW *wnd, int segmap, int common, int pos_w, int pos_h){
 
 /*
        A
@@ -281,33 +281,33 @@ void display_7seg(int segmap, int common, int pos_w, int pos_h){
 
     combine_7seg(segmap, C);
 
-    wattron(janela1,COLOR_PAIR(LED_RED));
+    wattron(wnd,COLOR_PAIR(LED_RED));
 
-    wmove(janela1, pos_h, pos_w);
+    wmove(wnd, pos_h, pos_w);
     //waddch(janela1,' ');
-    waddch(janela1,C[0]);
-    waddch(janela1,C[1]);
-    waddch(janela1,C[1]);
-    waddch(janela1,C[2]);
-    waddch(janela1,' ');
+    waddch(wnd,C[0]);
+    waddch(wnd,C[1]);
+    waddch(wnd,C[1]);
+    waddch(wnd,C[2]);
+    waddch(wnd,' ');
 
-    wmove(janela1, pos_h+1, pos_w);
+    wmove(wnd, pos_h+1, pos_w);
     //waddch(janela1,' ');
-    waddch(janela1,C[3]);
-    waddch(janela1,C[4]);
-    waddch(janela1,C[4]);
-    waddch(janela1,C[5]);
-    waddch(janela1,' ');
+    waddch(wnd,C[3]);
+    waddch(wnd,C[4]);
+    waddch(wnd,C[4]);
+    waddch(wnd,C[5]);
+    waddch(wnd,' ');
 
-    wmove(janela1, pos_h+2, pos_w);
+    wmove(wnd, pos_h+2, pos_w);
     //waddch(janela1,' ');
-    waddch(janela1,C[6]);
-    waddch(janela1,C[7]);
-    waddch(janela1,C[7]);
-    waddch(janela1,C[8]);
-    waddch(janela1,C[9]);
+    waddch(wnd,C[6]);
+    waddch(wnd,C[7]);
+    waddch(wnd,C[7]);
+    waddch(wnd,C[8]);
+    waddch(wnd,C[9]);
 
-    wattroff(janela1,COLOR_PAIR(LED_WHITE));
+    wattroff(wnd,COLOR_PAIR(LED_WHITE));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -489,7 +489,7 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
         case DIS7SEG:
             {
                 dis7seg *dis = b->objptr;
-                display_7seg(dis->segmap, dis->common_val|(dis->count_persist?1:0), new_w + b->pos_w, new_h + b->pos_h);
+                display_7seg(janela1, dis->segmap, dis->common_val|(dis->count_persist?1:0), new_w + b->pos_w, new_h + b->pos_h);
             }
             break;
 
