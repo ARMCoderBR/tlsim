@@ -64,6 +64,8 @@ void event_init(event_context_t *ec);
 
 void event_insert(event_context_t *ec, event *e);
 
+void event_mutex_lock(event_context_t *ec);
+void event_mutex_unlock(event_context_t *ec);
 bool_t event_process(event_context_t *ec);
 
 void new_ehandler(ehandler **ehptr, void *objdest, event_function_t objdest_event_handler);

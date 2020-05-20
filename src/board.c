@@ -1048,9 +1048,9 @@ int board_run(event_context_t *ec, board_object *board){
 
     while (!stoprun){
 
-        pthread_mutex_lock(&ec->event_mutex);
+        event_mutex_lock(ec);
         while (event_process(ec));
-        pthread_mutex_unlock(&ec->event_mutex);
+        event_mutex_unlock(ec);
 
         if (resize){
 
@@ -1139,9 +1139,9 @@ int board_run(event_context_t *ec, board_object *board){
                     if (p->key == key){
 
                         bitswitch *bs = p->objptr;
-                        pthread_mutex_lock(&bs->ec->event_mutex);
+                        event_mutex_lock(bs->ec);
                         bitswitch_setval(bs, 1 ^ bs->value);
-                        pthread_mutex_unlock(&bs->ec->event_mutex);
+                        event_mutex_unlock(bs->ec);
 
                         board_set_refresh();
                     }

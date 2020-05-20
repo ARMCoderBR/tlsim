@@ -52,7 +52,7 @@ void *clkgen_thread(void *args){
             }
         }
 
-        pthread_mutex_lock(&s->ec->event_mutex);
+        event_mutex_lock(s->ec);
         e.event_handler_root = s->out_event_handler_root;
         e.valueptr = &s->value;
         e.timestamp = 0;
@@ -63,7 +63,7 @@ void *clkgen_thread(void *args){
         e.valueptr = &s->valuen;
         e.timestamp = 0;
         event_insert(s->ec, &e);
-        pthread_mutex_unlock(&s->ec->event_mutex);
+        event_mutex_unlock(s->ec);
 
         if (!s->pause)
             usleep(s->period_us >> 1);
