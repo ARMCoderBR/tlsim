@@ -7,8 +7,8 @@
 // SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 ////////////////////////////////////////////////////////////////////////////////
 
-    Version 1.0.5
-    May 15, 2020
+    Version 1.0.6
+    May 19, 2020
 
     INTRO
     ~~~~~
@@ -170,3 +170,6 @@ hinted within brackets.
     
     - Change in the style of the switches
     
+    V1.0.6 - May 16, 2020:
+    
+    - Small code improvements - no changes in program operation
