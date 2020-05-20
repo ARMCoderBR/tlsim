@@ -27,14 +27,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 void computer_sim(){
 
+    board_initialize();
+
     char name[64];
 
     sprintf(name,"BEN EATER'S COMPUTER SIM BY ARMCODER V%d.%d.%d",SW_VERSION, SW_REVISION, SW_MINOR);
     board_object *mainboard = board_create(0,0,0,name);
 
     printf("Init(1)\n");
-
-    board_initialize();
 
     printf("Init(2)\n");
 

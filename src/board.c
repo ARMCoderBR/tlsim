@@ -62,7 +62,7 @@ board_ctx_t *board_init(){
     return bctx;
 }
 
-board_ctx_t *bctx;
+board_ctx_t *ctx;
 
 ////////////////////////////////////////////////////////////////////////////////
 void combine_7seg(int segmap, int C[]){
@@ -385,7 +385,7 @@ void sigterm_handler(int sig){
 
 void board_set_clk(clkgen *clk){
 
-    bctx->boardclk = clk;
+    ctx->boardclk = clk;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -988,14 +988,14 @@ int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h){
 
 void board_initialize(){
 
-    bctx = board_init();
+    ctx = board_init();
 }
 
 int board_run(event_context_t *ec, board_object *board){
 
     bool_t resize = 0;
 
-    bctx->board = board;
+    ctx->board = board;
 
     if (!board) return -2;
 
@@ -1016,8 +1016,8 @@ int board_run(event_context_t *ec, board_object *board){
 
     cbreak(); noecho();            /* Inicia o NCURSES */
     ESCDELAY=200;
-    bctx->TERM_LINES = LINES;
-    bctx->TERM_COLS = COLS;
+    ctx->TERM_LINES = LINES;
+    ctx->TERM_COLS = COLS;
 
     start_color();
     init_pair(1, 8|COLOR_RED, 16|COLOR_BLACK);
@@ -1029,28 +1029,28 @@ int board_run(event_context_t *ec, board_object *board){
 
     init_pair(10, COLOR_WHITE, 8|COLOR_BLACK);
 
-    bctx->janela0 = newwin(bctx->TERM_LINES,bctx->TERM_COLS,0,0);
-    bctx->janela1 = newwin(bctx->TERM_LINES-LINHAS_JANELA2B,bctx->TERM_COLS,0,0);
-    bctx->janela2 = newwin(LINHAS_JANELA2B,bctx->TERM_COLS,bctx->TERM_LINES-LINHAS_JANELA2B,0);
-    bctx->janela3 = newwin(LINHAS_JANELA2,bctx->TERM_COLS-2,1+bctx->TERM_LINES-LINHAS_JANELA2B,1);
+    ctx->janela0 = newwin(ctx->TERM_LINES,ctx->TERM_COLS,0,0);
+    ctx->janela1 = newwin(ctx->TERM_LINES-LINHAS_JANELA2B,ctx->TERM_COLS,0,0);
+    ctx->janela2 = newwin(LINHAS_JANELA2B,ctx->TERM_COLS,ctx->TERM_LINES-LINHAS_JANELA2B,0);
+    ctx->janela3 = newwin(LINHAS_JANELA2,ctx->TERM_COLS-2,1+ctx->TERM_LINES-LINHAS_JANELA2B,1);
 
     if (!board->w_width)
-        board->w_width = bctx->TERM_COLS;
+        board->w_width = ctx->TERM_COLS;
 
     if (!board->w_height)
-        board->w_height = bctx->TERM_LINES-LINHAS_JANELA2B;
+        board->w_height = ctx->TERM_LINES-LINHAS_JANELA2B;
 
-    desenha_janelas(bctx);
+    desenha_janelas(ctx);
 
-    clock_reinit(bctx);
+    clock_reinit(ctx);
 
-    keypad(bctx->janela1,TRUE);
+    keypad(ctx->janela1,TRUE);
 
     bool_t stoprun = 0;
 
-    pthread_create(&bctx->refthread, NULL, refresh_thread, bctx);
+    pthread_create(&ctx->refthread, NULL, refresh_thread, ctx);
 
-    board_set_refresh(bctx);
+    board_set_refresh(ctx);
 
     while (!stoprun){
 
@@ -1060,32 +1060,32 @@ int board_run(event_context_t *ec, board_object *board){
 
         if (resize){
 
-            pthread_mutex_lock(&bctx->ncursesmutex);
+            pthread_mutex_lock(&ctx->ncursesmutex);
 
-            getmaxyx(stdscr, bctx->TERM_LINES, bctx->TERM_COLS);
+            getmaxyx(stdscr, ctx->TERM_LINES, ctx->TERM_COLS);
 
-            wresize(bctx->janela0,bctx->TERM_LINES,bctx->TERM_COLS);
-            wresize(bctx->janela1,bctx->TERM_LINES-LINHAS_JANELA2B,bctx->TERM_COLS);
-            wresize(bctx->janela2,LINHAS_JANELA2B,bctx->TERM_COLS);
-            mvwin(bctx->janela2,bctx->TERM_LINES-LINHAS_JANELA2B,0);
-            wresize(bctx->janela3,LINHAS_JANELA2,bctx->TERM_COLS-2);
-            mvwin(bctx->janela3,1+bctx->TERM_LINES-LINHAS_JANELA2B,1);
+            wresize(ctx->janela0,ctx->TERM_LINES,ctx->TERM_COLS);
+            wresize(ctx->janela1,ctx->TERM_LINES-LINHAS_JANELA2B,ctx->TERM_COLS);
+            wresize(ctx->janela2,LINHAS_JANELA2B,ctx->TERM_COLS);
+            mvwin(ctx->janela2,ctx->TERM_LINES-LINHAS_JANELA2B,0);
+            wresize(ctx->janela3,LINHAS_JANELA2,ctx->TERM_COLS-2);
+            mvwin(ctx->janela3,1+ctx->TERM_LINES-LINHAS_JANELA2B,1);
 
-            board->w_width = bctx->TERM_COLS;
-            board->w_height = bctx->TERM_LINES-LINHAS_JANELA2B;
-            desenha_janelas(bctx);
+            board->w_width = ctx->TERM_COLS;
+            board->w_height = ctx->TERM_LINES-LINHAS_JANELA2B;
+            desenha_janelas(ctx);
             resize = 0;
 
-            pthread_mutex_unlock(&bctx->ncursesmutex);
-            board_set_refresh(bctx);
-            clock_redraw(bctx);
+            pthread_mutex_unlock(&ctx->ncursesmutex);
+            board_set_refresh(ctx);
+            clock_redraw(ctx);
         }
 
-        restart_handlers(bctx);
+        restart_handlers(ctx);
 
-        if (received_key(bctx)){
+        if (received_key(ctx)){
 
-            int key = read_key(bctx);
+            int key = read_key(ctx);
 
             switch(key){
 
@@ -1094,42 +1094,42 @@ int board_run(event_context_t *ec, board_object *board){
                 break;
             case 27:
                 stoprun = 1;
-                board_set_refresh(bctx);
+                board_set_refresh(ctx);
                 break;
             case KEY_F(2):
-                if (bctx->num_focuseable_boards > 1){
-                    if (bctx->current_board_on_focus)
-                        bctx->current_board_on_focus--;
+                if (ctx->num_focuseable_boards > 1){
+                    if (ctx->current_board_on_focus)
+                        ctx->current_board_on_focus--;
                     else
-                        bctx->current_board_on_focus = bctx->num_focuseable_boards - 1;
-                    board_set_refresh(bctx);
+                        ctx->current_board_on_focus = ctx->num_focuseable_boards - 1;
+                    board_set_refresh(ctx);
                 }
                 break;
             case KEY_F(3):
-                if (bctx->num_focuseable_boards > 1){
+                if (ctx->num_focuseable_boards > 1){
 
-                    bctx->current_board_on_focus = (bctx->current_board_on_focus+1) % bctx->num_focuseable_boards;
-                    board_set_refresh(bctx);
+                    ctx->current_board_on_focus = (ctx->current_board_on_focus+1) % ctx->num_focuseable_boards;
+                    board_set_refresh(ctx);
                 }
                 break;
             case KEY_F(12):
-                clock_faster(bctx);
-                board_set_refresh(bctx);
+                clock_faster(ctx);
+                board_set_refresh(ctx);
                 break;
             case KEY_F(11):
-                clock_slower(bctx);
-                board_set_refresh(bctx);
+                clock_slower(ctx);
+                board_set_refresh(ctx);
                 break;
             case KEY_F(10):
-                clock_pause(bctx);
-                board_set_refresh(bctx);
+                clock_pause(ctx);
+                board_set_refresh(ctx);
                 break;
             }
 
             board_object *pboardfocused = NULL;
 
-            if (bctx->num_focuseable_boards)
-                pboardfocused = bctx->board_on_focus[bctx->current_board_on_focus];
+            if (ctx->num_focuseable_boards)
+                pboardfocused = ctx->board_on_focus[ctx->current_board_on_focus];
 
             board_object *p;
 
@@ -1149,7 +1149,7 @@ int board_run(event_context_t *ec, board_object *board){
                         bitswitch_setval(bs, 1 ^ bs->value);
                         event_mutex_unlock(bs->ec);
 
-                        board_set_refresh(bctx);
+                        board_set_refresh(ctx);
                     }
                 }
                 p = p->objptr_next;
@@ -1157,9 +1157,9 @@ int board_run(event_context_t *ec, board_object *board){
         }
     }
 
-    refresh_thread_stop(bctx);
+    refresh_thread_stop(ctx);
 
-    pthread_mutex_destroy(&bctx->setrefmutex);
+    pthread_mutex_destroy(&ctx->setrefmutex);
 
     endwin();
 
