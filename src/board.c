@@ -22,6 +22,7 @@
 #include "bitswitch.h"
 #include "update.h"
 #include "dis7seg.h"
+#include "clkgen.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,19 +32,37 @@
 #define LINHAS_JANELA2 3
 #define LINHAS_JANELA2B (LINHAS_JANELA2+2)
 
-int TERM_LINES = 0;
-int TERM_COLS = 0;
-fd_set readfds;
+////////////////////////////////////////////////////////////////////////////////
+board_ctx_t *board_init(){
 
-WINDOW *janela0;
-WINDOW *janela1;
-WINDOW *janela2;
-WINDOW *janela3;
+    board_ctx_t *bctx = malloc(sizeof(board_ctx_t));
 
-pthread_mutex_t setrefmutex = PTHREAD_MUTEX_INITIALIZER;
-bool_t reader_ok = 0;
+    if (!bctx) return NULL;
 
-pthread_mutex_t ncursesmutex = PTHREAD_MUTEX_INITIALIZER;
+    memset(bctx, 0, sizeof(board_ctx_t));
+
+    bctx->TERM_LINES = 0;
+    bctx->TERM_COLS = 0;
+
+    pthread_mutex_init(&bctx->setrefmutex, NULL);
+    bctx->reader_ok = 0;
+
+    pthread_mutex_init(&bctx->ncursesmutex, NULL);
+
+    bctx->boardclk = NULL;
+    bctx->refresh_run = 0;
+
+    bctx->focustable_done = 0;
+    bctx->num_focuseable_boards = 0;
+    bctx->current_board_on_focus = 0;
+
+    bctx->clock_pausing = 0;
+    bctx->iclk = 0;
+
+    return bctx;
+}
+
+board_ctx_t *bctx;
 
 ////////////////////////////////////////////////////////////////////////////////
 void combine_7seg(int segmap, int C[]){
@@ -299,56 +318,56 @@ void display_7seg(WINDOW *wnd, int segmap, int common, int pos_w, int pos_h){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void desenha_janelas(void)
+void desenha_janelas(board_ctx_t *bctx)
 {
-    wbkgd(janela0,COLOR_PAIR(10));
-    wbkgd(janela1,COLOR_PAIR(10));
-    wbkgd(janela2,COLOR_PAIR(10));
-    wbkgd(janela3,COLOR_PAIR(10));
+    wbkgd(bctx->janela0,COLOR_PAIR(10));
+    wbkgd(bctx->janela1,COLOR_PAIR(10));
+    wbkgd(bctx->janela2,COLOR_PAIR(10));
+    wbkgd(bctx->janela3,COLOR_PAIR(10));
 
     /*box(janela0, 0 , 0);  */      /* 0, 0 gives default characters
                                  * for the vertical and horizontal
                                  * lines            */
-    wrefresh(janela0);
+    wrefresh(bctx->janela0);
 
-    wclear(janela1);
-    wrefresh(janela1);
+    wclear(bctx->janela1);
+    wrefresh(bctx->janela1);
 
-    box(janela2, 0 , 0);        /* 0, 0 gives default characters
+    box(bctx->janela2, 0 , 0);        /* 0, 0 gives default characters
                                  * for the vertical and horizontal
                                  * lines            */
-    wmove(janela1, TERM_LINES-LINHAS_JANELA2B-2, 1);
-    waddstr(janela1,"F2,F3: Change focused Panel     https://github.com/ARMCoderBR/tlsim");
+    wmove(bctx->janela1, bctx->TERM_LINES-LINHAS_JANELA2B-2, 1);
+    waddstr(bctx->janela1,"F2,F3: Change focused Panel     https://github.com/ARMCoderBR/tlsim");
 
-    wrefresh(janela2);
+    wrefresh(bctx->janela2);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void restart_handlers(void)
+void restart_handlers(board_ctx_t *bctx)
 {
     struct timeval tv;
 
-    FD_ZERO (&readfds);
-    FD_SET(0,&readfds);
+    FD_ZERO (&bctx->readfds);
+    FD_SET(0,&bctx->readfds);
 
     tv.tv_sec = 0;
     tv.tv_usec = 100;    // 100 us
 
-    select (1,&readfds,NULL,NULL,&tv);
+    select (1,&bctx->readfds,NULL,NULL,&tv);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int received_key(void)
+int received_key(board_ctx_t *bctx)
 {
-    return (FD_ISSET(0,&readfds));
+    return (FD_ISSET(0,&bctx->readfds));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-int read_key(void)
+int read_key(board_ctx_t *bctx)
 {
-    pthread_mutex_lock(&ncursesmutex);
-    int key = wgetch(janela1);
-    pthread_mutex_unlock(&ncursesmutex);
+    pthread_mutex_lock(&bctx->ncursesmutex);
+    int key = wgetch(bctx->janela1);
+    pthread_mutex_unlock(&bctx->ncursesmutex);
     return key;
 }
 
@@ -364,13 +383,9 @@ void sigterm_handler(int sig){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "clkgen.h"
-
-clkgen *boardclk = NULL;
-
 void board_set_clk(clkgen *clk){
 
-    boardclk = clk;
+    bctx->boardclk = clk;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -378,21 +393,17 @@ void board_set_clk(clkgen *clk){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-pthread_t refthread;
-bool_t refresh_run = 0;
-int piperefresh[2];
-
 ////////////////////////////////////////////////////////////////////////////////
-void board_set_refresh(){
+void board_set_refresh(board_ctx_t *bctx){
 
-    if (!reader_ok) return;
+    if (!bctx->reader_ok) return;
 
-    pthread_mutex_lock(&setrefmutex);
+    pthread_mutex_lock(&bctx->setrefmutex);
 
     char buf[] = "1";
-    write(piperefresh[1],buf,1);
+    write(bctx->piperefresh[1],buf,1);
 
-    pthread_mutex_unlock(&setrefmutex);
+    pthread_mutex_unlock(&bctx->setrefmutex);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -409,28 +420,19 @@ void rectangle(WINDOW *wnd, int y1, int x1, int y2, int x2)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-#define MAX_FOCUSEABLES_BOARDS 50
-
-bool_t focustable_done = 0;
-int num_focuseable_boards = 0;
-int current_board_on_focus = 0;
-board_object *board_on_focus[MAX_FOCUSEABLES_BOARDS];
-
-////////////////////////////////////////////////////////////////////////////////
-void board_refresh_a(board_object *b, int new_h, int new_w){
+void board_refresh_a(board_ctx_t *bctx, board_object *b, int new_h, int new_w){
 
     if (b->type != BOARD) return;   // Erro interno - nunca deve acontecer.
 
-    wattrset(janela1,A_NORMAL);
-    rectangle(janela1, new_h, new_w, new_h+b->w_height-1, new_w+b->w_width-1);
+    wattrset(bctx->janela1,A_NORMAL);
+    rectangle(bctx->janela1, new_h, new_w, new_h+b->w_height-1, new_w+b->w_width-1);
 
     if (b->name[0]){
 
-        wmove(janela1, new_h, 1 + new_w);
-        waddch(janela1,'[');
-        waddstr(janela1,b->name);
-        waddch(janela1,']');
+        wmove(bctx->janela1, new_h, 1 + new_w);
+        waddch(bctx->janela1,'[');
+        waddstr(bctx->janela1,b->name);
+        waddch(bctx->janela1,']');
     }
 
     int has_key = 0;
@@ -440,7 +442,7 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 
     while (b){
 
-        wmove(janela1, new_h + b->pos_h, new_w + b->pos_w);
+        wmove(bctx->janela1, new_h + b->pos_h, new_w + b->pos_w);
 
         switch (b->type){
 
@@ -448,14 +450,14 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
             {
                 bitswitch* bs = b->objptr;
                 if (bs->value){
-                    wattron(janela1,COLOR_PAIR(6));
-                    waddstr(janela1,"[ "); waddch(janela1,ACS_DIAMOND); waddstr(janela1,"1]");
-                    wattroff(janela1,COLOR_PAIR(6));
+                    wattron(bctx->janela1,COLOR_PAIR(6));
+                    waddstr(bctx->janela1,"[ "); waddch(bctx->janela1,ACS_DIAMOND); waddstr(bctx->janela1,"1]");
+                    wattroff(bctx->janela1,COLOR_PAIR(6));
                 }
                 else{
-                    wattron(janela1,COLOR_PAIR(LED_WHITE));
-                    waddstr(janela1,"["); waddch(janela1,ACS_DIAMOND); waddstr(janela1," 1]");
-                    wattroff(janela1,COLOR_PAIR(LED_WHITE));
+                    wattron(bctx->janela1,COLOR_PAIR(LED_WHITE));
+                    waddstr(bctx->janela1,"["); waddch(bctx->janela1,ACS_DIAMOND); waddstr(bctx->janela1," 1]");
+                    wattroff(bctx->janela1,COLOR_PAIR(LED_WHITE));
                 }
             }
             break;
@@ -463,21 +465,21 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
         case LED:
             {
                 indicator* out = b->objptr;
-                wattron(janela1,COLOR_PAIR(b->color));
+                wattron(bctx->janela1,COLOR_PAIR(b->color));
                 if (out->value){
-                    wattron(janela1,A_STANDOUT);
-                    waddstr(janela1,"[#]");
-                    wattroff(janela1,A_STANDOUT);
+                    wattron(bctx->janela1,A_STANDOUT);
+                    waddstr(bctx->janela1,"[#]");
+                    wattroff(bctx->janela1,A_STANDOUT);
                 }else
-                    waddstr(janela1,"[.]");
-                wattroff(janela1,COLOR_PAIR(b->color));
+                    waddstr(bctx->janela1,"[.]");
+                wattroff(bctx->janela1,COLOR_PAIR(b->color));
             }
             break;
 
         case DIS7SEG:
             {
                 dis7seg *dis = b->objptr;
-                display_7seg(janela1, dis->segmap, dis->common_val|(dis->count_persist?1:0), new_w + b->pos_w, new_h + b->pos_h);
+                display_7seg(bctx->janela1, dis->segmap, dis->common_val|(dis->count_persist?1:0), new_w + b->pos_w, new_h + b->pos_h);
             }
             break;
 
@@ -486,13 +488,13 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
                 indicator* out = b->objptr;
                 char s[10];
                 sprintf(s,"%X",out->value & 0x0F);
-                waddstr(janela1,s);
+                waddstr(bctx->janela1,s);
             }
             break;
 
         case BOARD:
 
-            board_refresh_a(b/*->objptr_root*/,b->pos_h, b->pos_w);
+            board_refresh_a(bctx, b/*->objptr_root*/,b->pos_h, b->pos_w);
             break;
         }
 
@@ -500,22 +502,22 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
 
             if (b->type == MANUAL_SWITCH){
 
-                if (thisboard == board_on_focus[current_board_on_focus]){
+                if (thisboard == bctx->board_on_focus[bctx->current_board_on_focus]){
 
-                    wattrset(janela1,A_STANDOUT);
+                    wattrset(bctx->janela1,A_STANDOUT);
                 }
             }
-            wmove(janela1,1 + new_h + b->pos_h, new_w + b->pos_w);
-            waddstr(janela1,b->name);
-            wattrset(janela1,A_NORMAL);
+            wmove(bctx->janela1,1 + new_h + b->pos_h, new_w + b->pos_w);
+            waddstr(bctx->janela1,b->name);
+            wattrset(bctx->janela1,A_NORMAL);
         }
 
         if (b->type == MANUAL_SWITCH){
 
             has_key = 1;
-            if (thisboard == board_on_focus[current_board_on_focus]){
+            if (thisboard == bctx->board_on_focus[bctx->current_board_on_focus]){
 
-                wattrset(janela1,A_STANDOUT);
+                wattrset(bctx->janela1,A_STANDOUT);
             }
 
             int key = b->key;
@@ -527,66 +529,67 @@ void board_refresh_a(board_object *b, int new_h, int new_w){
             else
                 sprintf(s,"[%c]",key);
 
-            waddstr(janela1,s);
-            wattrset(janela1,A_NORMAL);
+            waddstr(bctx->janela1,s);
+            wattrset(bctx->janela1,A_NORMAL);
         }
 
         b = b->objptr_next;
     }
 
-    if (!focustable_done)
+    if (!bctx->focustable_done)
         if (has_key)
-            if (num_focuseable_boards < MAX_FOCUSEABLES_BOARDS)
-                board_on_focus[num_focuseable_boards++] = thisboard;
+            if (bctx->num_focuseable_boards < MAX_FOCUSEABLES_BOARDS)
+                bctx->board_on_focus[bctx->num_focuseable_boards++] = thisboard;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void board_refresh(board_object *b){
+void board_refresh(board_ctx_t *bctx, board_object *b){
 
-    pthread_mutex_lock(&ncursesmutex);
+    pthread_mutex_lock(&bctx->ncursesmutex);
 
-    board_refresh_a(b,0,0);
+    board_refresh_a(bctx, b,0,0);
 
-    focustable_done = 1;
+    bctx->focustable_done = 1;
 
-    wrefresh(janela1);
-    wrefresh(janela0);
+    wrefresh(bctx->janela1);
+    wrefresh(bctx->janela0);
 
-    pthread_mutex_unlock(&ncursesmutex);
+    pthread_mutex_unlock(&bctx->ncursesmutex);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 void *refresh_thread(void *args){
 
-    board_object * refboard = args;
+    board_ctx_t * bctx = args;
+    board_object * refboard = bctx->board;
 
-    refresh_run = 1;
+    bctx->refresh_run = 1;
     char buf[16];
 
     fd_set rreadfds;
     struct timeval rtv;
 
-    pipe(piperefresh);
+    pipe(bctx->piperefresh);
     bool_t ref_pending = 0;
 
     struct timespec lastspec, nowspec;
     clock_gettime(CLOCK_REALTIME, &lastspec);
 
-    reader_ok = 1;
+    bctx->reader_ok = 1;
 
-    while (refresh_run){
+    while (bctx->refresh_run){
 
         FD_ZERO(&rreadfds);
-        FD_SET(piperefresh[0],&rreadfds);
+        FD_SET(bctx->piperefresh[0],&rreadfds);
 
         rtv.tv_sec = 0;
         rtv.tv_usec = 100000;
 
-        select(1+piperefresh[0],&rreadfds,NULL,NULL,&rtv);
+        select(1+bctx->piperefresh[0],&rreadfds,NULL,NULL,&rtv);
 
-        if (FD_ISSET(piperefresh[0],&rreadfds)){
+        if (FD_ISSET(bctx->piperefresh[0],&rreadfds)){
 
-            read(piperefresh[0], buf, sizeof(buf));
+            read(bctx->piperefresh[0], buf, sizeof(buf));
             ref_pending = 1;
         }
 
@@ -599,7 +602,7 @@ void *refresh_thread(void *args){
 
         if (deltams >= 40){
 
-            board_refresh(refboard);
+            board_refresh(bctx, refboard);
             lastspec = nowspec;
             ref_pending = 0;
         }
@@ -611,24 +614,21 @@ void *refresh_thread(void *args){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void refresh_thread_stop(){
+void refresh_thread_stop(board_ctx_t *bctx){
 
-    refresh_run = 0;
-    pthread_join(refthread,NULL);
+    bctx->refresh_run = 0;
+    pthread_join(bctx->refthread,NULL);
 
-    reader_ok = 0;
+    bctx->reader_ok = 0;
 
-    close(piperefresh[0]);
-    close(piperefresh[1]);
+    close(bctx->piperefresh[0]);
+    close(bctx->piperefresh[1]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-
-bool_t clock_pausing = 0;
-int iclk = 0;
 
 #define NCLKS 10
 
@@ -646,104 +646,103 @@ const int CLKS_PERIOD_US[NCLKS] = {
 };
 
 ////////////////////////////////////////////////////////////////////////////////
-void clock_redraw(){
+void clock_redraw(board_ctx_t *bctx){
 
-    pthread_mutex_lock(&ncursesmutex);
+    pthread_mutex_lock(&bctx->ncursesmutex);
 
     int i;
 
     char s[50] = "Clk:[";
 
     for (i = 0; i < NCLKS; i++)
-        if (i != iclk)
+        if (i != bctx->iclk)
             strcat(s,"-");
         else
             strcat(s,"|");
     strcat(s,"]");
 
-    wmove(janela3,0,1);
-    waddstr(janela3,s);
+    wmove(bctx->janela3,0,1);
+    waddstr(bctx->janela3,s);
 
-    wmove(janela3,1,1);
-    if (!clock_pausing)
-        waddstr(janela3,"RUNNING");
+    wmove(bctx->janela3,1,1);
+    if (!bctx->clock_pausing)
+        waddstr(bctx->janela3,"RUNNING");
     else
-        waddstr(janela3,"PAUSED ");
+        waddstr(bctx->janela3,"PAUSED ");
 
-    wmove(janela3,2,1);
-    waddstr(janela3,"F10:Pause/Pulse F11:Slower F12:Faster");
+    wmove(bctx->janela3,2,1);
+    waddstr(bctx->janela3,"F10:Pause/Pulse F11:Slower F12:Faster");
 
-    wrefresh(janela3);
+    wrefresh(bctx->janela3);
 
-    pthread_mutex_unlock(&ncursesmutex);
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-void clock_reinit(){
-
-    int clock_period_us = CLKS_PERIOD_US[iclk];
-    clkgen_set_us(boardclk, clock_period_us);
-    clock_redraw();
+    pthread_mutex_unlock(&bctx->ncursesmutex);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void clock_faster(){
+void clock_reinit(board_ctx_t *bctx){
 
-    if (clock_pausing){
+    int clock_period_us = CLKS_PERIOD_US[bctx->iclk];
+    clkgen_set_us(bctx->boardclk, clock_period_us);
+    clock_redraw(bctx);
+}
 
-        clock_pausing = 0;
-        clkgen_pause(boardclk, clock_pausing);
-        clock_redraw();
+////////////////////////////////////////////////////////////////////////////////
+void clock_faster(board_ctx_t *bctx){
+
+    if (bctx->clock_pausing){
+
+        bctx->clock_pausing = 0;
+        clkgen_pause(bctx->boardclk, bctx->clock_pausing);
+        clock_redraw(bctx);
         return;
     }
 
-    if (iclk < (NCLKS-1)){
+    if (bctx->iclk < (NCLKS-1)){
 
-        iclk++;
-        int clock_period_us = CLKS_PERIOD_US[iclk];
-        clkgen_set_us(boardclk, clock_period_us);
-        clock_redraw();
+        bctx->iclk++;
+        int clock_period_us = CLKS_PERIOD_US[bctx->iclk];
+        clkgen_set_us(bctx->boardclk, clock_period_us);
+        clock_redraw(bctx);
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void clock_slower(){
+void clock_slower(board_ctx_t *bctx){
 
-    if (clock_pausing){
+    if (bctx->clock_pausing){
 
-        clock_pausing = 0;
-        clkgen_pause(boardclk, clock_pausing);
-        clock_redraw();
+        bctx->clock_pausing = 0;
+        clkgen_pause(bctx->boardclk, bctx->clock_pausing);
+        clock_redraw(bctx);
         return;
     }
 
-    if (iclk > 0){
+    if (bctx->iclk > 0){
 
-        iclk--;
-        int clock_period_us = CLKS_PERIOD_US[iclk];
-        clkgen_set_us(boardclk, clock_period_us);
-        clock_redraw();
+        bctx->iclk--;
+        int clock_period_us = CLKS_PERIOD_US[bctx->iclk];
+        clkgen_set_us(bctx->boardclk, clock_period_us);
+        clock_redraw(bctx);
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-void clock_pause(){
+void clock_pause(board_ctx_t *bctx){
 
-    if (!clock_pausing){
+    if (!bctx->clock_pausing){
 
-        clock_pausing = 1;
-        clkgen_pause(boardclk, clock_pausing);
-        clock_redraw();
+        bctx->clock_pausing = 1;
+        clkgen_pause(bctx->boardclk, bctx->clock_pausing);
+        clock_redraw(bctx);
         return;
     }
     else{
 
-        clkgen_step(boardclk);
+        clkgen_step(bctx->boardclk);
         usleep(10000);
     }
 
-    clock_redraw();
+    clock_redraw(bctx);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -987,9 +986,16 @@ int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
+void board_initialize(){
+
+    bctx = board_init();
+}
+
 int board_run(event_context_t *ec, board_object *board){
 
     bool_t resize = 0;
+
+    bctx->board = board;
 
     if (!board) return -2;
 
@@ -1010,8 +1016,8 @@ int board_run(event_context_t *ec, board_object *board){
 
     cbreak(); noecho();            /* Inicia o NCURSES */
     ESCDELAY=200;
-    TERM_LINES = LINES;
-    TERM_COLS = COLS;
+    bctx->TERM_LINES = LINES;
+    bctx->TERM_COLS = COLS;
 
     start_color();
     init_pair(1, 8|COLOR_RED, 16|COLOR_BLACK);
@@ -1023,28 +1029,28 @@ int board_run(event_context_t *ec, board_object *board){
 
     init_pair(10, COLOR_WHITE, 8|COLOR_BLACK);
 
-    janela0 = newwin(TERM_LINES,TERM_COLS,0,0);
-    janela1 = newwin(TERM_LINES-LINHAS_JANELA2B,TERM_COLS,0,0);
-    janela2 = newwin(LINHAS_JANELA2B,TERM_COLS,TERM_LINES-LINHAS_JANELA2B,0);
-    janela3 = newwin(LINHAS_JANELA2,TERM_COLS-2,1+TERM_LINES-LINHAS_JANELA2B,1);
+    bctx->janela0 = newwin(bctx->TERM_LINES,bctx->TERM_COLS,0,0);
+    bctx->janela1 = newwin(bctx->TERM_LINES-LINHAS_JANELA2B,bctx->TERM_COLS,0,0);
+    bctx->janela2 = newwin(LINHAS_JANELA2B,bctx->TERM_COLS,bctx->TERM_LINES-LINHAS_JANELA2B,0);
+    bctx->janela3 = newwin(LINHAS_JANELA2,bctx->TERM_COLS-2,1+bctx->TERM_LINES-LINHAS_JANELA2B,1);
 
     if (!board->w_width)
-        board->w_width = TERM_COLS;
+        board->w_width = bctx->TERM_COLS;
 
     if (!board->w_height)
-        board->w_height = TERM_LINES-LINHAS_JANELA2B;
+        board->w_height = bctx->TERM_LINES-LINHAS_JANELA2B;
 
-    desenha_janelas();
+    desenha_janelas(bctx);
 
-    clock_reinit();
+    clock_reinit(bctx);
 
-    keypad(janela1,TRUE);
+    keypad(bctx->janela1,TRUE);
 
     bool_t stoprun = 0;
 
-    pthread_create(&refthread, NULL, refresh_thread, board);
+    pthread_create(&bctx->refthread, NULL, refresh_thread, bctx);
 
-    board_set_refresh();
+    board_set_refresh(bctx);
 
     while (!stoprun){
 
@@ -1054,32 +1060,32 @@ int board_run(event_context_t *ec, board_object *board){
 
         if (resize){
 
-            pthread_mutex_lock(&ncursesmutex);
+            pthread_mutex_lock(&bctx->ncursesmutex);
 
-            getmaxyx(stdscr, TERM_LINES, TERM_COLS);
+            getmaxyx(stdscr, bctx->TERM_LINES, bctx->TERM_COLS);
 
-            wresize(janela0,TERM_LINES,TERM_COLS);
-            wresize(janela1,TERM_LINES-LINHAS_JANELA2B,TERM_COLS);
-            wresize(janela2,LINHAS_JANELA2B,TERM_COLS);
-            mvwin(janela2,TERM_LINES-LINHAS_JANELA2B,0);
-            wresize(janela3,LINHAS_JANELA2,TERM_COLS-2);
-            mvwin(janela3,1+TERM_LINES-LINHAS_JANELA2B,1);
+            wresize(bctx->janela0,bctx->TERM_LINES,bctx->TERM_COLS);
+            wresize(bctx->janela1,bctx->TERM_LINES-LINHAS_JANELA2B,bctx->TERM_COLS);
+            wresize(bctx->janela2,LINHAS_JANELA2B,bctx->TERM_COLS);
+            mvwin(bctx->janela2,bctx->TERM_LINES-LINHAS_JANELA2B,0);
+            wresize(bctx->janela3,LINHAS_JANELA2,bctx->TERM_COLS-2);
+            mvwin(bctx->janela3,1+bctx->TERM_LINES-LINHAS_JANELA2B,1);
 
-            board->w_width = TERM_COLS;
-            board->w_height = TERM_LINES-LINHAS_JANELA2B;
-            desenha_janelas();
+            board->w_width = bctx->TERM_COLS;
+            board->w_height = bctx->TERM_LINES-LINHAS_JANELA2B;
+            desenha_janelas(bctx);
             resize = 0;
 
-            pthread_mutex_unlock(&ncursesmutex);
-            board_set_refresh();
-            clock_redraw();
+            pthread_mutex_unlock(&bctx->ncursesmutex);
+            board_set_refresh(bctx);
+            clock_redraw(bctx);
         }
 
-        restart_handlers();
+        restart_handlers(bctx);
 
-        if (received_key()){
+        if (received_key(bctx)){
 
-            int key = read_key();
+            int key = read_key(bctx);
 
             switch(key){
 
@@ -1088,42 +1094,42 @@ int board_run(event_context_t *ec, board_object *board){
                 break;
             case 27:
                 stoprun = 1;
-                board_set_refresh();
+                board_set_refresh(bctx);
                 break;
             case KEY_F(2):
-                if (num_focuseable_boards > 1){
-                    if (current_board_on_focus)
-                        current_board_on_focus--;
+                if (bctx->num_focuseable_boards > 1){
+                    if (bctx->current_board_on_focus)
+                        bctx->current_board_on_focus--;
                     else
-                        current_board_on_focus = num_focuseable_boards - 1;
-                    board_set_refresh();
+                        bctx->current_board_on_focus = bctx->num_focuseable_boards - 1;
+                    board_set_refresh(bctx);
                 }
                 break;
             case KEY_F(3):
-                if (num_focuseable_boards > 1){
+                if (bctx->num_focuseable_boards > 1){
 
-                    current_board_on_focus = (current_board_on_focus+1) % num_focuseable_boards;
-                    board_set_refresh();
+                    bctx->current_board_on_focus = (bctx->current_board_on_focus+1) % bctx->num_focuseable_boards;
+                    board_set_refresh(bctx);
                 }
                 break;
             case KEY_F(12):
-                clock_faster();
-                board_set_refresh();
+                clock_faster(bctx);
+                board_set_refresh(bctx);
                 break;
             case KEY_F(11):
-                clock_slower();
-                board_set_refresh();
+                clock_slower(bctx);
+                board_set_refresh(bctx);
                 break;
             case KEY_F(10):
-                clock_pause();
-                board_set_refresh();
+                clock_pause(bctx);
+                board_set_refresh(bctx);
                 break;
             }
 
             board_object *pboardfocused = NULL;
 
-            if (num_focuseable_boards)
-                pboardfocused = board_on_focus[current_board_on_focus];
+            if (bctx->num_focuseable_boards)
+                pboardfocused = bctx->board_on_focus[bctx->current_board_on_focus];
 
             board_object *p;
 
@@ -1143,7 +1149,7 @@ int board_run(event_context_t *ec, board_object *board){
                         bitswitch_setval(bs, 1 ^ bs->value);
                         event_mutex_unlock(bs->ec);
 
-                        board_set_refresh();
+                        board_set_refresh(bctx);
                     }
                 }
                 p = p->objptr_next;
@@ -1151,9 +1157,9 @@ int board_run(event_context_t *ec, board_object *board){
         }
     }
 
-    refresh_thread_stop();
+    refresh_thread_stop(bctx);
 
-    pthread_mutex_destroy(&setrefmutex);
+    pthread_mutex_destroy(&bctx->setrefmutex);
 
     endwin();
 

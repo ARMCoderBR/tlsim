@@ -8,6 +8,11 @@
 #ifndef BOARD_H_
 #define BOARD_H_
 
+#include <ncurses.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <sys/select.h>
+
 #include "update.h"
 #include "bitswitch.h"
 #include "indicator.h"
@@ -52,6 +57,42 @@ typedef struct {
     void/*board_object*/ *objptr_next;
 } board_object;
 
+#define MAX_FOCUSEABLES_BOARDS 50
+typedef struct {
+
+    int TERM_LINES;
+    int TERM_COLS;
+    fd_set readfds;
+
+    WINDOW *janela0;
+    WINDOW *janela1;
+    WINDOW *janela2;
+    WINDOW *janela3;
+
+    pthread_mutex_t setrefmutex;
+    bool_t reader_ok;
+
+    pthread_mutex_t ncursesmutex;
+
+    clkgen *boardclk;
+    pthread_t refthread;
+    bool_t refresh_run;
+    int piperefresh[2];
+
+    bool_t focustable_done;
+    int num_focuseable_boards;
+    int current_board_on_focus;
+    board_object *board_on_focus[MAX_FOCUSEABLES_BOARDS];
+
+    bool_t clock_pausing;
+    int iclk;
+
+    board_object * board;
+} board_ctx_t;
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
 int board_add_manual_switch(board_object *b, bitswitch *bs, int pos_w, int pow_h, int key, char *name);
 
 int board_add_led(board_object *b, indicator *out, int pos_w, int pos_h, char *name, led_color_t color);
@@ -73,5 +114,7 @@ board_object *mainboard_create(char *name);
 void board_set_clk(clkgen *clk);
 
 void board_set_refresh();
+
+void board_initialize();
 
 #endif /* BOARD_H_ */

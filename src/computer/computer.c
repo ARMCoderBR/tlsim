@@ -32,15 +32,29 @@ void computer_sim(){
     sprintf(name,"BEN EATER'S COMPUTER SIM BY ARMCODER V%d.%d.%d",SW_VERSION, SW_REVISION, SW_MINOR);
     board_object *mainboard = board_create(0,0,0,name);
 
+    printf("Init(1)\n");
+
+    board_initialize();
+
+    printf("Init(2)\n");
+
     event_context_t ec;
 
     event_init(&ec);
 
+    printf("Init(3)\n");
+
     logger_init(&ec);
+
+    printf("Init(4)\n");
 
     clkgen *mainclk = clkgen_create(&ec, "",1000000);
 
+    printf("Init(5)\n");
+
     board_set_clk(mainclk);
+
+    printf("Init(6)\n");
 
     //////// REGS //////////////////////////////////////////////////////////////
 
@@ -54,6 +68,8 @@ void computer_sim(){
         exit(0);
     }
 
+    printf("Init(7)\n");
+
     board_object *regA_board = reg_8bit_board_create(regA, KEY_F(1), "Reg A"); // Requer NCURSES
     board_object *regB_board = reg_8bit_board_create(regB, KEY_F(2), "Reg B"); // Requer NCURSES
     board_object *regIN_board = reg_8bit_board_create(regIN, KEY_F(3), "Reg IN"); // Requer NCURSES
@@ -64,20 +80,27 @@ void computer_sim(){
         exit(0);
     }
 
+    printf("Init(8)\n");
+
     clkgen_connect_out(mainclk, regA, (void*)&reg_8bit_in_clock);
     clkgen_connect_out(mainclk, regB, (void*)&reg_8bit_in_clock);
     clkgen_connect_out(mainclk, regIN, (void*)&reg_8bit_in_clock);
+
+    printf("Init(9)\n");
 
     board_add_board(mainboard,regA_board,1,1);
     board_add_board(mainboard,regB_board,1,9);
     board_add_board(mainboard,regIN_board,1,13);
 
+    printf("Init(10)\n");
 
     //////// ALU ///////////////////////////////////////////////////////////////
 
     alu_8bit *alu = alu_8bit_create(&ec, "ALU");
     board_object *alu_board = alu_8bit_board_create(alu, KEY_F(4), "ALU"); // Requer NCURSES
     board_add_board(mainboard,alu_board,1,5);
+
+    printf("Init(11)\n");
 
     ls173_connect_1q(regA->ls173_lo, alu, alu_8bit_in_dataAN[0]);
     ls173_connect_2q(regA->ls173_lo, alu, alu_8bit_in_dataAN[1]);
@@ -97,6 +120,7 @@ void computer_sim(){
     ls173_connect_3q(regB->ls173_hi, alu, alu_8bit_in_dataBN[6]);
     ls173_connect_4q(regB->ls173_hi, alu, alu_8bit_in_dataBN[7]);
 
+    printf("Init(12)\n");
 
     //////// RAM ///////////////////////////////////////////////////////////////
 
@@ -105,12 +129,16 @@ void computer_sim(){
     board_add_board(mainboard,ram_board,42,1);
     clkgen_connect_out(mainclk, ram, (void*)&ram_8bit_in_clk);
 
+    printf("Init(13)\n");
+
     //////// PROGRAM COUNTER ///////////////////////////////////////////////////
 
     progctr *pctr = progctr_create(&ec, "PC");
     board_object *pctr_board = progctr_board_create(pctr, KEY_F(6), "PC");
     board_add_board(mainboard,pctr_board,67,21);
     clkgen_connect_out(mainclk, pctr, (void*)&progctr_in_clock);
+
+    printf("Init(14)\n");
 
     //////// REG OUT ///////////////////////////////////////////////////////////
 
@@ -119,10 +147,14 @@ void computer_sim(){
     board_add_board(mainboard,regout_board,60,14);
     clkgen_connect_out(mainclk, regout, (void*)&reg_out_in_clock);
 
+    printf("Init(15)\n");
+
     //////// BUS ///////////////////////////////////////////////////////////////
 
     indicator *ledbus[8];
     board_object *bus_board = board_create(40, 4, 0, "BUS");
+
+    printf("Init(16)\n");
 
     int i;
     for (i = 0; i < 8; i++){
@@ -184,8 +216,11 @@ void computer_sim(){
         board_add_led(bus_board,ledbus[i],1+4*j, 1, dname, LED_RED);
     }
 
+    printf("Init(17)\n");
+
     board_add_board(mainboard,bus_board,1,17);
 
+    printf("Init(18)\n");
 
     for (i = 0; i < 4; i++){
 
@@ -203,6 +238,7 @@ void computer_sim(){
         progctr_connect_bit_out (pctr, i, regout, reg_out_in_dataN[i]);
     }
 
+    printf("Init(19)\n");
 
     //////// CONTROL UNIT //////////////////////////////////////////////////////
 
@@ -210,11 +246,17 @@ void computer_sim(){
     board_object *ctru_board = ctrunit_board_create(ctru, '*', "CONTROL UNIT");
     board_add_board(mainboard,ctru_board,1,21);
 
+    printf("Init(20)\n");
+
     board_object *ctru_flags_board = ctrunit_board_flags_create(ctru, '*', "FLAGS");
     board_add_board(mainboard,ctru_flags_board,44,15);
 
+    printf("Init(21)\n");
+
     clkgen_connect_out(mainclk, ctru, (void*)&ctrunit_in_clk);
     clkgen_connect_outn(mainclk, ctru, (void*)&ctrunit_in_clkn);
+
+    printf("Init(22)\n");
 
     alu_8bit_connect_zero_out (alu, ctru, (void*)&ctrunit_in_zero);
     alu_8bit_connect_carry_out (alu, ctru, (void*)&ctrunit_in_carry);
@@ -251,6 +293,8 @@ void computer_sim(){
     ctrunit_connect_out_j(ctru, pctr, (void*)&progctr_in_load);
 
     ////////////////
+
+    printf("Running...\n");
 
     board_run(&ec, mainboard);
 
