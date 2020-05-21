@@ -336,8 +336,11 @@ void desenha_janelas(board_ctx_t *bctx)
     box(bctx->janela2, 0 , 0);        /* 0, 0 gives default characters
                                  * for the vertical and horizontal
                                  * lines            */
-    wmove(bctx->janela1, bctx->TERM_LINES-LINHAS_JANELA2B-2, 1);
-    waddstr(bctx->janela1,"F2,F3: Change focused Panel     https://github.com/ARMCoderBR/tlsim");
+    wmove(bctx->janela1, bctx->TERM_LINES-LINHAS_JANELA2B-2, 2);
+    waddstr(bctx->janela1,"F2,F3:Change focused Panel");
+
+    wmove(bctx->janela1, bctx->TERM_LINES-LINHAS_JANELA2B-2, bctx->TERM_COLS-37);
+    waddstr(bctx->janela1,"https://github.com/ARMCoderBR/tlsim");
 
     wrefresh(bctx->janela2);
 }
@@ -671,7 +674,7 @@ void clock_redraw(board_ctx_t *bctx){
         waddstr(bctx->janela3,"PAUSED ");
 
     wmove(bctx->janela3,2,1);
-    waddstr(bctx->janela3,"F10:Pause/Pulse F11:Slower F12:Faster");
+    waddstr(bctx->janela3,"F10:Pause/Pulse  F11:Slower  F12:Faster");
 
     wrefresh(bctx->janela3);
 

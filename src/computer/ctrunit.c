@@ -397,12 +397,12 @@ board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
 ////////////////////////////////////////////////////////////////////////////////
 board_object *ctrunit_board_flags_create(ctrunit *reg, int key, char *name){
 
-    board_object *board = board_create(12, 5, key, name);
+    board_object *board = board_create(13, 5, key, name);
 
     if (!board) return board;
 
-    board_add_led(board, reg->ledc,2,2,"CF", LED_WHITE);
-    board_add_led(board, reg->ledz,6,2,"ZF", LED_WHITE);
+    board_add_led(board, reg->ledc,3,2,"CF", LED_WHITE);
+    board_add_led(board, reg->ledz,7,2,"ZF", LED_WHITE);
 
     return board;
 }
