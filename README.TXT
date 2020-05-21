@@ -83,27 +83,33 @@ these variants.
     Probably a lot. It's working for me, but this is not a great argument, of
 course.
 
-    The screen layout deserves some redesign. 
+    As of version 1.0.7, I think this project is virtually finished. It can run
+all Ben Eater's test programs perfectly, I almost feel like I've built the 
+actual hardware as shown in the videos!
 
-    This is still a work in progress, I'm in the final stages of completing the
-BEC's original design, that is:
+    So I'm not going to expand it a lot more, except for minor tweaks and fixes.
 
-    * Implement the microcode for the last instructions (HLT, etc)
+    There's a lot that can be improved, however. A few suggestions for the 
+brave:
     
-    * Implement the flags registers
-    
-    * Implement the enhanced microcode for the flags registers
-     
-    * Last UI tweaks
+    - A full graphical UI application that can run on both Windows and Linux 
+would most likely require a port to C++. After some analysis, I think that a 
+proper port to C++ is not as trivial as I first thought, so don't count on me 
+for that.  
 
-    * (Future) - Graphical UI?
+    - A way to load/save the RAM contents from/to disk. This could be done in
+two ways: a "Deus ex machina" way (that "magically" transfers data between the
+RAM and disk files, sort of a cheating), or a more beautiful way where a
+simulated hardware could transfer RAM data from/to a simulated EEPROM (and then
+its contents could be loaded/saved from disk). Maybe I will do it someday...      
+
+    - The James Bates variant (https://www.youtube.com/watch?v=gqYFT6iecHw) and 
+others. I didn't check whether the simulation engine can run the Bates' version
+properly, but I'm almost sure it will do.
 
 
     QUICKSTART
     ~~~~~~~~~~
-
-    This version can already run the first BEC's program, that one that adds two
-numbers (in Ben's example, 14 + 28 = 42).
 
     The EEPROM's microcode is automatically initialized, but the RAM contents 
 must be inserted by the user through the UI.
