@@ -113,8 +113,8 @@ board_object *mainboard_create(char *name);
 
 void board_set_clk(clkgen *clk);
 
-void board_set_refresh();
+void board_set_refresh(void);
 
-void board_initialize();
+void board_initialize(void);
 
 #endif /* BOARD_H_ */
