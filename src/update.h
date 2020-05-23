@@ -58,9 +58,10 @@ typedef struct {
     FILE *logfile;
     bool_t logging;
     pthread_mutex_t event_mutex;
+    void *bctx;
 } event_context_t;
 
-void event_init(event_context_t *ec);
+event_context_t *event_init(void);
 
 void event_insert(event_context_t *ec, event *e);
 
@@ -90,6 +91,6 @@ void part_destroy(void **part);
 
 #define SW_VERSION  1
 #define SW_REVISION 0
-#define SW_MINOR    7
+#define SW_MINOR    8
 
 #endif /* UPDATE_H_ */

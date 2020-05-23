@@ -37,7 +37,7 @@ progctr *progctr_create(event_context_t *ec, char *name){
 
     reg->ls161 = ls161_create(ec);
     reg->ls245_1  = ls245_create(ec);
-    reg->ledclk = indicator_create("Clk");
+    reg->ledclk = indicator_create(ec, "Clk");
 
     int i;
     for (i = 0; i < 4; i++){
@@ -45,7 +45,7 @@ progctr *progctr_create(event_context_t *ec, char *name){
         strncpy(lshi,name,sizeof(lshi));
         sprintf(lslo,"-D%d",i);
         strncat(lshi,lslo,sizeof(lshi)/2);
-        reg->led[i] = indicator_create(lshi);
+        reg->led[i] = indicator_create(ec, lshi);
     }
 
     ls161_connect_qa(reg->ls161, reg->led[0], (void*)&indicator_in_d0);

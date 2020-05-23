@@ -7,8 +7,8 @@
 // SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 ////////////////////////////////////////////////////////////////////////////////
 
-    Version 1.0.7
-    May 21, 2020
+    Version 1.0.8
+    May 23, 2020
 
     INTRO
     ~~~~~
@@ -184,3 +184,10 @@ hinted within brackets.
     
     - Eliminated almost all global variables, in an attempt to make the overall 
       code neater. Minor screen tweaks.
+      
+    V1.0.8 - May 23, 2020:
+    
+    - Last globals eliminated, and now 'gatetest.c' and 'testls191.c' can work
+      (they are older tests not related to Ben's computer simulation). You can
+      play with them by editing 'main.c'.
+

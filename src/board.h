@@ -103,7 +103,7 @@ int board_add_xdigit(board_object *b, indicator *out, int pos_w, int pos_h, char
 
 int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h);
 
-int board_run(event_context_t *ec, board_object *board);
+int board_run(board_ctx_t *ctx, event_context_t *ec, board_object *board);
 
 board_object *board_create(int width, int height, int key, char *name);
 
@@ -111,10 +111,10 @@ void board_destroy(board_object **dest);
 
 board_object *mainboard_create(char *name);
 
-void board_set_clk(clkgen *clk);
+void board_set_clk(board_ctx_t *ctx, clkgen *clk);
 
-void board_set_refresh(void);
+void board_set_refresh(board_ctx_t *ctx);
 
-void board_initialize(void);
+board_ctx_t *board_init(void);
 
 #endif /* BOARD_H_ */

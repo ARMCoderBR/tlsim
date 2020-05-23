@@ -17,8 +17,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 int main (int argc, char *argv[]){
 
-    //do_testls191();
     //gatetest();
+
+    //do_testls191();
 
     computer_sim();
 

@@ -20,9 +20,10 @@ typedef struct  {
     uint8_t value;
     uint8_t oldvalue;
     bool_t refreshable;
+    event_context_t *ec;
 } indicator;
 
-indicator *indicator_create(char *name);
+indicator *indicator_create(event_context_t *ec, char *name);
 
 void indicator_destroy(indicator **dest);
 

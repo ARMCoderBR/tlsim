@@ -62,8 +62,6 @@ board_ctx_t *board_init(void){
     return bctx;
 }
 
-board_ctx_t *ctx = NULL;
-
 ////////////////////////////////////////////////////////////////////////////////
 void combine_7seg(int segmap, int C[]){
 
@@ -386,7 +384,9 @@ void sigterm_handler(int sig){
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-void board_set_clk(clkgen *clk){
+void board_set_clk(board_ctx_t *ctx, clkgen *clk){
+
+    if (!ctx) return;
 
     ctx->boardclk = clk;
 }
@@ -397,7 +397,9 @@ void board_set_clk(clkgen *clk){
 ////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
-void board_set_refresh(void){
+void board_set_refresh(board_ctx_t *ctx){
+
+    if (!ctx) return;
 
     if (!ctx->reader_ok) return;
 
@@ -991,10 +993,10 @@ int board_add_board(board_object *b, board_object *board, int pos_w, int pos_h){
 
 void board_initialize(void){
 
-    ctx = board_init();
+//    ctx = board_init();
 }
 
-int board_run(event_context_t *ec, board_object *board){
+int board_run(board_ctx_t *ctx, event_context_t *ec, board_object *board){
 
     bool_t resize = 0;
 
@@ -1055,7 +1057,7 @@ int board_run(event_context_t *ec, board_object *board){
 
     pthread_create(&ctx->refthread, NULL, refresh_thread, ctx);
 
-    board_set_refresh();
+    board_set_refresh(ctx);
 
     while (!stoprun){
 
@@ -1082,7 +1084,7 @@ int board_run(event_context_t *ec, board_object *board){
             resize = 0;
 
             pthread_mutex_unlock(&ctx->ncursesmutex);
-            board_set_refresh();
+            board_set_refresh(ctx);
             clock_redraw(ctx);
         }
 
@@ -1099,7 +1101,7 @@ int board_run(event_context_t *ec, board_object *board){
                 break;
             case 27:
                 stoprun = 1;
-                board_set_refresh();
+                board_set_refresh(ctx);
                 break;
             case KEY_F(2):
                 if (ctx->num_focuseable_boards > 1){
@@ -1107,27 +1109,27 @@ int board_run(event_context_t *ec, board_object *board){
                         ctx->current_board_on_focus--;
                     else
                         ctx->current_board_on_focus = ctx->num_focuseable_boards - 1;
-                    board_set_refresh();
+                    board_set_refresh(ctx);
                 }
                 break;
             case KEY_F(3):
                 if (ctx->num_focuseable_boards > 1){
 
                     ctx->current_board_on_focus = (ctx->current_board_on_focus+1) % ctx->num_focuseable_boards;
-                    board_set_refresh();
+                    board_set_refresh(ctx);
                 }
                 break;
             case KEY_F(12):
                 clock_faster(ctx);
-                board_set_refresh();
+                board_set_refresh(ctx);
                 break;
             case KEY_F(11):
                 clock_slower(ctx);
-                board_set_refresh();
+                board_set_refresh(ctx);
                 break;
             case KEY_F(10):
                 clock_pause(ctx);
-                board_set_refresh();
+                board_set_refresh(ctx);
                 break;
             }
 
@@ -1154,7 +1156,7 @@ int board_run(event_context_t *ec, board_object *board){
                         bitswitch_setval(bs, 1 ^ bs->value);
                         event_mutex_unlock(bs->ec);
 
-                        board_set_refresh();
+                        board_set_refresh(ctx);
                     }
                 }
                 p = p->objptr_next;

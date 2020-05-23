@@ -17,7 +17,9 @@
 #include "update.h"
 
 ////////////////////////////////////////////////////////////////////////////////
-void event_init(event_context_t *ec){
+event_context_t *event_init(void){
+
+    event_context_t *ec = malloc(sizeof(event_context_t));
 
     ec->event_list = NULL;
     ec->event_last = NULL;
@@ -25,7 +27,10 @@ void event_init(event_context_t *ec){
     ec->max_timestamp = 0;
     ec->logfile = NULL;
     ec->logging = 0;
+    ec->bctx = NULL;
     pthread_mutex_init(&ec->event_mutex,NULL);
+
+    return ec;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

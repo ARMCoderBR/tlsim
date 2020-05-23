@@ -25,8 +25,6 @@ typedef struct {
     indicator *oqb1;
     indicator *oqc1;
     indicator *oqd1;
-    indicator *ohex1;
-
     indicator *omaxmin1;
     indicator *oripclk1;
     indicator *oclk;
@@ -35,31 +33,25 @@ typedef struct {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-testls191 *testls191_create(){
+testls191 *testls191_create(event_context_t *ev){
 
     testls191 *b = malloc(sizeof(testls191));
     if (!b) return b;
 
-    b->ctr1 = ls191_create();
-    b->oqa1 = indicator_create(NULL);
-    b->oqb1 = indicator_create(NULL);
-    b->oqc1 = indicator_create(NULL);
-    b->oqd1 = indicator_create(NULL);
-    b->ohex1 = indicator_create("Hex");
+    b->ctr1 = ls191_create(ev);
+    b->oqa1 = indicator_create(ev, NULL);
+    b->oqb1 = indicator_create(ev, NULL);
+    b->oqc1 = indicator_create(ev, NULL);
+    b->oqd1 = indicator_create(ev, NULL);
 
-    b->omaxmin1 = indicator_create("MAXMIN");
-    b->oripclk1 = indicator_create("RIPCLK");
-    b->oclk = indicator_create("CLK");
+    b->omaxmin1 = indicator_create(ev, "MAXMIN");
+    b->oripclk1 = indicator_create(ev, "RIPCLK");
+    b->oclk = indicator_create(ev, "CLK");
 
     ls191_connect_qa(b->ctr1, b->oqa1, (void*)&indicator_in_d0);
     ls191_connect_qb(b->ctr1, b->oqb1, (void*)&indicator_in_d0);
     ls191_connect_qc(b->ctr1, b->oqc1, (void*)&indicator_in_d0);
     ls191_connect_qd(b->ctr1, b->oqd1, (void*)&indicator_in_d0);
-
-    ls191_connect_qa(b->ctr1, b->ohex1, (void*)&indicator_in_d0);
-    ls191_connect_qb(b->ctr1, b->ohex1, (void*)&indicator_in_d1);
-    ls191_connect_qc(b->ctr1, b->ohex1, (void*)&indicator_in_d2);
-    ls191_connect_qd(b->ctr1, b->ohex1, (void*)&indicator_in_d3);
 
     ls191_connect_maxmin(b->ctr1, b->omaxmin1, (void*)&indicator_in_d0);
     ls191_connect_ripclk(b->ctr1, b->oripclk1, (void*)&indicator_in_d0);
@@ -73,10 +65,13 @@ board_object *testls191_board_create(testls191 *t, int key, char *name){
     board_object *board = board_create(40,4, key, name);
     if (!board) return board;
 
-    board_add_led(board, t->oclk,1,1,"CLK", LED_RED);
-    board_add_xdigit(board, t->ohex1,10,1,"COUNT", LED_RED);
-    board_add_led(board, t->omaxmin1,20,1,"MAXMIN", LED_RED);
-    board_add_led(board, t->oripclk1,30,1,"RIPPLE", LED_RED);
+    board_add_led(board, t->oclk,1,1,"CLK", LED_BLUE);
+    board_add_led(board, t->oqd1,6,1,"QD", LED_RED);
+    board_add_led(board, t->oqc1,10,1,"QC", LED_RED);
+    board_add_led(board, t->oqb1,14,1,"QB", LED_RED);
+    board_add_led(board, t->oqa1,18,1,"QA", LED_RED);
+    board_add_led(board, t->omaxmin1,23,1,"MAXMIN", LED_WHITE);
+    board_add_led(board, t->oripclk1,31,1,"RIPPLE", LED_WHITE);
 
     return board;
 }
@@ -84,10 +79,14 @@ board_object *testls191_board_create(testls191 *t, int key, char *name){
 ////////////////////////////////////////////////////////////////////////////////
 void do_testls191(){
 
-    testls191 *t191_1 = testls191_create();
-    testls191 *t191_2 = testls191_create();
-    testls191 *t191_3 = testls191_create();
-    testls191 *t191_4 = testls191_create();
+    board_ctx_t *ctx = board_init();
+    event_context_t *ev = event_init();
+    ev->bctx = ctx;
+
+    testls191 *t191_1 = testls191_create(ev);
+    testls191 *t191_2 = testls191_create(ev);
+    testls191 *t191_3 = testls191_create(ev);
+    testls191 *t191_4 = testls191_create(ev);
 
     if ((!t191_1)||(!t191_2)||(!t191_3)||(!t191_4))    {
 
@@ -95,8 +94,7 @@ void do_testls191(){
         exit(0);
     }
 
-
-    bitswitch *updownsel = bitswitch_create("UP/DN");
+    bitswitch *updownsel = bitswitch_create(ev, "UP/DN");
     if (!updownsel){
 
         perror("updownsel create");
@@ -123,7 +121,7 @@ void do_testls191(){
     }
 
 
-    ls32 *quad_or1 = ls32_create();
+    ls32 *quad_or1 = ls32_create(ev);
     if (!quad_or1){
 
         perror("quad_or1 create");
@@ -132,7 +130,7 @@ void do_testls191(){
 
 /*
 
-SYSCLK
+MAINCLK
 --+---------------+---------------+---------------+
   |CLK            |CLK            |CLK            |CLK
 +-------+ EN    +-------+ EN    +-------+ EN    +-------+ EN
@@ -152,40 +150,36 @@ SYSCLK
     board_add_board(mainboard, b191_b3, 2, 10);
     board_add_board(mainboard, b191_b4, 42, 10);
 
-
     board_add_manual_switch(mainboard, updownsel, 2, 15, KEY_F(1), "UP/DN");
 
+    clkgen *mainclk = clkgen_create(ev, "",1000000);
+    bitconst_connect_zero(mainclk, (void*)&clkgen_in_halt);
 
+    board_set_clk(ctx, mainclk);
 
-    board_clock_connect(t191_1->ctr1, (void*)&ls191_in_clk);
-    board_clock_connect(t191_1->oclk, (void*)&indicator_in_d0);
+    clkgen_connect_out(mainclk, t191_1->ctr1, (void*)&ls191_in_clk);
+    clkgen_connect_out(mainclk, t191_1->oclk, (void*)&indicator_in_d0);
     bitconst_connect_one(t191_1->ctr1,(void*)&ls191_in_load);
-    //bitconst_connect_zero(t191_1->ctr1,(void*)&ls191_in_enable);
 
-
-    board_clock_connect(t191_2->ctr1, (void*)&ls191_in_clk);
-    board_clock_connect(t191_2->oclk, (void*)&indicator_in_d0);
+    clkgen_connect_out(mainclk, t191_2->ctr1, (void*)&ls191_in_clk);
+    clkgen_connect_out(mainclk, t191_2->oclk, (void*)&indicator_in_d0);
     bitconst_connect_one(t191_2->ctr1,(void*)&ls191_in_load);
-    //bitconst_connect_zero(t191_2->ctr1,(void*)&ls191_in_enable);
     ls191_connect_ripclk(t191_2->ctr1, quad_or1,(void*)&ls32_in_b2);
     ls32_connect_y2(quad_or1,t191_1->ctr1,(void*)&ls191_in_enable);
 
-
-    board_clock_connect(t191_3->ctr1, (void*)&ls191_in_clk);
-    board_clock_connect(t191_3->oclk, (void*)&indicator_in_d0);
+    clkgen_connect_out(mainclk, t191_3->ctr1, (void*)&ls191_in_clk);
+    clkgen_connect_out(mainclk, t191_3->oclk, (void*)&indicator_in_d0);
     bitconst_connect_one(t191_3->ctr1,(void*)&ls191_in_load);
-    //bitconst_connect_zero(t191_3->ctr1,(void*)&ls191_in_enable);
     ls191_connect_ripclk(t191_3->ctr1, quad_or1, (void*)&ls32_in_b1);
     ls32_connect_y1(quad_or1,quad_or1,(void*)&ls32_in_a2);
     ls32_connect_y1(quad_or1,t191_2->ctr1, (void*)&ls191_in_enable);
 
-
-    board_clock_connect(t191_4->ctr1, (void*)&ls191_in_clk);
-    board_clock_connect(t191_4->oclk, (void*)&indicator_in_d0);
+    clkgen_connect_out(mainclk, t191_4->ctr1, (void*)&ls191_in_clk);
+    clkgen_connect_out(mainclk, t191_4->oclk, (void*)&indicator_in_d0);
     bitconst_connect_one(t191_4->ctr1,(void*)&ls191_in_load);
     bitconst_connect_zero(t191_4->ctr1,(void*)&ls191_in_enable);
     ls191_connect_ripclk(t191_4->ctr1, t191_3->ctr1, (void*)&ls191_in_enable);
     ls191_connect_ripclk(t191_4->ctr1, quad_or1, (void*)&ls32_in_a1);
 
-    board_run(mainboard);
+    board_run(ctx, ev, mainboard);
 }

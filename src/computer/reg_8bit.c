@@ -40,7 +40,7 @@ reg_8bit *reg_8bit_create(event_context_t *ec, reg8bit_type_t type, char *name){
     reg->ls173_hi = ls173_create(ec, lshi);
     reg->ls173_lo = ls173_create(ec, lslo);
     reg->ls245_1  = ls245_create(ec);
-    reg->ledclk = indicator_create("Clk");
+    reg->ledclk = indicator_create(ec, "Clk");
 
     reg->type = type;
 
@@ -50,7 +50,7 @@ reg_8bit *reg_8bit_create(event_context_t *ec, reg8bit_type_t type, char *name){
         strncpy(lshi,name,sizeof(lshi));
         sprintf(lslo,"-D%d",i);
         strncat(lshi,lslo,sizeof(lshi)/2);
-        reg->led[i] = indicator_create(lshi);
+        reg->led[i] = indicator_create(ec, lshi);
     }
 
     ls173_connect_1q(reg->ls173_lo, reg->led[0], (void*)&indicator_in_d0);

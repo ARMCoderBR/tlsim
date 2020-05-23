@@ -49,7 +49,7 @@ alu_8bit *alu_8bit_create(event_context_t *ec, char *name){
         strncpy(lshi,name,sizeof(lshi));
         sprintf(lslo,"-D%d",i);
         strncat(lshi,lslo,sizeof(lshi)/2);
-        alu->led[i] = indicator_create(lshi);
+        alu->led[i] = indicator_create(ec, lshi);
     }
 
     ls283_connect_y1(alu->ls283_lo, alu->led[0], (void*)&indicator_in_d0);
@@ -112,8 +112,8 @@ alu_8bit *alu_8bit_create(event_context_t *ec, char *name){
     ls08_connect_y1(alu->ls08, alu->ls08, (void*)&ls08_in_a3);
     ls08_connect_y2(alu->ls08, alu->ls08, (void*)&ls08_in_b3);
 
-    alu->ledz = indicator_create("Z");
-    alu->ledc = indicator_create("C");
+    alu->ledz = indicator_create(ec, "Z");
+    alu->ledc = indicator_create(ec, "C");
 
     ls08_connect_y3(alu->ls08, alu->ledz, (void*)&indicator_in_d0);
     ls283_connect_cout(alu->ls283_hi, alu->ledc, (void*)&indicator_in_d0);

@@ -47,14 +47,14 @@ void *difpulse_function(void *args){
         if (o->reqpulse){
 
             event_mutex_lock(o->ec);
-            event_process(o->ec);
+            while (event_process(o->ec));
             event_mutex_unlock(o->ec);
             o->reqpulse = 0;
             o->valpulse = 0;
             ls00_in_b1(o->ls00_clk, &o->valpulse, 0);
             usleep(100);
             event_mutex_lock(o->ec);
-            event_process(o->ec);
+            while (event_process(o->ec));
             event_mutex_unlock(o->ec);
         }
     }
@@ -106,7 +106,7 @@ ram_8bit *ram_8bit_create(event_context_t *ec, char *name){
         strncpy(lshi,name,sizeof(lshi));
         sprintf(lslo,"-D%d",i);
         strncat(lshi,lslo,sizeof(lshi)/2);
-        ram->leddata[i] = indicator_create(lshi);
+        ram->leddata[i] = indicator_create(ec, lshi);
     }
 
     ls189_connect_1q(ram->ls189_lo, ram->ls04_lo, (void*)&ls04_in_a1);
@@ -155,10 +155,10 @@ ram_8bit *ram_8bit_create(event_context_t *ec, char *name){
 
     ls00_connect_y1(ram->ls00_clk, ram->ls157_write, (void*)&ls157_in_b1);
 
-    ram->ledaddr[0] = indicator_create("A0");
-    ram->ledaddr[1] = indicator_create("A1");
-    ram->ledaddr[2] = indicator_create("A2");
-    ram->ledaddr[3] = indicator_create("A3");
+    ram->ledaddr[0] = indicator_create(ec, "A0");
+    ram->ledaddr[1] = indicator_create(ec, "A1");
+    ram->ledaddr[2] = indicator_create(ec, "A2");
+    ram->ledaddr[3] = indicator_create(ec, "A3");
     ram->prog_run = bitswitch_create(ec, "ProgRun");
     ram->progaddr[0] = bitswitch_create(ec, "RA0");
     ram->progaddr[1] = bitswitch_create(ec, "RA1");
@@ -237,8 +237,8 @@ ram_8bit *ram_8bit_create(event_context_t *ec, char *name){
     bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_g1);
     //bitconst_connect_zero(ram->ls173_addreg,(void*)&ls173_in_clr);
 
-    ram->ledprog = indicator_create("Ledprog");
-    ram->ledrun = indicator_create("Ledrun");
+    ram->ledprog = indicator_create(ec, "Ledprog");
+    ram->ledrun = indicator_create(ec, "Ledrun");
     bitswitch_connect_out(ram->prog_run,ram->ledrun,(void*)&indicator_in_d0);
     bitswitch_connect_out(ram->prog_run, ram->ls04_lo, (void*)&ls04_in_a6);
     ls04_connect_y6(ram->ls04_lo, ram->ledprog, (void*)&indicator_in_d0);

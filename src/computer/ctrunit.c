@@ -158,15 +158,15 @@ ctrunit *ctrunit_create(event_context_t *ec, char *name){
     int i;
     for (i = 0; i < NSIGNALS_CTRU; i++){
 
-        ctru->led[i] = indicator_create(labels[i]);
+        ctru->led[i] = indicator_create(ec, labels[i]);
         ctru->in_rootptr[i] = NULL; ctru->out_event_handler_root[i] = NULL;
     }
 
     //// LS161
     ctru->ls161 = ls161_create(ec);
-    ctru->ct[0] = indicator_create("C0");
-    ctru->ct[1] = indicator_create("C1");
-    ctru->ct[2] = indicator_create("C2");
+    ctru->ct[0] = indicator_create(ec, "C0");
+    ctru->ct[1] = indicator_create(ec, "C1");
+    ctru->ct[2] = indicator_create(ec, "C2");
     ls161_connect_qa(ctru->ls161, ctru->ct[0], (void*)&indicator_in_d0);
     ls161_connect_qb(ctru->ls161, ctru->ct[1], (void*)&indicator_in_d0);
     ls161_connect_qc(ctru->ls161, ctru->ct[2], (void*)&indicator_in_d0);
@@ -178,12 +178,12 @@ ctrunit *ctrunit_create(event_context_t *ec, char *name){
 
     //// LS138
     ctru->ls138 = ls138_create(ec);
-    ctru->t[0]  = indicator_create("T0");
-    ctru->t[1]  = indicator_create("T1");
-    ctru->t[2]  = indicator_create("T2");
-    ctru->t[3]  = indicator_create("T3");
-    ctru->t[4]  = indicator_create("T4");
-    ctru->t[5]  = indicator_create("T5");
+    ctru->t[0]  = indicator_create(ec, "T0");
+    ctru->t[1]  = indicator_create(ec, "T1");
+    ctru->t[2]  = indicator_create(ec, "T2");
+    ctru->t[3]  = indicator_create(ec, "T3");
+    ctru->t[4]  = indicator_create(ec, "T4");
+    ctru->t[5]  = indicator_create(ec, "T5");
     bitconst_connect_zero(ctru->ls138, (void*)&ls138_ing2a);
     bitconst_connect_zero(ctru->ls138, (void*)&ls138_ing2b);
     bitconst_connect_one(ctru->ls138, (void*)&ls138_ing1);
@@ -198,7 +198,7 @@ ctrunit *ctrunit_create(event_context_t *ec, char *name){
     ls161_connect_qb(ctru->ls161, ctru->ls138, (void*)&ls138_inb);
     ls161_connect_qc(ctru->ls161, ctru->ls138, (void*)&ls138_inc);
 
-    ctru->ledclk  = indicator_create("CLK");
+    ctru->ledclk  = indicator_create(ec, "CLK");
 
     //// EEPROMs
 
@@ -247,8 +247,8 @@ ctrunit *ctrunit_create(event_context_t *ec, char *name){
 
     //// LS173 (Flags)
     ctru->ls173 = ls173_create(ec, "");
-    ctru->ledz = indicator_create("ZF");
-    ctru->ledc = indicator_create("CF");
+    ctru->ledz = indicator_create(ec, "ZF");
+    ctru->ledc = indicator_create(ec, "CF");
 
     bitconst_connect_zero(ctru->ls173, (void*)&ls173_in_m);
     bitconst_connect_zero(ctru->ls173, (void*)&ls173_in_n);

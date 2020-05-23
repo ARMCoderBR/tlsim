@@ -39,7 +39,7 @@ reg_out *reg_out_create(event_context_t *ec, char *name){
 
     reg->ls173_hi = ls173_create(ec, lshi);
     reg->ls173_lo = ls173_create(ec, lslo);
-    reg->ledclk = indicator_create("Clk");
+    reg->ledclk = indicator_create(ec, "Clk");
 
     int i;
     for (i = 0; i < 8; i++){
@@ -47,7 +47,7 @@ reg_out *reg_out_create(event_context_t *ec, char *name){
         strncpy(lshi,name,sizeof(lshi));
         sprintf(lslo,"-D%d",i);
         strncat(lshi,lslo,sizeof(lshi)/2);
-        reg->led[i] = indicator_create(lshi);
+        reg->led[i] = indicator_create(ec, lshi);
     }
 
     unsigned char bufcreate[2048];
@@ -80,7 +80,7 @@ reg_out *reg_out_create(event_context_t *ec, char *name){
 
     for (i = 0; i < 4; i++){
 
-        reg->display[i] = dis7seg_create(COMMON_K,"");
+        reg->display[i] = dis7seg_create(ec, COMMON_K,"");
 
         //bitconst_connect_zero(reg->display[i], (void*)&dis7seg_in_common);
         at28c16_connect_o7(reg->eep1, reg->display[i], (void*)&dis7seg_in_segdp);
@@ -133,13 +133,13 @@ reg_out *reg_out_create(event_context_t *ec, char *name){
     reg->clk = clkgen_create(ec, "",20000);
     bitconst_connect_zero(reg->clk, (void*)&clkgen_in_halt);
 
-    reg->ledclki = indicator_create("");
+    reg->ledclki = indicator_create(ec, "");
 
     clkgen_connect_out(reg->clk, reg->ledclki, (void*)&indicator_in_d0);
 
     reg->ls76 = ls76_create(ec);
-    reg->led76_0 = indicator_create("");
-    reg->led76_1 = indicator_create("");
+    reg->led76_0 = indicator_create(ec, "");
+    reg->led76_1 = indicator_create(ec, "");
     bitconst_connect_one(reg->ls76,(void*)&ls76_in_1j);
     bitconst_connect_one(reg->ls76,(void*)&ls76_in_1k);
     bitconst_connect_one(reg->ls76,(void*)&ls76_in_1pre);

@@ -41,7 +41,7 @@ void *persist_function(void *args){
 					if (o->segmap_old != o->segmap){
 					      o->segmap_old = o->segmap;
 					      if (o->refreshable)
-					          board_set_refresh();
+					          board_set_refresh(o->ec->bctx);
 					}
 			}
         }
@@ -52,7 +52,7 @@ void *persist_function(void *args){
 
             if (!o->count_persist){
             	if (o->refreshable)
-            		board_set_refresh();
+            		board_set_refresh(o->ec->bctx);
             }
         }
     }
@@ -61,12 +61,14 @@ void *persist_function(void *args){
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-dis7seg *dis7seg_create(dis7seg_type type, char *name){
+dis7seg *dis7seg_create(event_context_t *ec, dis7seg_type type, char *name){
 
     dis7seg *o = malloc(sizeof(dis7seg));
 
     if (o == NULL)
         return NULL;
+
+    o->ec = ec;
 
     if (name)
         strncpy(o->name, name, sizeof(o->name));

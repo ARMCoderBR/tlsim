@@ -46,9 +46,10 @@ typedef struct  {
     pthread_t persist_thread;
     int count_persist;
     int delay_latch_display;
+    event_context_t *ec;
 } dis7seg;
 
-dis7seg *dis7seg_create(dis7seg_type type, char *name);
+dis7seg *dis7seg_create(event_context_t *ec, dis7seg_type type, char *name);
 
 void dis7seg_destroy(dis7seg **dest);
 

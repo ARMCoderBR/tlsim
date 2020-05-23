@@ -22,19 +22,17 @@ void gatetest(){
     ls08 *ands;
     indicator *os1,*os2,*os3,*oand1,*oand2;
 
-    event_context_t evc;
+    event_context_t *evc = event_init();
 
-    event_init(&evc);
-
-    s1 = bitswitch_create(&evc,"S1");
-    s2 = bitswitch_create(&evc,"S2");
-    s3 = bitswitch_create(&evc,"S3");
-    ands = ls08_create(&evc);
-    os1 = indicator_create("S1");
-    os2 = indicator_create("S2");
-    os3 = indicator_create("S3");
-    oand1 = indicator_create("AND1");
-    oand2 = indicator_create("AND2");
+    s1 = bitswitch_create(evc,"S1");
+    s2 = bitswitch_create(evc,"S2");
+    s3 = bitswitch_create(evc,"S3");
+    ands = ls08_create(evc);
+    os1 = indicator_create(evc, "S1");
+    os2 = indicator_create(evc, "S2");
+    os3 = indicator_create(evc, "S3");
+    oand1 = indicator_create(evc, "AND1");
+    oand2 = indicator_create(evc, "AND2");
 
     bitswitch_connect_out(s1, ands, (void*)&ls08_in_a1);
     bitswitch_connect_out(s2, ands, (void*)&ls08_in_b1);

@@ -20,17 +20,19 @@ static void indicator_up(indicator *o){
 
         o->oldvalue = o->value;
         if (o->refreshable)
-            board_set_refresh();
+            board_set_refresh(o->ec->bctx);
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-indicator *indicator_create(char *name){
+indicator *indicator_create(event_context_t *ec, char *name){
 
     indicator *o = malloc(sizeof(indicator));
 
     if (o == NULL)
         return NULL;
+
+    o->ec = ec;
 
     if (name)
         strncpy(o->name, name, sizeof(o->name));

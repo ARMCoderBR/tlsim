@@ -70,5 +70,9 @@ void bitswitch_setval(bitswitch *s, bitvalue_t val){
         e.valueptr = &s->value;
         e.timestamp = 0;
         event_insert(s->ec, &e);
+        event_mutex_lock(s->ec);
+        while (event_process(s->ec));
+        event_mutex_unlock(s->ec);
+
     }
 }
