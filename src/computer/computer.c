@@ -249,6 +249,12 @@ void computer_sim(){
 
     ////////////////
 
+#include "exmachina.h"
+
+    pthread_t sim_thread;
+    pthread_create(&sim_thread, NULL, exmachina_thread, ctx);
+    pthread_detach(sim_thread);
+
     board_run(ctx, ec, mainboard);
 
     logger_end(ec);

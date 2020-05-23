@@ -7,7 +7,7 @@
 // SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 ////////////////////////////////////////////////////////////////////////////////
 
-    Version 1.0.8
+    Version 1.1.0
     May 23, 2020
 
     INTRO
@@ -101,7 +101,11 @@ for that.
 two ways: a "Deus ex machina" way (that "magically" transfers data between the
 RAM and disk files, sort of a cheating), or a more beautiful way where a
 simulated hardware could transfer RAM data from/to a simulated EEPROM (and then
-its contents could be loaded/saved from disk). Maybe I will do it someday...      
+its contents could be loaded/saved from disk) - (EDIT) I created the 
+'exmachina.c' module that sort of implements this idea, but not dynamically from
+disk. The program to be loaded to the RAM is hard-coded, and to change it will 
+require a project rebuild. This code simulates the user actions of manually 
+inputting the test program, and can be improved at will.      
 
     - The James Bates variant (https://www.youtube.com/watch?v=gqYFT6iecHw) and 
 others. I didn't check whether the simulation engine can run the Bates' version
@@ -190,4 +194,13 @@ hinted within brackets.
     - Last globals eliminated, and now 'gatetest.c' and 'testls191.c' can work
       (they are older tests not related to Ben's computer simulation). You can
       play with them by editing 'main.c'.
+
+    V1.1.0 - May 23, 2020:
+    
+    - Created the Ex-Machina Autoloader. It simulates the needed keypresses to
+      load a demo program into Ben's computer's RAM. It's simply a thread that
+      injects fake keypresses into the engine, and is implemented into the file
+      'exmachina.c'. There the demo program can be changed to whatever program
+      the user wants, and it will work as long as it is compatible with the 
+      Ben's computer architecture!
 

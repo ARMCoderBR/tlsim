@@ -350,11 +350,12 @@ void restart_handlers(board_ctx_t *bctx)
 
     FD_ZERO (&bctx->readfds);
     FD_SET(0,&bctx->readfds);
+    FD_SET(bctx->pipekeys[0],&bctx->readfds);
 
     tv.tv_sec = 0;
     tv.tv_usec = 100;    // 100 us
 
-    select (1,&bctx->readfds,NULL,NULL,&tv);
+    select (1+bctx->pipekeys[0],&bctx->readfds,NULL,NULL,&tv);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -364,12 +365,32 @@ int received_key(board_ctx_t *bctx)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+int received_key_simu(board_ctx_t *bctx)
+{
+    return (FD_ISSET(bctx->pipekeys[0],&bctx->readfds));
+}
+
+////////////////////////////////////////////////////////////////////////////////
 int read_key(board_ctx_t *bctx)
 {
     pthread_mutex_lock(&bctx->ncursesmutex);
     int key = wgetch(bctx->janela1);
     pthread_mutex_unlock(&bctx->ncursesmutex);
     return key;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+int read_key_simu(board_ctx_t *bctx)
+{
+    int key;
+    read(bctx->pipekeys[0], &key, sizeof(int));
+    return key;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void board_write_key(board_ctx_t *bctx, int key)
+{
+    write(bctx->pipekeys[1], &key, sizeof(int));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1004,6 +1025,8 @@ int board_run(board_ctx_t *ctx, event_context_t *ec, board_object *board){
 
     ctx->board = board;
 
+    pipe(ctx->pipekeys);
+
     if (!board) return -2;
 
     if (board->type != BOARD)
@@ -1090,9 +1113,20 @@ int board_run(board_ctx_t *ctx, event_context_t *ec, board_object *board){
 
         restart_handlers(ctx);
 
-        if (received_key(ctx)){
+        bool_t has_key = 0;
+        int key;
 
-            int key = read_key(ctx);
+        if (received_key(ctx)){
+            key = read_key(ctx);
+            has_key = 1;
+        }
+
+        if (received_key_simu(ctx)){
+            key = read_key_simu(ctx);
+            has_key = 1;
+        }
+
+        if (has_key){
 
             switch(key){
 

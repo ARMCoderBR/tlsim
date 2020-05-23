@@ -78,6 +78,7 @@ typedef struct {
     pthread_t refthread;
     bool_t refresh_run;
     int piperefresh[2];
+    int pipekeys[2];
 
     bool_t focustable_done;
     int num_focuseable_boards;
@@ -116,5 +117,7 @@ void board_set_clk(board_ctx_t *ctx, clkgen *clk);
 void board_set_refresh(board_ctx_t *ctx);
 
 board_ctx_t *board_init(void);
+
+void board_write_key(board_ctx_t *bctx, int key);
 
 #endif /* BOARD_H_ */

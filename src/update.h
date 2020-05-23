@@ -90,7 +90,7 @@ void part_destroy(void **part);
 #define DESTROY(X) part_destroy((void**)&X)
 
 #define SW_VERSION  1
-#define SW_REVISION 0
-#define SW_MINOR    8
+#define SW_REVISION 1
+#define SW_MINOR    0
 
 #endif /* UPDATE_H_ */

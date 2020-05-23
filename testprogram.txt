@@ -1,10 +1,10 @@
-
-0   OUT         E0
-1   ADD 15      2F
-2   JC 4        74
-3   JMP 0       60
-4   SUB 15      3F
-5   OUT         E0
-6   JZ 0        80
-7   JMP 4       64
-15  1           01
+ADDR   MNEMONIC    CODE       
+00     OUT         E0
+01     ADD 15      2F
+02     JC 4        74
+03     JMP 0       60
+04     SUB 15      3F
+05     OUT         E0
+06     JZ 0        80
+07     JMP 4       64
+0F     1           01
