@@ -1152,10 +1152,7 @@ int board_run(board_ctx_t *ctx, event_context_t *ec, board_object *board){
                     if (p->key == key){
 
                         bitswitch *bs = p->objptr;
-                        event_mutex_lock(bs->ec);
                         bitswitch_setval(bs, 1 ^ bs->value);
-                        event_mutex_unlock(bs->ec);
-
                         board_set_refresh(ctx);
                     }
                 }
