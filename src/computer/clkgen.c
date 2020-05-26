@@ -63,6 +63,7 @@ void *clkgen_thread(void *args){
         e.valueptr = &s->valuen;
         e.timestamp = 0;
         event_insert(s->ec, &e);
+        while (event_process(s->ec));
         event_mutex_unlock(s->ec);
 
         if (!s->pause)
@@ -124,7 +125,12 @@ void clkgen_destroy (clkgen **dest){
     ehandler_destroy(&b->outn_event_handler_root);
     vallist_destroy(&b->halt_rootptr);
 
+    event_mutex_lock(b->ec);
+    while (event_process(b->ec));
+    event_mutex_unlock(b->ec);
+
     free(b);
+
     *dest = NULL;
 }
 

@@ -259,6 +259,8 @@ void computer_sim(){
 
     logger_end(ec);
 
+    DESTROY(mainclk);
+
     ////////////////
 
     DESTROY(regA);

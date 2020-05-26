@@ -7,8 +7,8 @@
 // SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 ////////////////////////////////////////////////////////////////////////////////
 
-    Version 1.1.0
-    May 23, 2020
+    Version 1.1.1
+    May 26, 2020
 
     INTRO
     ~~~~~
@@ -203,4 +203,9 @@ hinted within brackets.
       'exmachina.c'. There the demo program can be changed to whatever program
       the user wants, and it will work as long as it is compatible with the 
       Ben's computer architecture!
+
+    V1.1.1 - May 26, 2020:
+    
+    - Better clock synchronization to avoid simulation glitches in slower 
+      systems.
 

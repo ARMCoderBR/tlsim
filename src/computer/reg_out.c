@@ -183,6 +183,8 @@ void reg_out_destroy (reg_out **dest){
     reg_out *b = *dest;
     if (b == NULL) return;
 
+    clkgen_destroy(&b->clk);
+
     ls173_destroy(&b->ls173_hi);
     ls173_destroy(&b->ls173_lo);
     indicator_destroy(&b->ledclk);
@@ -196,7 +198,6 @@ void reg_out_destroy (reg_out **dest){
     for (i = 0; i < 4; i++)
         dis7seg_destroy(&b->display[i]);
 
-    clkgen_destroy(&b->clk);
     indicator_destroy(&b->ledclki);
 
     ls76_destroy(&b->ls76);
@@ -205,7 +206,6 @@ void reg_out_destroy (reg_out **dest){
 
     ls139_destroy(&b->ls139);
     bitswitch_destroy(&b->sw_signed);
-
 
     free(b);
     *dest = NULL;

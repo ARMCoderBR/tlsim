@@ -91,6 +91,6 @@ void part_destroy(void **part);
 
 #define SW_VERSION  1
 #define SW_REVISION 1
-#define SW_MINOR    0
+#define SW_MINOR    1
 
 #endif /* UPDATE_H_ */

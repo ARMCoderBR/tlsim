@@ -1197,6 +1197,9 @@ int board_run(board_ctx_t *ctx, event_context_t *ec, board_object *board){
 
     refresh_thread_stop(ctx);
 
+    if (!ctx->clock_pausing)
+    	clock_pause(ctx);
+
     pthread_mutex_destroy(&ctx->setrefmutex);
 
     endwin();
