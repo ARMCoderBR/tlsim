@@ -7,8 +7,8 @@
 // SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 ////////////////////////////////////////////////////////////////////////////////
 
-    Version 1.1.1
-    May 26, 2020
+    Version 1.1.2
+    June 25, 2020
 
     INTRO
     ~~~~~
@@ -80,43 +80,27 @@ these variants.
     CAVEATS AND NOTES
     ~~~~~~~~~~~~~~~~~
     
-    Probably a lot. It's working for me, but this is not a great argument, of
-course.
+    There are still probably lots of caveats. Several were been solved, though, 
+and this project is still receiving regular improvements over time, slowly.
 
-    As of version 1.0.7, I think this project is virtually finished. It can run
-all Ben Eater's test programs perfectly, I almost feel like I've built the 
-actual hardware as shown in the videos!
+    When I reached version 1.0.7 I thought that the project was about to come to
+an end. At that point it was able to run all Ben Eater's test programs perfectly
+and was not planning to expand it any more, except for minor tweaks and fixes.
 
-    So I'm not going to expand it a lot more, except for minor tweaks and fixes.
-
-    There's a lot that can be improved, however. A few suggestions for the 
-brave:
-    
-    - A full graphical UI application that can run on both Windows and Linux 
-would most likely require a port to C++. After some analysis, I think that a 
-proper port to C++ is not as trivial as I first thought, so don't count on me 
-for that.  
-
-    - A way to load/save the RAM contents from/to disk. This could be done in
-two ways: a "Deus ex machina" way (that "magically" transfers data between the
-RAM and disk files, sort of a cheating), or a more beautiful way where a
-simulated hardware could transfer RAM data from/to a simulated EEPROM (and then
-its contents could be loaded/saved from disk) - (EDIT) I created the 
-'exmachina.c' module that sort of implements this idea, but not dynamically from
-disk. The program to be loaded to the RAM is hard-coded, and to change it will 
-require a project rebuild. This code simulates the user actions of manually 
-inputting the test program, and can be improved at will.      
-
-    - The James Bates variant (https://www.youtube.com/watch?v=gqYFT6iecHw) and 
-others. I didn't check whether the simulation engine can run the Bates' version
-properly, but I'm almost sure it will do.
+    However I always felt that the NCurses interface was not really satisfying,
+so I'm researching how to reimplement TLSim with a true GUI. I think it deserves
+such an improvement.
 
 
     QUICKSTART
     ~~~~~~~~~~
 
-    The EEPROM's microcode is automatically initialized, but the RAM contents 
-must be inserted by the user through the UI.
+    The EEPROM's microcode is pre-initialized, and the RAM contents is 
+automatically initialized by the 'exmachina.c' module that fires a thread that
+simulates the needed user inputs to fill the RAM with a sample program. 
+
+    After that the computer is started, but can be stopped and the RAM program
+can be edited by the user through the UI using the keyboard.
     
     How each module works is explained in detail in the Ben's videos, I have
 replicated them quite faithfully in the UI.
@@ -209,3 +193,6 @@ hinted within brackets.
     - Better clock synchronization to avoid simulation glitches in slower 
       systems.
 
+    V1.1.2 - June 25, 2020:
+    
+    - Grouping the main Computer Sim variables. 
