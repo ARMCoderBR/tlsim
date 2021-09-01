@@ -150,6 +150,8 @@ ctrunit *ctrunit_create(event_context_t *ec, char *name){
     ctru->ls04_2 = ls04_create(ec);
     ctru->reset_sw = bitswitch_create(ec, "Reset");
 
+    bitswitch_setval(ctru->reset_sw,0);
+
     bitswitch_connect_out(ctru->reset_sw, ctru->ls00, (void*)&ls00_in_a1);
     bitswitch_connect_out(ctru->reset_sw, ctru->ls00, (void*)&ls00_in_b1);
     ls00_connect_y1(ctru->ls00, ctru->ls00, (void*)&ls00_in_a2);
@@ -173,7 +175,7 @@ ctrunit *ctrunit_create(event_context_t *ec, char *name){
 
     bitconst_connect_one(ctru->ls161, (void*)&ls161_in_enp);
     bitconst_connect_one(ctru->ls161, (void*)&ls161_in_ent);
-    bitconst_connect_one(ctru->ls161, (void*)&ls161_in_load);
+
     ls00_connect_y1(ctru->ls00, ctru->ls161, (void*)&ls161_in_clear);
 
     //// LS138
@@ -268,6 +270,60 @@ ctrunit *ctrunit_create(event_context_t *ec, char *name){
     //Clear
     ls00_connect_y2(ctru->ls00, ctru->ls173, (void*)&ls173_in_clr);
 
+    // Reset Tn Counter (Turbo)
+
+    bitconst_connect_zero(ctru->ls161, (void*)&ls161_in_da);
+    bitconst_connect_zero(ctru->ls161, (void*)&ls161_in_db);
+    bitconst_connect_zero(ctru->ls161, (void*)&ls161_in_dc);
+    bitconst_connect_zero(ctru->ls161, (void*)&ls161_in_dd);
+
+    ctru->ls32_pri1 = ls32_create(ec);
+    ctru->ls32_pri2 = ls32_create(ec);
+    ctru->ls32_sec = ls32_create(ec);
+    ctru->ls32_ter = ls32_create(ec);
+
+    at28c16_connect_o0(ctru->eep_lo, ctru->ls32_pri1, (void*)&ls32_in_a1);
+    at28c16_connect_o1(ctru->eep_lo, ctru->ls32_pri1, (void*)&ls32_in_b1);
+    at28c16_connect_o2(ctru->eep_lo, ctru->ls32_pri1, (void*)&ls32_in_a2);
+    at28c16_connect_o3(ctru->eep_lo, ctru->ls32_pri1, (void*)&ls32_in_b2);
+    at28c16_connect_o4(ctru->eep_lo, ctru->ls32_pri1, (void*)&ls32_in_a3);
+    at28c16_connect_o5(ctru->eep_lo, ctru->ls32_pri1, (void*)&ls32_in_b3);
+    at28c16_connect_o6(ctru->eep_lo, ctru->ls32_pri1, (void*)&ls32_in_a4);
+    at28c16_connect_o7(ctru->eep_lo, ctru->ls32_pri1, (void*)&ls32_in_b4);
+
+    at28c16_connect_o0(ctru->eep_hi, ctru->ls32_pri2, (void*)&ls32_in_a1);
+    at28c16_connect_o1(ctru->eep_hi, ctru->ls32_pri2, (void*)&ls32_in_b1);
+    at28c16_connect_o2(ctru->eep_hi, ctru->ls32_pri2, (void*)&ls32_in_a2);
+    at28c16_connect_o3(ctru->eep_hi, ctru->ls32_pri2, (void*)&ls32_in_b2);
+    at28c16_connect_o4(ctru->eep_hi, ctru->ls32_pri2, (void*)&ls32_in_a3);
+    at28c16_connect_o5(ctru->eep_hi, ctru->ls32_pri2, (void*)&ls32_in_b3);
+    at28c16_connect_o6(ctru->eep_hi, ctru->ls32_pri2, (void*)&ls32_in_a4);
+    at28c16_connect_o7(ctru->eep_hi, ctru->ls32_pri2, (void*)&ls32_in_b4);
+
+    ls32_connect_y1(ctru->ls32_pri1, ctru->ls32_sec, (void*)ls32_in_a1);
+    ls32_connect_y2(ctru->ls32_pri1, ctru->ls32_sec, (void*)ls32_in_b1);
+    ls32_connect_y3(ctru->ls32_pri1, ctru->ls32_sec, (void*)ls32_in_a2);
+    ls32_connect_y4(ctru->ls32_pri1, ctru->ls32_sec, (void*)ls32_in_b2);
+
+    ls32_connect_y1(ctru->ls32_pri2, ctru->ls32_sec, (void*)ls32_in_a3);
+    ls32_connect_y2(ctru->ls32_pri2, ctru->ls32_sec, (void*)ls32_in_b3);
+    ls32_connect_y3(ctru->ls32_pri2, ctru->ls32_sec, (void*)ls32_in_a4);
+    ls32_connect_y4(ctru->ls32_pri2, ctru->ls32_sec, (void*)ls32_in_b4);
+
+    ls32_connect_y1(ctru->ls32_sec, ctru->ls32_ter, (void*)ls32_in_a1);
+    ls32_connect_y2(ctru->ls32_sec, ctru->ls32_ter, (void*)ls32_in_b1);
+    ls32_connect_y3(ctru->ls32_sec, ctru->ls32_ter, (void*)ls32_in_a2);
+    ls32_connect_y4(ctru->ls32_sec, ctru->ls32_ter, (void*)ls32_in_b2);
+
+    ls32_connect_y1(ctru->ls32_ter, ctru->ls32_ter, (void*)ls32_in_a3);
+    ls32_connect_y2(ctru->ls32_ter, ctru->ls32_ter, (void*)ls32_in_b3);
+    ls32_connect_y3(ctru->ls32_ter, ctru->ls32_ter, (void*)ls32_in_a4);
+
+    ctru->turbo_sw = bitswitch_create(ec, "Turbo");
+    bitswitch_setval(ctru->turbo_sw,1);
+    bitswitch_connect_out(ctru->turbo_sw, ctru->ls32_ter, (void*)&ls32_in_b4);
+    ls32_connect_y4(ctru->ls32_ter, ctru->ls161, (void*)&ls161_in_load);
+
     ctru->destroy = (void*)ctrunit_destroy;
 
     return ctru;
@@ -324,6 +380,11 @@ void ctrunit_destroy (ctrunit **dest){
     DESTROY(b->ls173);
     DESTROY(b->ledz);
     DESTROY(b->ledc);
+
+    DESTROY(b->ls32_pri1);
+    DESTROY(b->ls32_pri2);
+    DESTROY(b->ls32_sec);
+    DESTROY(b->ls32_ter);
 
     free(b);
     *dest = NULL;
@@ -388,6 +449,8 @@ board_object *ctrunit_board_create(ctrunit *reg, int key, char *name){
     board_add_led(board, reg->t[3],37,4,"T3", LED_GREEN);
     board_add_led(board, reg->t[4],41,4,"T4", LED_GREEN);
     board_add_led(board, reg->t[5],45,4,"T5", LED_GREEN);
+
+    board_add_manual_switch(board, reg->turbo_sw, 51, 4, 't', "Turbo");
 
     board_add_led(board, reg->ledclk,61,4,"CLK", LED_BLUE);
 

@@ -1,7 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 // TLSIM
 // A TINY LOGIC CIRCUIT SIMULATOR
-// (C) 2019, 2020 BY ARMCODER - milton@armcoder.com.br
+// (C) 2019, 2021 BY ARMCODER - milton@armcoder.com.br
+//
+// https://github.com/ARMCoderBR/tlsim
 //
 // THIS PROGRAM IS FREE SOFTWARE
 // SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
@@ -91,6 +93,6 @@ void part_destroy(void **part);
 
 #define SW_VERSION  1
 #define SW_REVISION 1
-#define SW_MINOR    2
+#define SW_MINOR    3
 
 #endif /* UPDATE_H_ */

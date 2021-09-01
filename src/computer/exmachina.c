@@ -29,7 +29,7 @@ const int LINES_PROG = sizeof(demoprog)/2;
 void write_key(board_ctx_t *bctx, int key){
 
     board_write_key(bctx, key);
-    usleep(100000);
+    usleep(200000);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -49,10 +49,10 @@ void *exmachina_thread(void *args){
         uint8_t newdata = demoprog[2*i+1];
 
         uint8_t deltaaddr = addr ^ newaddr;
+
         if (deltaaddr & 0x01){
             write_key(bctx, 'l');
         }
-
         if (deltaaddr & 0x02){
             write_key(bctx, 'k');
         }

@@ -21,6 +21,7 @@
 #include "ls138.h"
 #include "ls173.h"
 #include "at28c16.h"
+#include "ls32.h"
 
 #define NSIGNALS_CTRU 16
 
@@ -80,6 +81,8 @@ typedef struct {
     at28c16 *eep_hi, *eep_lo;
     ls173 *ls173;
     indicator *ledz, *ledc;
+    ls32 *ls32_pri1, *ls32_pri2, *ls32_sec, *ls32_ter;
+    bitswitch *turbo_sw;
     event_context_t *ec;
 } ctrunit;
 

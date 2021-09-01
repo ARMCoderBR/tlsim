@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 // TLSIM
 // A TINY LOGIC CIRCUIT SIMULATOR
-// (C) 2019, 2020 BY ARMCODER - milton@armcoder.com.br
+// (C) 2019, 2021 BY ARMCODER - milton@armcoder.com.br
 //
 // THIS PROGRAM IS FREE SOFTWARE
 // SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 ////////////////////////////////////////////////////////////////////////////////
 
-    Version 1.1.2
-    June 25, 2020
+    Version 1.1.3
+    September 1, 2021
 
     INTRO
     ~~~~~
@@ -196,3 +196,7 @@ hinted within brackets.
     V1.1.2 - June 25, 2020:
     
     - Grouping the main Computer Sim variables. 
+
+    V1.1.3 - September 1, 2021:
+    
+    - Created the Turbo Switch like the one in GTLSim
