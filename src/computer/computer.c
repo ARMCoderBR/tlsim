@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ncurses.h>
+#include <string.h>
 
 #include "computer.h"
 
