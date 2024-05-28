@@ -7,7 +7,8 @@
 
 ![Banner](https://repository-images.githubusercontent.com/262901436/8dafb6d3-9398-4ecf-8e2d-5539298ed21b)
 
-TLSIM
+## TLSIM
+
 A TINY LOGIC CIRCUIT SIMULATOR
 
 (C) 2019, 2021 BY ARMCODER - milton@armcoder.com.br
@@ -18,7 +19,7 @@ SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
 Version 1.1.3
 September 1, 2021
 
-INTRO
+## INTRO
     
 Hi folks!
 
@@ -36,8 +37,7 @@ his YouTube channel. He's a great teacher in the field of electronics, IMO.
 
 This project aims to accurately simulate Ben's implementation through software.
 
-
-BEN'S COMPUTER SIMULATORS
+## BEN'S COMPUTER SIMULATORS
 
 TLSim is not the first SAP-1 (Ben Eater's Computer) software simulator to hit
 the road, and a quick web search will yield results in no time. But I decided to
@@ -59,7 +59,7 @@ write one anyway, because:
    planning to do so, not for now).
        
          
-ENVIRONMENT
+## ENVIRONMENT
     
 This is (for now) a Linux-only project, since it was only tested in Ubuntu
 20.04. I used Eclipse 2019-09 over OpenJDK 11, and the 'ncurses' and 'pthread' 
@@ -71,17 +71,15 @@ modes that supply large amounts of rows and columns. I don't know why.
     
 With some tweaking it's possible to arrange the screen elements to take up
 way less space, requiring smaller windows if needed.
-    
-    
-BEN'S COMPUTER VARIANTS
+        
+## BEN'S COMPUTER VARIANTS
     
 Some fans created hardware projects that extended the SAP-1's functionality
 (more instructions, more memory, etc). I have no plans, for now, to cater to
 these variants.
-    
-    
-CAVEATS AND NOTES
-    
+
+## CAVEATS AND NOTES
+
 There are still probably lots of caveats. Several were been solved, though, 
 and this project is still receiving regular improvements over time, slowly.
 
@@ -93,8 +91,7 @@ However I always felt that the NCurses interface was not really satisfying,
 so I'm researching how to reimplement TLSim with a true GUI. I think it deserves
 such an improvement.
 
-
-QUICKSTART
+## QUICKSTART
 
 The EEPROM's microcode is pre-initialized, and the RAM contents is 
 automatically initialized by the 'exmachina.c' module that fires a thread that
