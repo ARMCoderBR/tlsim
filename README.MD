@@ -5,6 +5,8 @@
   |_| |____|___/___|_|  |_|
 ```
 
+![Banner](https://repository-images.githubusercontent.com/262901436/8dafb6d3-9398-4ecf-8e2d-5539298ed21b)
+
 TLSIM
 A TINY LOGIC CIRCUIT SIMULATOR
 
@@ -37,7 +39,7 @@ This project aims to accurately simulate Ben's implementation through software.
 
 BEN'S COMPUTER SIMULATORS
 
-    TLSim is not the first SAP-1 (Ben Eater's Computer) software simulator to hit
+TLSim is not the first SAP-1 (Ben Eater's Computer) software simulator to hit
 the road, and a quick web search will yield results in no time. But I decided to
 write one anyway, because:
 
@@ -58,7 +60,6 @@ write one anyway, because:
        
          
 ENVIRONMENT
-
     
 This is (for now) a Linux-only project, since it was only tested in Ubuntu
 20.04. I used Eclipse 2019-09 over OpenJDK 11, and the 'ncurses' and 'pthread' 
