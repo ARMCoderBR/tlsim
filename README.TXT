@@ -34,7 +34,7 @@ software.
     BEN'S COMPUTER SIMULATORS
     ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    TLSim is not the first BEC (Ben Eater's Computer) software simulator to hit
+    TLSim is not the first SAP-1 (Ben Eater's Computer) software simulator to hit
 the road, and a quick web search will yield results in no time. But I decided to
 write one anyway, because:
 
@@ -72,7 +72,7 @@ way less space, requiring smaller windows if needed.
     BEN'S COMPUTER VARIANTS
     ~~~~~~~~~~~~~~~~~~~~~~~
     
-    Some fans created hardware projects that extended the BEC's functionality
+    Some fans created hardware projects that extended the SAP-1's functionality
 (more instructions, more memory, etc). I have no plans, for now, to cater to
 these variants.
     
