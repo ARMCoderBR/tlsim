@@ -1,130 +1,128 @@
-////////////////////////////////////////////////////////////////////////////////
-// TLSIM
-// A TINY LOGIC CIRCUIT SIMULATOR
-// (C) 2019, 2021 BY ARMCODER - milton@armcoder.com.br
-//
-// THIS PROGRAM IS FREE SOFTWARE
-// SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
-////////////////////////////////////////////////////////////////////////////////
+```
+ _____ _    ___ ___ __  __ 
+|_   _| |  / __|_ _|  \/  |
+  | | | |__\__ \| || |\/| |
+  |_| |____|___/___|_|  |_|
+```
 
-    Version 1.1.3
-    September 1, 2021
+![Banner](https://repository-images.githubusercontent.com/262901436/8dafb6d3-9398-4ecf-8e2d-5539298ed21b)
 
-    INTRO
-    ~~~~~
+## TLSIM
+
+A TINY LOGIC CIRCUIT SIMULATOR
+
+(C) 2019, 2021 BY ARMCODER - milton@armcoder.com.br
+
+THIS PROGRAM IS FREE SOFTWARE
+SEE LICENSE AT https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt
+
+Version 1.1.3
+September 1, 2021
+
+## INTRO
     
-    Hi folks!
+Hi folks!
 
-    TLSim is a pet project that I decided to build after discovering Ben Eater's
+TLSim is a pet project that I decided to build after discovering Ben Eater's
 YouTube channel where he teaches how to build a very simple computer over some
 breadboards using just TTL ICs, switches, LEDs and other discrete parts.
 
-    For reference, the playlist with the complete tutorial is here:
+For reference, the playlist with the complete tutorial is here:
    
     https://www.youtube.com/playlist?list=PLowKtXNTBypGqImE405J2565dvjafglHU
    
-    Just for the record, I'm not affiliated with Ben Eater in any way, this is
+Just for the record, I'm not affiliated with Ben Eater in any way, this is
 simply a software inspired by his work, although I definitely recommend to check
 his YouTube channel. He's a great teacher in the field of electronics, IMO.
 
-    This project aims to accurately simulate Ben's implementation through 
-software.
+This project aims to accurately simulate Ben's implementation through software.
 
+## BEN'S COMPUTER SIMULATORS
 
-    BEN'S COMPUTER SIMULATORS
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    TLSim is not the first SAP-1 (Ben Eater's Computer) software simulator to hit
+TLSim is not the first SAP-1 (Ben Eater's Computer) software simulator to hit
 the road, and a quick web search will yield results in no time. But I decided to
 write one anyway, because:
 
-    1. It's fun.
+1. It's fun.
     
-    2. It's different from the others in the sense that is simulates every TTL
-       chip on the board and their individual connections. It's almost like to
-       build the real thing. That is, this is a chip-level model, rather than a
-       module-level model.
+2. It's different from the others in the sense that is simulates every TTL
+   chip on the board and their individual connections. It's almost like to
+   build the real thing. That is, this is a chip-level model, rather than a
+   module-level model.
        
-    3. I needed something to do in my free time as going outside in times of
-       COVID is not an option.    
+3. I needed something to do in my free time as going outside in times of
+   COVID is not an option.    
     
-    4. The TTL models and the engine can easily be reused in other designs. 
-       Although the project is written in pure C, it's quite structured and
-       hierarchical. It's almost tempting to rewrite it in C++ (no, I'm not
-       planning to do so, not for now).
+4. The TTL models and the engine can easily be reused in other designs. 
+   Although the project is written in pure C, it's quite structured and
+   hierarchical. It's almost tempting to rewrite it in C++ (no, I'm not
+   planning to do so, not for now).
        
          
-    ENVIRONMENT
-    ~~~~~~~~~~~    
+## ENVIRONMENT
     
-    This is (for now) a Linux-only project, since it was only tested in Ubuntu
+This is (for now) a Linux-only project, since it was only tested in Ubuntu
 20.04. I used Eclipse 2019-09 over OpenJDK 11, and the 'ncurses' and 'pthread' 
 additional libraries are required to build.
 
-    The program must run in a Terminal (X) window with at least 127 columns x 
+The program must run in a Terminal (X) window with at least 127 columns x 
 50 rows. I could not run it correctly in native text mode, even in framebuffer
 modes that supply large amounts of rows and columns. I don't know why.   
     
-    With some tweaking it's possible to arrange the screen elements to take up
+With some tweaking it's possible to arrange the screen elements to take up
 way less space, requiring smaller windows if needed.
+        
+## BEN'S COMPUTER VARIANTS
     
-    
-    BEN'S COMPUTER VARIANTS
-    ~~~~~~~~~~~~~~~~~~~~~~~
-    
-    Some fans created hardware projects that extended the SAP-1's functionality
+Some fans created hardware projects that extended the SAP-1's functionality
 (more instructions, more memory, etc). I have no plans, for now, to cater to
 these variants.
-    
-    
-    CAVEATS AND NOTES
-    ~~~~~~~~~~~~~~~~~
-    
-    There are still probably lots of caveats. Several were been solved, though, 
+
+## CAVEATS AND NOTES
+
+There are still probably lots of caveats. Several were been solved, though, 
 and this project is still receiving regular improvements over time, slowly.
 
-    When I reached version 1.0.7 I thought that the project was about to come to
+When I reached version 1.0.7 I thought that the project was about to come to
 an end. At that point it was able to run all Ben Eater's test programs perfectly
 and was not planning to expand it any more, except for minor tweaks and fixes.
 
-    However I always felt that the NCurses interface was not really satisfying,
+However I always felt that the NCurses interface was not really satisfying,
 so I'm researching how to reimplement TLSim with a true GUI. I think it deserves
 such an improvement.
 
+## QUICKSTART
 
-    QUICKSTART
-    ~~~~~~~~~~
-
-    The EEPROM's microcode is pre-initialized, and the RAM contents is 
+The EEPROM's microcode is pre-initialized, and the RAM contents is 
 automatically initialized by the 'exmachina.c' module that fires a thread that
 simulates the needed user inputs to fill the RAM with a sample program. 
 
-    After that the computer is started, but can be stopped and the RAM program
+After that the computer is started, but can be stopped and the RAM program
 can be edited by the user through the UI using the keyboard.
     
-    How each module works is explained in detail in the Ben's videos, I have
+How each module works is explained in detail in the Ben's videos, I have
 replicated them quite faithfully in the UI.
 
-    The UI interface is controlled only by the keyboard. The keys are:
+The UI interface is controlled only by the keyboard. The keys are:
     
-    * F2, F3: change focused Module (the active keys will be highlited)
+* F2, F3: change focused Module (the active keys will be highlited)
     
-    * F10: Pause/Step Clock
+* F10: Pause/Step Clock
     
-    * F11: Unpause/Slower Clock
+* F11: Unpause/Slower Clock
     
-    * F12: Unpause/Faster Clock
+* F12: Unpause/Faster Clock
     
-    * ESC: Quits the program
+* ESC: Quits the program
     
-    Within a focused Module, the keys are usually alpha or digits, and are 
+Within a focused Module, the keys are usually alpha or digits, and are 
 hinted within brackets.
 
-    That's for now.
+That's for now.
 
-    Stay tuned and have fun!
-    
-    
+Stay tuned and have fun!
+
+```    
     CHANGELOG
     ~~~~~~~~~
     
@@ -200,3 +198,4 @@ hinted within brackets.
     V1.1.3 - September 1, 2021:
     
     - Created the Turbo Switch like the one in GTLSim
+```
